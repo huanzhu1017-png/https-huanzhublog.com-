@@ -324,10 +324,10 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 @media print{.music-panel{display:none}}
 
 /* ---- Vintage scrapbook theme (matches the revenue forecast dashboard) ---- */
-:root{--paper:#EEE8DA;--grid:rgba(0,0,0,0);--ink:#1E1A16;--pencil:#5A554B;--blue:#2F5E46;--red:#9A3B2A;--hl:#E9D9A6;--note:#F1E4B8;--tape:rgba(196,180,140,.75);--f-head:"Old Standard TT",Georgia,serif}
+:root{--paper:#EEE8DA;--grid:rgba(0,0,0,0);--ink:#1E1A16;--pencil:#5A554B;--blue:#2F5E46;--red:#9A3B2A;--hl:#E9D9A6;--note:#F1E4B8;--tape:rgba(196,180,140,.75);--f-head:"IM Fell English",Georgia,serif;--f-body:"EB Garamond","Crimson Pro",Georgia,serif}
 body{background-image:none!important}
-h1,h2,h3{font-family:var(--f-head)!important}
-.intro h1{font-size:64px!important;letter-spacing:-.01em}
+h1,h2,h3{font-family:var(--f-head)!important;font-weight:400!important}
+.intro h1{font-size:68px!important;letter-spacing:-.01em}
 .sec>h2 svg{display:none}
 .sec>h2{border-bottom:1px solid #1A1A1A;align-self:stretch!important;padding-bottom:4px}
 .top{border-bottom:3px double #1A1A1A;padding-bottom:10px}
