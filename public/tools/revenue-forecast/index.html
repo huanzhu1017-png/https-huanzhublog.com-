@@ -336,7 +336,6 @@ const yUp=dCC.slice().sort((a,b)=>b.y-a.y).slice(0,3), yDn=dCC.slice().sort((a,b
 const topDeals=c=>DEALS.filter(d=>d.cc===c&&!d.up).sort((a,b)=>b.disc-a.disc).slice(0,2).map(d=>`${esc(d.client)} ${M(d.disc)}`).join(', ');
 const subChg=chg-ftop;
 $('#s-find').innerHTML=[
- `<b>Forecast moved ${chg>=0?'up':'down'} ${M(Math.abs(chg))} since 9/28:</b> ${M(ftop)} is new company finance topside, the other ${sgn(subChg,M)} comes from cost-center submissions (Lease ${sgn(F[0]-P[0],M)}, CM ${sgn(F[1]+F[2]-P[1]-P[2],M)}).`,
  `<b>Biggest increases vs. 9/28:</b> ${up3.map(x=>`${esc(x.c.name)} ${sgn(x.d,M)} (${topDeals(x.c)})`).join('; ')}.`,
  `<b>Biggest decreases vs. 9/28:</b> ${dn3.map(x=>`${esc(x.c.name)} ${sgn(x.d,M)}`).join('; ')}.`,
  `<b>Cost centers driving the change vs. Q4 2025:</b> Up: ${yUp.map(x=>`${esc(x.c.name)} ${sgn(x.y,M)}`).join('; ')}. Down: ${yDn.map(x=>`${esc(x.c.name)} ${sgn(x.y,M)}`).join('; ')}.`
