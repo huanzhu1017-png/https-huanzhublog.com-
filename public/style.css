@@ -222,3 +222,11 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   .me{grid-column:1;grid-row:1;width:min(240px,70%);justify-self:center;transform:rotate(-1.5deg)}
   .hello-text{grid-row:2}
 }
+
+/* ---------- work: bullet points + toolbox ---------- */
+.job .pts{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:4px;max-width:66ch}
+.job .pts li::marker{color:var(--red)}
+.kit{display:flex;flex-direction:column;gap:16px}
+.kit > div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px}
+.kit-label{font-family:var(--f-hand);color:var(--pencil);font-size:17px;padding-top:2px}
+@media (max-width:560px){.kit > div{grid-template-columns:1fr;gap:2px}}
