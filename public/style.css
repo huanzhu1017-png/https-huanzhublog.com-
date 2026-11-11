@@ -260,3 +260,15 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 /* ---------- music ---------- */
 .hold.singer .tkr{font-size:24px;line-height:1.15}
 .hold.singer h3{font-family:"Noto Serif SC","Songti SC","STSong",serif;font-weight:600;font-size:20px}
+
+/* ---------- background music toggle ---------- */
+.music-btn{position:fixed;z-index:20;right:max(16px,calc(env(safe-area-inset-right,0px) + 12px));bottom:calc(env(safe-area-inset-bottom,0px) + 16px);
+  display:flex;align-items:center;gap:6px;font:700 15px var(--f-hand);color:var(--ink);background:var(--note);cursor:pointer;
+  padding:6px 14px 6px 10px;border:1.5px solid var(--ink);border-radius:15px 225px 15px 255px/255px 15px 225px 15px;
+  box-shadow:2px 3px 0 rgba(30,35,40,.18);transform:rotate(-2deg)}
+.music-btn .note-ico{font-size:18px;line-height:1;color:var(--red)}
+.music-btn[aria-pressed="true"]{background:#fff}
+.music-btn[aria-pressed="true"] .note-ico{animation:hzbob 1.8s ease-in-out infinite}
+@keyframes hzbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.music-btn[aria-pressed="true"] .note-ico{animation:none}}
+@media print{.music-btn{display:none}}
