@@ -1,7 +1,7 @@
 /* Huan Zhu — notebook style. Graph-paper ground, pencil notes, hand-drawn charts. */
 :root{
   color-scheme:light;
-  --paper:#F7F6EF; --grid:#DCE6DA; --ink:#1E2328; --pencil:#5B6066; --blue:#2A4C8C; --red:#B0412B; --green:#3C7A4A;
+  --paper:#EEF2E8; --grid:#D2DFCC; --ink:#1E2328; --pencil:#5B6066; --blue:#2A4C8C; --red:#B0412B; --green:#3C7A4A;
   --hl:#FCEB7A; --note:#FFF3A6; --tape:rgba(214,203,170,.75);
   --f-body:"Crimson Pro",Georgia,"Times New Roman",serif;
   --f-hand:"Kalam","Comic Sans MS","Bradley Hand",cursive;
