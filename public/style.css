@@ -176,3 +176,17 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   .shelf .slot{aspect-ratio:auto;min-height:90px}
   .posts li{grid-template-columns:1fr;gap:2px}
 }
+
+/* ---------- restaurant list ---------- */
+.spots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.spot{background:#FFFEFA;padding:16px 18px 14px;position:relative;display:flex;flex-direction:column;gap:6px;
+  border:1.5px solid var(--ink);border-radius:15px 225px 15px 255px/255px 15px 225px 15px;box-shadow:3px 4px 0 rgba(30,35,40,.12)}
+.spot:nth-child(odd){transform:rotate(-.6deg)}
+.spot:nth-child(even){transform:rotate(.5deg)}
+.spot-head{display:flex;flex-direction:column;gap:0}
+.spot h3{font-size:24px;font-weight:700}
+.spot .where{font-family:var(--f-hand);font-size:15px;color:var(--pencil)}
+.spot .order{font-family:var(--f-hand);font-size:18px;color:var(--blue)}
+.spot .order span{color:var(--red)}
+.spot .addr{font-size:16px;color:var(--pencil)}
+@media (max-width:640px){.spots{grid-template-columns:1fr}}
