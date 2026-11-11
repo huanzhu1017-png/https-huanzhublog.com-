@@ -201,3 +201,11 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 .snaps figcaption{font-family:var(--f-hand);font-size:15px;color:var(--pencil);text-align:center;padding-top:3px}
 .snaps a:focus-visible{outline-offset:2px}
 @media (max-width:640px){.snaps{grid-template-columns:1fr}}
+
+/* ---------- neighborhoods ---------- */
+.hood{display:flex;flex-direction:column;gap:10px}
+.hood + .hood{margin-top:26px}
+.hood-name{font-family:var(--f-hand);font-weight:700;font-size:24px;color:var(--blue);align-self:flex-start;
+  padding:0 6px;background:linear-gradient(100deg,transparent 2%,var(--hl) 4%,var(--hl) 94%,transparent 97%) no-repeat 0 75%/100% 45%}
+.hood-note{font-family:var(--f-hand);font-size:16px;color:var(--pencil);margin-top:-6px}
+.snaps.tall img{aspect-ratio:3/4}
