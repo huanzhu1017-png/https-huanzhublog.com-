@@ -246,3 +246,12 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 .hold p{font-size:16px;line-height:1.45;margin-top:4px}
 .hold .quote{font-family:var(--f-hand);font-size:16px;margin-top:auto;padding-top:6px}
 @media (max-width:720px){.holds{grid-template-columns:1fr}}
+
+/* ---------- work: tool links ---------- */
+.tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px}
+.tools-label{font-family:var(--f-hand);font-size:17px;color:var(--red)}
+.tool{font-family:var(--f-hand);font-weight:700;font-size:17px;color:var(--ink);text-decoration:none;background:var(--hl);
+  padding:4px 14px;border:1.5px solid var(--ink);border-radius:15px 225px 15px 255px/255px 15px 225px 15px;box-shadow:2px 3px 0 rgba(30,35,40,.15)}
+.tool:nth-of-type(odd){transform:rotate(-1deg)}
+.tool:nth-of-type(even){transform:rotate(.8deg)}
+.tool:hover{background:#fff;color:var(--blue)}
