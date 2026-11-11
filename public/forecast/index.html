@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Revenue forecasting · Huan Zhu</title>
+<meta name="description" content="How I replaced emailed broker forecasts with one system on top of the ERP, and cut the forecast miss from ~10% to ~2%.">
+<meta property="og:title" content="Getting brokers out of their inboxes · Huan Zhu">
+<meta property="og:description" content="Revenue forecasting on top of the ERP. Forecast miss from ~10% to ~2%.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Kalam:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <a href="../index.html">← huan zhu</a>
+    <nav><a href="../work/index.html">all work</a><a href="../index.html#hi">say hi</a></nav>
+  </div>
+
+  <article class="case">
+    <span class="tag">at Newmark · 2023–2025</span>
+    <h1>Getting brokers out of their inboxes</h1>
+
+    <h2>Before</h2>
+    <p>Brokers sent their revenue forecasts in by email. Someone in finance would paste them into a deck, and by the time leadership saw the number it was already old. It was also off by about 10%, which in a commission business makes planning hard.</p>
+
+    <h2>What I built</h2>
+    <p>A forecasting system that sits on top of the company ERP. Deal pipeline flows in directly, the forecast logic applies, and leadership looks at one screen instead of a stack of attachments.</p>
+    <p>AI checks run on the data as it comes in. They flag deals that look stale or inconsistent before they get rolled up, so the number leadership sees is already cleaned.</p>
+
+    <h2>What happened</h2>
+    <p>About 1,500 brokers use it now. The emailed process is gone, and the forecast miss is <span class="u">around 2%</span>.</p>
+
+    <div class="tags"><span>ERP integration</span><span>pipeline modeling</span><span>AI data validation</span><span>change management</span></div>
+
+    <div class="card">
+      <span class="tape" aria-hidden="true"></span>
+      <div class="margin">click between the two, the yellow gap is the miss</div>
+      <div class="cap"><span>monthly revenue, $M</span>
+        <div class="tabs" role="group" aria-label="Forecast method">
+          <button id="before" type="button" aria-pressed="false">old way (email)</button>
+          <button id="after" type="button" aria-pressed="true">new system</button>
+        </div>
+      </div>
+      <div class="nums"><span>avg miss <b id="mape">–</b></span><span>worst month <b id="worst">–</b></span><span>months within 3% <b id="within">–</b></span></div>
+      <svg id="chart" viewBox="0 0 600 250" role="img" aria-label="Hand-drawn line chart of forecast against actual revenue"></svg>
+      <div class="small">made-up data · "Meridian Brokerage" (not a real company) · FY25</div>
+    </div>
+  </article>
+
+  <nav class="pager"><a href="../work/index.html">← all work</a><a href="../variance/index.html">next: variance commentary →</a></nav>
+</div>
+<script src="../sketch.js"></script>
+<script>
+const months = ["J","F","M","A","M","J","J","A","S","O","N","D"];
+const actual = [118,124,151,139,146,172,141,149,178,163,170,214];
+const errOld = [.09,-.11,.13,-.07,.10,-.12,.08,-.09,.11,-.10,.06,-.14];
+const errNew = [.02,-.01,.03,-.02,.01,-.02,.02,-.01,.02,-.02,.01,-.03];
+let mode = "after";
+
+function draw(){
+  const svg = document.getElementById("chart"); svg.innerHTML = "";
+  const W = 600, H = 250, L = 42, R = 14, T = 16, B = 30, lo = 80, hi = 260;
+  const x = i => L + i * (W - L - R) / 11, y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+  const err = mode === "after" ? errNew : errOld;
+  const fc = actual.map((a, i) => a * (1 + err[i]));
+
+  pen(svg, [[L, T - 4], [L, H - B]], { w: 1.6, seed: 3 });
+  pen(svg, [[L, H - B], [W - R + 4, H - B]], { w: 1.6, seed: 4 });
+  [100, 150, 200, 250].forEach((v, k) => {
+    pen(svg, [[L - 5, y(v)], [L + 3, y(v)]], { w: 1.3, single: true, seed: 20 + k });
+    el("text", { x: L - 9, y: y(v) + 5, "text-anchor": "end" }, svg, v);
+  });
+  months.forEach((m, i) => el("text", { x: x(i), y: H - 9, "text-anchor": "middle" }, svg, m));
+
+  const band = "M" + fc.map((f, i) => `${x(i)},${y(f)}`).join("L") + "L" +
+    actual.map((_, i) => `${x(11 - i)},${y(actual[11 - i])}`).join("L") + "Z";
+  el("path", { d: band, fill: C.hl, opacity: .85 }, svg);
+  pen(svg, actual.map((a, i) => [x(i), y(a)]), { w: 2.4, seed: 11 });
+  pen(svg, fc.map((f, i) => [x(i), y(f)]), { w: 2, stroke: C.red, seed: 13, dash: "6 5", single: true });
+  el("text", { x: x(11) - 6, y: y(actual[11]) - 10, "text-anchor": "end", style: `fill:${C.ink};font-size:15px` }, svg, "actual");
+  el("text", { x: x(2) + 6, y: y(fc[2]) - (err[2] > 0 ? 10 : -18), style: `fill:${C.red};font-size:15px` }, svg, "forecast");
+
+  const abs = err.map(Math.abs);
+  document.getElementById("mape").textContent = (abs.reduce((a, b) => a + b) / 12 * 100).toFixed(1) + "%";
+  document.getElementById("worst").textContent = Math.round(Math.max(...abs) * 100) + "%";
+  document.getElementById("within").textContent = abs.filter(e => e <= .03).length + "/12";
+  document.getElementById("before").setAttribute("aria-pressed", mode === "before");
+  document.getElementById("after").setAttribute("aria-pressed", mode === "after");
+}
+document.getElementById("before").onclick = () => { mode = "before"; draw(); };
+document.getElementById("after").onclick = () => { mode = "after"; draw(); };
+draw();
+</script>
+</body>
+</html>

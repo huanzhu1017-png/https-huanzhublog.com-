@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Headcount model · Huan Zhu</title>
+<meta name="description" content="A driver-based headcount and compensation model connecting hiring pace, pay, payroll taxes and bonuses.">
+<meta property="og:title" content="A headcount model that ties out · Huan Zhu">
+<meta property="og:description" content="Driver-based workforce planning: try a hiring plan, see the full-year cost.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Kalam:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <a href="../index.html">← huan zhu</a>
+    <nav><a href="../work/index.html">all work</a><a href="../index.html#hi">say hi</a></nav>
+  </div>
+
+  <article class="case">
+    <span class="tag">at BlackRock · 2019–2022</span>
+    <h1>A headcount model that ties out</h1>
+
+    <h2>Before</h2>
+    <p>Long-range plans treated people as a single line. Hiring pace, payroll taxes and bonus structures were estimated in different places by different people, and they rarely matched when you added them up.</p>
+
+    <h2>What I built</h2>
+    <p>One driver-based model that connects all of it. Hiring pace, base pay, payroll load and bonus targets feed straight into quarterly cost, so a leader can try a hiring plan and see what it does to the full year right away.</p>
+
+    <h2>What happened</h2>
+    <p>It became the basis for <span class="u">long-range workforce planning</span> across a region of more than 1,000 people.</p>
+
+    <div class="tags"><span>workforce analytics</span><span>scenario planning</span><span>Hyperion / TM1</span></div>
+
+    <div class="card">
+      <span class="tape" aria-hidden="true"></span>
+      <div class="margin">drag these around</div>
+      <div class="cap"><span>what does a hiring plan cost?</span></div>
+      <div class="sl">
+        <label for="hires">hires / quarter<output id="hires-o"></output><input id="hires" type="range" min="0" max="60" step="5" value="25"></label>
+        <label for="base">avg base<output id="base-o"></output><input id="base" type="range" min="90" max="250" step="5" value="150"></label>
+        <label for="bonus">bonus target<output id="bonus-o"></output><input id="bonus" type="range" min="0" max="60" step="5" value="25"></label>
+      </div>
+      <div class="nums"><span>ending headcount <b id="hc">–</b></span><span>full year <b id="cost">–</b></span><span>extra vs. no hiring <b id="delta">–</b></span></div>
+      <svg id="chart" viewBox="0 0 600 180" role="img" aria-label="Hand-drawn bar chart of quarterly cost"></svg>
+      <div class="small">starts at 1,000 people · 22% tax &amp; benefits · hires land mid-quarter · made-up data</div>
+    </div>
+  </article>
+
+  <nav class="pager"><a href="../variance/index.html">← variance commentary</a><a href="../work/index.html">all work →</a></nav>
+</div>
+<script src="../sketch.js"></script>
+<script>
+const START = 1000, LOAD = .22, money = v => "$" + (v / 1e6).toFixed(1) + "M";
+const hires = document.getElementById("hires"), base = document.getElementById("base"), bonus = document.getElementById("bonus");
+
+function draw(){
+  const h = +hires.value, b = +base.value * 1000, bo = +bonus.value / 100;
+  document.getElementById("hires-o").textContent = h;
+  document.getElementById("base-o").textContent = "$" + base.value + "K";
+  document.getElementById("bonus-o").textContent = bonus.value + "%";
+  const perHeadQ = b * (1 + LOAD) / 4 + b * bo / 4;
+  const q = [1, 2, 3, 4].map(k => (START + h * (k - 1) + h / 2) * perHeadQ);
+  const total = q.reduce((a, c) => a + c), flat = START * perHeadQ * 4;
+  document.getElementById("hc").textContent = (START + h * 4).toLocaleString();
+  document.getElementById("cost").textContent = money(total);
+  document.getElementById("delta").textContent = "+" + money(total - flat);
+
+  const svg = document.getElementById("chart"); svg.innerHTML = ""; hatchDefs(svg);
+  const W = 600, H = 180, L = 20, R = 10, T = 26, B = 28, max = Math.max(...q) * 1.12;
+  const y = v => T + (1 - v / max) * (H - T - B), slot = (W - L - R) / 4, bw = slot * .48;
+  pen(svg, [[L, H - B], [W - R, H - B]], { w: 1.6, seed: 9 });
+  q.forEach((v, i) => {
+    const x0 = L + i * slot + (slot - bw) / 2;
+    box(svg, x0, y(v), bw, y(0) - y(v), i === 3 ? C.blue : C.pencil, i === 3 ? "hb" : "hp", 80 + i);
+    el("text", { x: x0 + bw / 2, y: y(v) - 8, "text-anchor": "middle", style: `fill:${C.ink};font-size:15px` }, svg, money(v));
+    el("text", { x: x0 + bw / 2, y: H - 8, "text-anchor": "middle" }, svg, "Q" + (i + 1));
+  });
+}
+[hires, base, bonus].forEach(i => i.addEventListener("input", draw));
+draw();
+</script>
+</body>
+</html>

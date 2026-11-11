@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Huan Zhu</title>
+<meta name="description" content="Huan Zhu's notebook: things I've built at work, things I'm writing, and bits of life in New York.">
+<link rel="canonical" href="https://huanzhublog.com/">
+<meta property="og:title" content="Huan Zhu">
+<meta property="og:description" content="Things I've built, things I'm writing, and bits of life in New York.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://huanzhublog.com/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Kalam:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <span>huanzhublog.com</span>
+    <nav><a href="work/index.html">work</a><a href="notes/index.html">notes</a><a href="life/index.html">life</a><a href="#hi">say hi</a></nav>
+  </div>
+
+  <section class="intro">
+    <h1>Hi, I'm Huan.</h1>
+    <div class="sub">I live in New York. This is my notebook.</div>
+    <p class="body">By day I work in finance. I like turning messy processes into simple ones, and I like a forecast that turns out to be right. The rest of the time I'm figuring out the city, reading, and trying new things.</p>
+    <p class="body">This site is where I keep a bit of all of it: things I've built, things I'm thinking about, and pieces of everyday life. It'll fill up slowly.</p>
+  </section>
+
+  <section class="sec">
+    <h2>Pick a page<svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8 C 20 4, 40 11, 60 6 S 90 9, 98 5" fill="none" stroke="#B0412B" stroke-width="2.4" stroke-linecap="round"/></svg></h2>
+    <div class="doors">
+      <a class="door" href="work/index.html">
+        <span class="label">work</span>
+        <h3>Things I've built</h3>
+        <p>Forecasting, variance analysis and planning models, redrawn with made-up numbers so you can play with them.</p>
+      </a>
+      <a class="door" href="notes/index.html">
+        <span class="label">notes</span>
+        <h3>Things I'm writing</h3>
+        <p>Short notes on work, tools, and whatever I'm chewing on.</p>
+      </a>
+      <a class="door" href="life/index.html">
+        <span class="label">life</span>
+        <h3>Everything else</h3>
+        <p>New York, books, food, trips. Still filling this one in.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Latest notes<svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 6 C 25 10, 45 3, 70 8 S 92 5, 98 9" fill="none" stroke="#B0412B" stroke-width="2.4" stroke-linecap="round"/></svg></h2>
+    <ul class="posts">
+      <li><span class="date">Nov 2026</span><a href="notes/why-this-site/index.html"><h3>Why I made this site</h3><p>Starting a corner of the internet that's mine.</p></a></li>
+    </ul>
+  </section>
+
+  <section class="sec" id="hi">
+    <h2>Say hi<svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 30 10, 60 4, 98 8" fill="none" stroke="#B0412B" stroke-width="2.4" stroke-linecap="round"/></svg></h2>
+    <p>About work, about something I wrote, or just to say hello.</p>
+    <div class="mail"><a id="mail" href="mailto:huan.zhu1017@gmail.com">huan.zhu1017@gmail.com</a><button id="copy" type="button">copy</button></div>
+  </section>
+
+  <p class="foot">© Huan Zhu · made by hand, slowly</p>
+</div>
+<script>
+document.getElementById("copy").addEventListener("click", async e => {
+  const btn = e.currentTarget;
+  try { await navigator.clipboard.writeText("huan.zhu1017@gmail.com"); btn.textContent = "copied!"; }
+  catch { const r = document.createRange(); r.selectNodeContents(document.getElementById("mail")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "selected, ctrl+c"; }
+  setTimeout(() => btn.textContent = "copy", 2000);
+});
+</script>
+</body>
+</html>
