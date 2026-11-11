@@ -19,7 +19,7 @@
   color-scheme:light;
   --bg:#F3F3F0; --surface:#fff; --panel:#EFEFEB; --ink:#0a0b0d; --ink2:#51565f; --muted:#8a8f98; --line:#e2e4e8; --grid:#eceef1;
   --navy:#1E3B32; --blue:#2B6A4C; --title:#2B6A4C;
-  --lease:#1f6fc5; --sales:#eb6834; --debt:#1baf7a; --booked:#1f6fc5; --pipe:#eb6834; --nodet:#8e6fd6; --mtop:#1baf7a; --ftop:#e8922a;
+  --lease:#1E5C45; --sales:#4E9A6F; --debt:#A9CC8C; --booked:#1E5C45; --pipe:#4E9A6F; --nodet:#2C8C88; --mtop:#A9CC8C; --ftop:#7A8C3A;
   --good:#17874f; --bad:#c0302a; --warn:#a86500;
   --tot:#fff3cf; --tot-line:#e0b93c; --hl:#fff6dc;
   --t1:#1E3B32; --t2:#a5650f; --t3:#d4561f; --t4:#c0302a;
@@ -148,7 +148,7 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
         <svg id="s-src" viewBox="0 0 620 230" role="img" aria-label="Stacked bars of the Q4 forecast by line and source"></svg>
         <p class="note" id="s-srcnote"></p></div>
       <div class="card"><h3>Last forecast vs. actual, by quarter</h3>
-        <div class="legend"><span><i style="background:#c9d3de"></i>First forecast</span><span><i style="background:#7fa7d4"></i>Last forecast</span><span><i style="background:var(--navy)"></i>Actual</span></div>
+        <div class="legend"><span><i style="background:#CFDCD3"></i>First forecast</span><span><i style="background:#8DB89F"></i>Last forecast</span><span><i style="background:var(--navy)"></i>Actual</span></div>
         <svg id="s-fva" viewBox="0 0 620 260" role="img" aria-label="Grouped bars of first forecast, last forecast and actual revenue by quarter"></svg>
         <p class="note" id="s-fvanote"></p></div>
     </div>
@@ -372,7 +372,7 @@ $('#s-reg').innerHTML=`<tr><th class="t">Region</th><th>9/28</th><th>10/19</th><
   [0,.25,.5,.75,1].forEach(f=>{const v=max*f;g+=`<line x1="${L}" x2="${W-4}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end" style="font-size:10px">${f?'$'+M0(v)+'M':'0'}</text>`});
   let err=[];
   FVA.forEach((f,i)=>{const x=L+i*slot+slot*.12;
-    [[f.first,'#c9d3de'],[f.last,'#7fa7d4'],[f.act,'var(--navy)']].forEach(([v,c],j)=>{if(v==null)return;const xx=x+j*(bw+2);
+    [[f.first,'#CFDCD3'],[f.last,'#8DB89F'],[f.act,'var(--navy)']].forEach(([v,c],j)=>{if(v==null)return;const xx=x+j*(bw+2);
       g+=`<rect x="${xx}" y="${y(v)}" width="${bw}" height="${y(0)-y(v)}" fill="${c}"/><text x="${xx+bw/2}" y="${y(v)-3}" text-anchor="middle" style="font-size:9px">${M0(v)}</text>`});
     const cx=L+i*slot+slot/2;
     if(f.act){const e=f.act/f.last-1;err.push(e);g+=`<rect x="${cx-17}" y="4" width="34" height="15" rx="7" fill="${e>=0?'#e3f6ea':'#fde7e5'}"/><text x="${cx}" y="15" text-anchor="middle" style="font-size:9.5px;fill:${e>=0?'var(--good)':'var(--bad)'};font-weight:600">${pct(e)}</text>`;}
@@ -428,7 +428,7 @@ function deals(){
   const inF=L.filter(d=>!d.up),disc=inF.reduce((a,d)=>a+d.disc,0),gross=inF.reduce((a,d)=>a+d.gross,0);
   const top10=inF.slice().sort((a,b)=>b.disc-a.disc).slice(0,10).reduce((a,d)=>a+d.disc,0);
   const band=k=>L.filter(d=>k==='gt'?d.prob>.5:k==='eq'?d.prob===.5:d.prob<.5);
-  const bands=[['>50%','gt','var(--lease)'],['=50%','eq','var(--debt)'],['<50%','lt','var(--sales)']].map(([l,k,c])=>{const a=band(k);return{l,c,n:a.length,g:a.reduce((s,d)=>s+d.gross,0),d:a.reduce((s,d)=>s+d.disc,0)}});
+  const bands=[['>50%','gt','var(--lease)'],['=50%','eq','var(--sales)'],['<50%','lt','var(--debt)']].map(([l,k,c])=>{const a=band(k);return{l,c,n:a.length,g:a.reduce((s,d)=>s+d.gross,0),d:a.reduce((s,d)=>s+d.disc,0)}});
   $('#d-kpi').innerHTML=`<div class="kpi"><div class="l">Deals in pipeline</div><div class="n">${L.length}</div><div class="s">${inF.length} in forecast · ${bands[2].n} below 50% (upside)</div></div>
    <div class="kpi"><div class="l">Discounted revenue, in-forecast deals</div><div class="n">${M(disc)}</div><div class="s">gross ${M(gross)} · avg. probability ${gross?Math.round(disc/gross*100):0}%</div></div>
    <div class="kpi"><div class="l">Top-10 concentration</div><div class="n">${disc?Math.round(top10/disc*100):0}%</div><div class="s">share of discounted pipeline in the 10 largest deals</div></div>`;
