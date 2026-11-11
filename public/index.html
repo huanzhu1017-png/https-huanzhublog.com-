@@ -76,18 +76,41 @@
   <section class="sec" id="hi">
     <h2>Say hi<svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 30 10, 60 4, 98 8" fill="none" stroke="#B0412B" stroke-width="2.4" stroke-linecap="round"/></svg></h2>
     <p>About work, about something I wrote, or just to say hello.</p>
-    <div class="mail"><a id="mail" href="mailto:huan.zhu1017@gmail.com">huan.zhu1017@gmail.com</a><button id="copy" type="button">copy</button></div>
+    <form class="guest" id="guest" action="FORMSPREE_ENDPOINT" method="POST" novalidate>
+      <span class="tape" aria-hidden="true"></span>
+      <h3>Leave me a message</h3>
+      <div class="row">
+        <label for="g-name"><span>Name <span class="opt">(optional)</span></span><input id="g-name" name="name" type="text" autocomplete="name" maxlength="80"></label>
+        <label for="g-email">Email<input id="g-email" name="email" type="email" autocomplete="email" required maxlength="120"></label>
+      </div>
+      <label for="g-msg">Message<textarea id="g-msg" name="message" rows="4" required maxlength="2000"></textarea></label>
+      <label class="check" for="g-sub"><input id="g-sub" name="subscribe" type="checkbox" value="yes"> Keep me posted when Huan writes something new</label>
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+      <div class="send"><button type="submit" id="g-btn">send it ✉</button><span id="g-status" role="status" aria-live="polite"></span></div>
+      <p class="small">Your email is only used to reply to you (and to send updates if you tick the box). It's never shared.</p>
+    </form>
   </section>
 
   <p class="foot">© Huan Zhu · made by hand, slowly</p>
 </div>
 <script>
-document.getElementById("copy").addEventListener("click", async e => {
-  const btn = e.currentTarget;
-  try { await navigator.clipboard.writeText("huan.zhu1017@gmail.com"); btn.textContent = "copied!"; }
-  catch { const r = document.createRange(); r.selectNodeContents(document.getElementById("mail")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "selected, ctrl+c"; }
-  setTimeout(() => btn.textContent = "copy", 2000);
-});
+(function(){
+  var f=document.getElementById('guest'); if(!f) return;
+  var st=document.getElementById('g-status'), btn=document.getElementById('g-btn');
+  f.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email=f.email.value.trim(), msg=f.message.value.trim();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){st.textContent='Please add an email so I can write back.';f.email.focus();return;}
+    if(!msg){st.textContent='Write a message first.';f.message.focus();return;}
+    btn.disabled=true; st.textContent='Sending…';
+    try{
+      var r=await fetch(f.action,{method:'POST',body:new FormData(f),headers:{Accept:'application/json'}});
+      if(r.ok){f.reset();st.textContent='Thanks! I\'ll get back to you soon.';}
+      else{st.textContent='That didn\'t go through. Try again in a minute.';}
+    }catch(err){st.textContent='No connection. Check your internet and try again.';}
+    btn.disabled=false;
+  });
+})();
 </script>
 <script src="music.js" defer></script>
 </body>

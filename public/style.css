@@ -272,3 +272,26 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 @keyframes hzbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){.music-btn[aria-pressed="true"] .note-ico{animation:none}}
 @media print{.music-btn{display:none}}
+
+/* ---------- guestbook ---------- */
+.guest{position:relative;background:#FFFEFA;border:1.5px solid var(--ink);padding:22px 20px 16px;margin-top:8px;max-width:620px;
+  border-radius:255px 12px 225px 10px/10px 225px 12px 255px;box-shadow:3px 4px 0 rgba(30,35,40,.12);transform:rotate(-.4deg);display:flex;flex-direction:column;gap:12px}
+.guest .tape{position:absolute;top:-13px;left:50%;width:110px;height:26px;background:var(--tape);transform:translateX(-50%) rotate(-3deg)}
+.guest h3{font-family:var(--f-hand);font-size:22px;color:var(--blue);margin:0}
+.guest .row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.guest label{display:flex;flex-direction:column;gap:3px;font-family:var(--f-hand);font-size:16px;color:var(--pencil);min-width:0}
+.guest .opt{font-size:13px}
+.guest input[type=text],.guest input[type=email],.guest textarea{font:400 17px var(--f-body);color:var(--ink);background:transparent;border:0;
+  border-bottom:1.5px solid var(--pencil);padding:4px 2px;width:100%;resize:vertical}
+.guest textarea{border:1.5px solid var(--pencil);border-radius:4px;padding:6px 8px;background:repeating-linear-gradient(transparent 0 27px,var(--grid) 27px 28px)}
+.guest input:focus,.guest textarea:focus{outline:none;border-color:var(--blue)}
+.guest .check{flex-direction:row;align-items:center;gap:8px;color:var(--ink)}
+.guest .check input{width:18px;height:18px;accent-color:var(--blue)}
+.guest .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.guest .send{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.guest button{font:700 17px var(--f-hand);background:var(--hl);color:var(--ink);border:1.5px solid var(--ink);padding:5px 18px;cursor:pointer;
+  border-radius:15px 225px 15px 255px/255px 15px 225px 15px;box-shadow:2px 3px 0 rgba(30,35,40,.15)}
+.guest button:disabled{opacity:.6;cursor:wait}
+.guest #g-status{font-family:var(--f-hand);font-size:16px;color:var(--blue)}
+.guest .small{font-family:var(--f-hand);font-size:13.5px;color:var(--pencil);margin:0}
+@media (max-width:560px){.guest .row{grid-template-columns:1fr}}
