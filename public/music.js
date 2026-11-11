@@ -11,10 +11,7 @@
       src: [C + 'transcoded/1/15/Chopin_Waltz_in_A_flat_major_Op_42.ogg/Chopin_Waltz_in_A_flat_major_Op_42.ogg.mp3',
             C + '1/15/Chopin_Waltz_in_A_flat_major_Op_42.ogg'] },
     { t: 'Waltz in E minor, B. 56', len: '2:56', by: 'Olga Gurevich · Musopen, public domain',
-      src: [C + '2/22/Chopin_-_Waltz_in_E_minor%2C_B_56.mp3'] },
-    { t: 'Ballade No. 2 in F, Op. 38', len: '7:00', by: 'Peter Johnston · Musopen, public domain',
-      src: [C + 'transcoded/c/cf/Frederic_Chopin_-_ballade_no._2_in_f_major%2C_op._38.ogg/Frederic_Chopin_-_ballade_no._2_in_f_major%2C_op._38.ogg.mp3',
-            C + 'c/cf/Frederic_Chopin_-_ballade_no._2_in_f_major%2C_op._38.ogg'] }
+      src: [C + '2/22/Chopin_-_Waltz_in_E_minor%2C_B_56.mp3'] }
   ];
   var KEY = 'hz-music2';
   function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
