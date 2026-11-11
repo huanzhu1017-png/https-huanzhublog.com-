@@ -255,3 +255,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 .tool:nth-of-type(odd){transform:rotate(-1deg)}
 .tool:nth-of-type(even){transform:rotate(.8deg)}
 .tool:hover{background:#fff;color:var(--blue)}
+
+/* ---------- music ---------- */
+.hold.singer .tkr{font-size:24px;line-height:1.15}
+.hold.singer h3{font-family:"Noto Serif SC","Songti SC","STSong",serif;font-weight:600;font-size:20px}
