@@ -121,7 +121,7 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
       <p id="headline"></p>
     </div>
   </div>
-  <p class="fict"><b>Demo version.</b> This is the layout and logic of a forecast dashboard I built, running on generated data for a made-up firm. Every company, person, address and dollar figure is fictional.</p>
+  <p class="fict"><b>What this shows:</b> how I build up a revenue forecast (booked + discounted pipeline + topside, by line, market and region) and how I report it to leadership: headline, key findings, variance to prior cycle and last year, and forecast accuracy over time. <b>All data is generated sample data for a made-up firm.</b></p>
 
   <div class="tabs" role="tablist">
     <button role="tab" id="tb-summary" aria-controls="p-summary" aria-selected="true" style="--c:var(--t1)">Summary</button>
@@ -181,18 +181,16 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
       <div class="filters">
         <select id="d-mkt" aria-label="Market"></select>
         <select id="d-type" aria-label="Deal type"><option value="">Lease + Sale + Financing</option><option>Lease</option><option>Sale</option><option>Financing</option></select>
-        <select id="d-brk" aria-label="Broker"></select>
         <select id="d-prob" aria-label="Probability"><option value="">All probabilities</option><option value="gt">&gt;50%</option><option value="eq">=50%</option><option value="lt">&lt;50%</option></select>
-        <input id="d-q" type="search" placeholder="Search client / address / market" aria-label="Search deals">
       </div>
       <div class="grid3" id="d-kpi"></div>
       <div class="grid2" style="margin-top:14px">
         <div style="min-width:0"><h3 style="font-size:13.5px;margin:0 0 6px">Probability ladder (gross commission)</h3><svg id="d-ladder" viewBox="0 0 560 120" role="img" aria-label="Gross commission by probability band"></svg><div class="scroll"><table id="d-ladt"></table></div></div>
-        <div style="min-width:0"><h3 style="font-size:13.5px;margin:0 0 6px">Top 10 deals (gross, ≥50%)</h3><svg id="d-top" viewBox="0 0 560 300" role="img" aria-label="Top ten deals by gross commission"></svg></div>
+        <div style="min-width:0"><h3 style="font-size:13.5px;margin:0 0 6px">Pipeline by market (discounted)</h3><svg id="d-top" viewBox="0 0 560 300" role="img" aria-label="Discounted pipeline by market"></svg></div>
       </div>
-      <div class="scroll" style="margin-top:14px"><table id="d-tab"></table></div>
-      <button class="more" id="d-more" type="button">Show 25 more deals</button>
-      <p class="note">Deals at 50% or above feed the discounted pipeline (gross × probability). Deals below 50% are shown as upside and stay out of the base forecast.</p>
+      <h3 style="font-size:13.5px;margin:16px 0 4px">Sample: 15 largest deals</h3>
+      <div class="scroll"><table id="d-tab"></table></div>
+      <p class="note">A sample of the deal list. Deals at 50% or above feed the discounted pipeline (gross × probability); deals below 50% are upside and stay out of the base forecast.</p>
     </div>
   </section>
 
@@ -203,32 +201,30 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
     <div class="grid3" id="c-kpi"></div>
     <div class="card" style="margin-top:14px">
       <div class="filters">
-        <input id="c-q" type="search" placeholder="Search client, property" aria-label="Search closed deals">
-        <select id="c-type" aria-label="Deal type"><option value="">All deal types</option><option>Lease</option><option>Sale</option><option>Financing</option><option>Consulting</option></select>
+        <select id="c-type" aria-label="Deal type"><option value="">All deal types</option><option>Lease</option><option>Sale</option><option>Financing</option></select>
         <select id="c-mkt" aria-label="Market"></select>
-        <select id="c-cc" aria-label="Cost center"></select>
         <label class="note" style="margin:0;display:flex;gap:4px;align-items:center">From <select id="c-from" aria-label="From month"></select></label>
         <label class="note" style="margin:0;display:flex;gap:4px;align-items:center">To <select id="c-to" aria-label="To month"></select></label>
         <span class="cnt" id="c-cnt"></span>
       </div>
       <div class="grid2" style="margin-top:0">
-        <div style="min-width:0"><h3 style="font-size:15px;margin:0 0 6px">Top 25 deals <span class="note" style="font-weight:400">· top 5 highlighted</span></h3><div class="scroll"><table id="c-deals"></table></div><button class="more" id="c-more" type="button">Show 25 more deals</button></div>
-        <div style="min-width:0"><h3 style="font-size:15px;margin:0 0 6px">Top 25 brokers <span class="note" style="font-weight:400">· top 5 highlighted</span></h3><div class="scroll"><table id="c-brk"></table></div></div>
+        <div style="min-width:0"><h3 style="font-size:15px;margin:0 0 6px">Sample: top 15 deals <span class="note" style="font-weight:400">· top 3 highlighted</span></h3><div class="scroll"><table id="c-deals"></table></div></div>
+        <div style="min-width:0"><h3 style="font-size:15px;margin:0 0 6px">Revenue by market</h3><div class="scroll"><table id="c-brk"></table></div></div>
       </div>
-      <p class="note">Deals by booked date. Revenue = recognized revenue. Lead broker = the broker credited the most production on the deal; broker ranking uses the full production booked to each broker.</p>
+      <p class="note">Deals by booked date. Revenue = recognized revenue.</p>
     </div>
   </section>
 
   <footer>
     <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../../forecast/index.html">the story behind this tool</a></div>
-    <div>Demo with generated data. Meridian Brokerage is not a real company; every client, broker, address, cost center and figure on this page is made up. Fed funds rates are public data.</div>
+    <div>Demo with generated data. Meridian Brokerage is not a real company; every client, market split and figure on this page is sample data. Fed funds rates are public data.</div>
   </footer>
 </div>
 
 <script>
 (function(){
 /* ---------- seeded random so the demo looks the same on every load ---------- */
-let s=20261116;const R=()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+let s=7310429;const R=()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const pick=a=>a[Math.floor(R()*a.length)], rnd=(a,b)=>a+R()*(b-a), rint=(a,b)=>Math.floor(rnd(a,b+1));
 const logn=(m,sd)=>Math.exp(Math.log(m)+sd*Math.sqrt(-2*Math.log(R()||1e-9))*Math.cos(2*Math.PI*R()));
 const $=q=>document.querySelector(q);
@@ -238,44 +234,29 @@ const cls=v=>v>0?'pos':v<0?'neg':'';
 const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---------- fictional firm ---------- */
-const MK=[
- ['New York','East',3.2],['Boston','East',1.1],['Philadelphia','East',.7],['Washington DC','East',1.0],['Atlanta','East',.9],['Charlotte','East',.5],['Miami','East',.8],
- ['Chicago','West',1.2],['Dallas','West',1.0],['Houston','West',.9],['Denver','West',.6],['Phoenix','West',.5],['Los Angeles','West',1.3],['San Francisco','West',1.1],['Seattle','West',.6],
- ['CM Northeast','Capital Markets',1.4],['CM Southeast','Capital Markets',.8],['CM Central','Capital Markets',.7],['CM Pacific','Capital Markets',.9],
- ['London','International',.8],['Toronto','International',.4],['Singapore','International',.3],
-];
+const MK=[['New York','East',3.0],['Boston','East',1.0],['DC','East',.9],['Atlanta','East',.8],['Miami','East',.7],
+ ['Chicago','West',1.1],['Dallas','West',1.0],['Houston','West',.8],['Denver','West',.6],['LA','West',1.3],['San Francisco','West',1.1],['Seattle','West',.6],
+ ['London','International',.8],['Toronto','International',.4]];
 const REG=['East','West','Capital Markets','International','Corporate & Admin'];
-const FIRST=['Avery','Jordan','Priya','Marcus','Elena','Theo','Hannah','Rafael','Mei','Owen','Nadia','Caleb','Sofia','Grant','Leah','Dmitri','Ivy','Malik','Tessa','Wes','Lena','Victor','June','Rohan','Clara','Felix','Ines','Hugo','Maya','Silas','Amara','Bennett','Kira','Lucas','Noor','Quinn','Ruth','Simone','Tobias','Yara'];
-const LAST=['Calloway','Brandt','Okafor','Lindqvist','Moreau','Hale','Vasquez','Tran','Whitaker','Kowalski','Ashby','Delacroix','Fenwick','Gallo','Hargrove','Ibarra','Jansen','Keller','Larkin','Mercer','Nakamura','Osei','Pemberton','Quill','Ramsey','Sorensen','Thorne','Ulloa','Varga','Winslow','Yates','Zeller','Abbott','Beaumont','Castellan','Draper'];
-const CO1=['Quillfern','Brindlewick','Moonharrow','Tallowmere','Vexmoor','Corrabell','Fenmarrow','Pellucid','Glimmerbay','Thornquist','Saffronby','Larchvale','Cindervale','Hollowmint','Wynfield','Orrin & Vale','Petalbrook','Duskwater','Kettleby','Marrowind','Silvercomb','Coppice','Velmora','Starlingford','Nimbusfield','Ochre & Sloane','Tamsin Works','Lumenvale','Gildenmoor','Juniperline','Cobblefen'];
-const CO2=['Labs','Health','Robotics','Capital','Partners','Biosciences','Logistics','Media','Foods','Analytics','Studios','Energy','Insurance','Holdings','Systems','Pharma','Apparel','Learning','Motors','Realty Trust','LLP','Hospitality','Clinics','Cloud'];
-const ST=['Maple Ave','Harbor St','Union Blvd','Cedar Ln','Market St','Lexington Pl','Ridge Rd','Canal St','Fulton Way','Orchard St','Park Row','Bay St','Mercer Pl','Commerce Dr','Hudson Yard Way','Elm Ct','Granite Ave','Willow Bend'];
-const person=()=>pick(FIRST)+' '+pick(LAST);
-const company=()=>pick(CO1)+' '+pick(CO2);
-const addr=()=>rint(10,2400)+' '+pick(ST);
-
-let code=740100;
-const CC=[];
+const SECT=['Tech company','Law firm','Biotech','Bank','Retailer','Logistics co.','Media co.','Healthcare group','Asset manager','Family office','REIT','Insurer','University','Hotel owner','Developer','Manufacturer'];
+const seq={};const client=()=>{const k=pick(SECT);seq[k]=(seq[k]||0)+1;return k+' '+String.fromCharCode(64+((seq[k]-1)%26)+1)};
+const CC=[];let code=100;
 MK.forEach(([m,r,w])=>{
-  const kinds=r==='Capital Markets'?['Capital Markets '+m.slice(3),'Debt & Structured '+m.slice(3)]:r==='International'?['Brokerage '+m]:(w>.9?['Brokerage '+m,'Tenant Rep '+m,'Capital Markets '+m]:['Brokerage '+m,'Capital Markets '+m]);
-  kinds.forEach((k,i)=>{
-    const wt=w*(i===0?1:rnd(.35,.6));
-    const mix=r==='Capital Markets'?(k.startsWith('Debt')?[0,.2,.8]:[0,.75,.25]):k.startsWith('Capital')?[0,.7,.3]:[.9,.1,0];
-    CC.push({code:(code+=rint(3,40)),name:k,market:m,region:r,wt,mix,brokers:Array.from({length:rint(4,9)},person)});
-  });
+  CC.push({code:code++,name:m+' Leasing',market:m,region:r,wt:w,mix:[.92,.08,0]});
+  if(w>=.8&&r!=='International')CC.push({code:code++,name:m+' Capital Markets',market:m,region:'Capital Markets',wt:w*.55,mix:[0,.7,.3]});
 });
-const FIN={code:999999,name:'Company Finance Topside (unallocated)',market:'Corporate',region:'Corporate & Admin',wt:0,mix:[.5,.35,.15],brokers:[]};
+const FIN={code:999,name:'Finance topside (unallocated)',market:'Corporate',region:'Corporate & Admin',wt:0,mix:[.5,.35,.15]};
 
 /* ---------- deals (Q4 pipeline) ---------- */
 const PROBS=[.25,.4,.5,.5,.6,.75,.75,.85,.9];
 const DEALS=[];
 CC.forEach(c=>{
-  const n=Math.round(c.wt*rnd(14,22));
+  const n=Math.round(c.wt*rnd(12,18));
   for(let i=0;i<n;i++){
-    const line=R()<c.mix[0]?'Lease':R()<c.mix[1]/(c.mix[1]+c.mix[2]+1e-9)?'Sale':'Financing';
-    const gross=Math.round(logn(c.region==='Capital Markets'?850e3:520e3,.95)/1e3)*1e3;
+    const type=R()<c.mix[0]?'Lease':R()<c.mix[1]/(c.mix[1]+c.mix[2]+1e-9)?'Sale':'Financing';
+    const gross=Math.round(logn(c.region==='Capital Markets'?700e3:420e3,.85)/1e4)*1e4;
     const prob=pick(PROBS);
-    DEALS.push({client:company(),addr:addr()+', '+(c.region==='Capital Markets'?pick(MK.filter(x=>x[1]!=='Capital Markets'&&x[1]!=='International'))[0]:c.market),market:c.market,cc:c,broker:pick(c.brokers),type:line,close:'Q4',prob,gross,disc:prob>=.5?gross*prob:0,up:prob<.5});
+    DEALS.push({client:client(),market:c.market,cc:c,type,close:'Q4',prob,gross,disc:prob>=.5?gross*prob:0,up:prob<.5});
   }
 });
 const lineOf=t=>t==='Lease'?0:t==='Sale'?1:2;
@@ -284,18 +265,17 @@ const lineOf=t=>t==='Lease'?0:t==='Sale'?1:2;
 const LN=['Lease','Sales','Debt'];
 CC.forEach(c=>{
   c.pipe=[0,0,0];DEALS.filter(d=>d.cc===c).forEach(d=>c.pipe[lineOf(d.type)]+=d.disc);
-  const tot=c.pipe.reduce((a,b)=>a+b,0)||1;
   c.booked=c.pipe.map(v=>v*rnd(.02,.06));
   c.nodet=c.pipe.map(v=>v*rnd(0,.25));
-  c.mtop=c.pipe.map(v=>v*(R()<.35?rnd(.15,.55):rnd(0,.12)));
+  c.mtop=c.pipe.map(v=>v*(R()<.35?rnd(.15,.5):rnd(0,.12)));
   c.fc=[0,1,2].map(i=>c.booked[i]+c.pipe[i]+c.nodet[i]+c.mtop[i]);
   const carried=R()<.12;
-  c.prior=c.fc.map(v=>carried?v:v*rnd(.72,1.08));
-  c.ly=c.fc.map(v=>v*rnd(.78,1.18));
+  c.prior=c.fc.map(v=>carried?v:v*rnd(.75,1.08));
+  c.ly=c.fc.map(v=>v*rnd(.8,1.15));
 });
 const sum3=(a,k)=>[0,1,2].map(i=>a.reduce((s,c)=>s+c[k][i],0));
 const ccFc=sum3(CC,'fc');
-const finAmt=(ccFc[0]+ccFc[1]+ccFc[2])*.055;
+const finAmt=(ccFc[0]+ccFc[1]+ccFc[2])*.05;
 FIN.booked=[0,0,0];FIN.pipe=[0,0,0];FIN.nodet=[0,0,0];FIN.mtop=[0,0,0];FIN.ftop=FIN.mix.map(x=>x*finAmt);
 FIN.fc=FIN.ftop.slice();FIN.prior=[0,0,0];FIN.ly=[0,0,0];
 CC.forEach(c=>c.ftop=[0,0,0]);
@@ -308,8 +288,8 @@ const upGross=DEALS.filter(d=>d.up).reduce((a,d)=>a+d.gross*d.prob,0);
 const downside=base-.5*(mtop+ftop), upside=base+upGross+.08*pipe;
 
 /* ---------- history ---------- */
-const SHAPE=[ .47,.31,.34,.58, .47,.64,.74,1.12, .69,.82,.69,.62, .50,.52,.55,.76, .43,.57,.61,.84, .58,.71,.82,1.00, .76,.84,.90];
-const MIX=[[.46,.42,.12],[.40,.45,.15],[.47,.39,.14],[.58,.31,.11],[.57,.32,.11],[.55,.33,.12],[.53,.34,.13]];
+const SHAPE=[ .52,.44,.49,.63, .55,.61,.66,.80, .67,.71,.66,.70, .57,.60,.62,.76, .61,.66,.70,.86, .68,.74,.79,1.00, .76,.81,.87];
+const MIX=[[.52,.36,.12],[.49,.38,.13],[.51,.36,.13],[.56,.32,.12],[.55,.33,.12],[.54,.33,.13],[.53,.34,.13]];
 const Q4LY=ly;
 const HIST=[];
 for(let y=2020;y<=2026;y++)for(let q=1;q<=4;q++){
@@ -331,16 +311,14 @@ const FVA=HIST.slice(20).map(h=>{
 /* ---------- closed deals 2026 YTD ---------- */
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'];
 const ytdTarget=HIST.filter(h=>h.y===2026&&h.q<4).reduce((a,h)=>a+h.v,0)+booked;
-const CLOSED=[];
-for(let i=0;i<1400;i++){
-  let r=R()*CC.reduce((a,x)=>a+x.wt,0),c=CC[0];for(const x of CC){r-=x.wt;if(r<=0){c=x;break}}
+const CLOSED=[];const wsum=CC.reduce((a,x)=>a+x.wt,0);
+for(let i=0;i<320;i++){
+  let r=R()*wsum,c=CC[0];for(const x of CC){r-=x.wt;if(r<=0){c=x;break}}
   const mo=Math.min(10,Math.floor(Math.pow(R(),.85)*11));
-  const t=R()<.62?'Lease':R()<.55?'Sale':R()<.8?'Financing':'Consulting';
-  const rev=logn(t==='Lease'?150e3:240e3,1.15);
-  const co=company();
-  CLOSED.push({name:co+' – '+addr(),client:co,type:t,cc:c,market:c.market,broker:pick(c.brokers),mo,day:rint(1,28),rev,id:rint(400000,599999)});
+  const t=c.region==='Capital Markets'?(R()<.6?'Sale':'Financing'):'Lease';
+  CLOSED.push({name:client(),type:t,cc:c,market:c.market,mo,rev:logn(t==='Lease'?600e3:900e3,1.0)});
 }
-const sc=ytdTarget/CLOSED.reduce((a,d)=>a+d.rev,0);CLOSED.forEach(d=>d.rev*=sc);
+const sc=ytdTarget/CLOSED.reduce((a,d)=>a+d.rev,0);CLOSED.forEach(d=>d.rev=Math.round(d.rev*sc/1e4)*1e4);
 
 /* =================== SUMMARY =================== */
 const chg=base-prior;
@@ -421,7 +399,7 @@ function look(){
   if(!q)list=list.slice(0,5);else list=list.slice(0,40);
   $('#s-look').innerHTML=`<tr><th class="t">Cost center</th><th class="t">Market</th><th class="t">Region</th><th>Booked</th><th>Pipeline</th><th>Topside</th><th>Forecast</th><th>vs. 9/28</th><th>vs. Q4 2025</th></tr>`+
    (list.length?list.map(c=>{const d=tot(c.fc)-tot(c.prior),y=tot(c.fc)-tot(c.ly);
-    return `<tr><td class="t">${esc(c.name)}<span class="code">${c.code}</span></td><td class="t">${esc(c.market)}</td><td class="t">${c.region}</td><td>${M(tot(c.booked))}</td><td>${M(tot(c.pipe)+tot(c.nodet))}</td><td>${M(tot(c.mtop)+tot(c.ftop))}</td><td><b>${M(tot(c.fc))}</b></td><td class="${cls(d)}">${d?sgn(d,M):'–'}</td><td class="${cls(y)}">${y?sgn(y,M):'–'}</td></tr>`}).join(''):`<tr><td class="t" colspan="9">No cost center matches “${esc(q)}”. Try a city or region.</td></tr>`);
+    return `<tr><td class="t">${esc(c.name)}</td><td class="t">${esc(c.market)}</td><td class="t">${c.region}</td><td>${M(tot(c.booked))}</td><td>${M(tot(c.pipe)+tot(c.nodet))}</td><td>${M(tot(c.mtop)+tot(c.ftop))}</td><td><b>${M(tot(c.fc))}</b></td><td class="${cls(d)}">${d?sgn(d,M):'–'}</td><td class="${cls(y)}">${y?sgn(y,M):'–'}</td></tr>`}).join(''):`<tr><td class="t" colspan="9">No cost center matches “${esc(q)}”. Try a city or region.</td></tr>`);
 }
 $('#s-q').addEventListener('input',look);look();
 
@@ -449,67 +427,57 @@ $('#s-q').addEventListener('input',look);look();
 })();
 
 /* =================== DEALS =================== */
-const mkts=[...new Set(DEALS.map(d=>d.market))].sort(), brks=[...new Set(DEALS.map(d=>d.broker))].sort();
+const mkts=MK.map(m=>m[0]);
 $('#d-mkt').innerHTML='<option value="">All markets</option>'+mkts.map(m=>`<option>${esc(m)}</option>`).join('');
-$('#d-brk').innerHTML='<option value="">All brokers</option>'+brks.map(m=>`<option>${esc(m)}</option>`).join('');
-let dShown=25;
 function deals(){
-  const m=$('#d-mkt').value,t=$('#d-type').value,b=$('#d-brk').value,p=$('#d-prob').value,q=$('#d-q').value.trim().toLowerCase();
-  const L=DEALS.filter(d=>(!m||d.market===m)&&(!t||d.type===t)&&(!b||d.broker===b)&&(!p||(p==='gt'?d.prob>.5:p==='eq'?d.prob===.5:d.prob<.5))&&(!q||(d.client+' '+d.addr+' '+d.market).toLowerCase().includes(q)));
+  const m=$('#d-mkt').value,t=$('#d-type').value,p=$('#d-prob').value;
+  const L=DEALS.filter(d=>(!m||d.market===m)&&(!t||d.type===t)&&(!p||(p==='gt'?d.prob>.5:p==='eq'?d.prob===.5:d.prob<.5)));
   const inF=L.filter(d=>!d.up),disc=inF.reduce((a,d)=>a+d.disc,0),gross=inF.reduce((a,d)=>a+d.gross,0);
   const top10=inF.slice().sort((a,b)=>b.disc-a.disc).slice(0,10).reduce((a,d)=>a+d.disc,0);
   const band=k=>L.filter(d=>k==='gt'?d.prob>.5:k==='eq'?d.prob===.5:d.prob<.5);
   const bands=[['>50%','gt','var(--lease)'],['=50%','eq','var(--debt)'],['<50%','lt','var(--sales)']].map(([l,k,c])=>{const a=band(k);return{l,c,n:a.length,g:a.reduce((s,d)=>s+d.gross,0),d:a.reduce((s,d)=>s+d.disc,0)}});
-  $('#d-kpi').innerHTML=`<div class="kpi"><div class="l">Deals shown</div><div class="n">${L.length}</div><div class="s">${inF.length} in forecast: ${bands[0].n} above 50% · ${bands[1].n} at 50% · ${bands[2].n} below 50% (upside)</div></div>
+  $('#d-kpi').innerHTML=`<div class="kpi"><div class="l">Deals in pipeline</div><div class="n">${L.length}</div><div class="s">${inF.length} in forecast · ${bands[2].n} below 50% (upside)</div></div>
    <div class="kpi"><div class="l">Discounted revenue, in-forecast deals</div><div class="n">${M(disc)}</div><div class="s">gross ${M(gross)} · avg. probability ${gross?Math.round(disc/gross*100):0}%</div></div>
-   <div class="kpi"><div class="l">Top-10 concentration</div><div class="n">${disc?Math.round(top10/disc*100):0}%</div><div class="s">share of in-forecast discounted revenue in 10 deals</div></div>`;
+   <div class="kpi"><div class="l">Top-10 concentration</div><div class="n">${disc?Math.round(top10/disc*100):0}%</div><div class="s">share of discounted pipeline in the 10 largest deals</div></div>`;
   const mx=Math.max(1,...bands.map(b=>b.g));
   $('#d-ladder').innerHTML=bands.map((b,i)=>`<text x="0" y="${24+i*36}" style="font-size:13px;fill:var(--ink)">${b.l}</text><rect x="48" y="${10+i*36}" width="${Math.max(2,b.g/mx*400)}" height="18" rx="3" fill="${b.c}"/><text x="${56+b.g/mx*400}" y="${24+i*36}" style="font-size:12.5px;fill:var(--ink)">${M(b.g)}</text>`).join('');
   $('#d-ladt').innerHTML=`<tr><th class="t"></th><th>Deals</th><th>Gross</th><th>Discounted</th></tr>`+bands.map(b=>`<tr><td class="t">${b.l}</td><td>${b.n}</td><td>${M(b.g)}</td><td>${M(b.d)}</td></tr>`).join('')+`<tr class="total"><td class="t">Total</td><td>${L.length}</td><td>${M(bands.reduce((a,b)=>a+b.g,0))}</td><td>${M(disc)}</td></tr>`;
-  const t10=L.filter(d=>d.prob>=.5).sort((a,b)=>b.gross-a.gross).slice(0,10),m10=Math.max(1,...t10.map(d=>d.gross));
-  $('#d-top').innerHTML=t10.length?t10.map((d,i)=>`<text x="190" y="${18+i*28}" text-anchor="end" style="font-size:12.5px;fill:var(--ink)">${esc(d.client.length>24?d.client.slice(0,23)+'…':d.client)}</text><rect x="198" y="${8+i*28}" width="${Math.max(2,d.gross/m10*290)}" height="12" rx="3" fill="var(--lease)"/><text x="${204+d.gross/m10*290}" y="${18+i*28}" style="font-size:12px;fill:var(--ink)">${M(d.gross)}</text>`).join(''):`<text x="0" y="20">No deals at 50% or above for these filters.</text>`;
-  const S=L.slice().sort((a,b)=>(b.disc||b.gross*b.prob/10)-(a.disc||a.gross*a.prob/10));
-  $('#d-tab').innerHTML=`<tr><th class="t">Client</th><th class="t">Market</th><th class="t">Lead broker</th><th class="t">Cost center</th><th class="t">Type</th><th>Close</th><th>Prob.</th><th>Gross</th><th>Discounted ↓</th><th class="t">Status</th></tr>`+
-   (S.length?S.slice(0,dShown).map(d=>`<tr><td class="t"><b style="font-weight:500">${esc(d.client)}</b><br><span class="note" style="margin:0">${esc(d.addr)}</span></td><td class="t">${esc(d.market)}</td><td class="t">${esc(d.broker)}</td><td class="t">${esc(d.cc.name)}<br><span class="note" style="margin:0">${d.cc.code}</span></td><td class="t">${d.type}</td><td>${d.close}</td><td>${Math.round(d.prob*100)}%</td><td>${M(d.gross)}</td><td><b>${d.up?'–':M(d.disc)}</b></td><td class="t"><span class="pill ${d.up?'up':'in'}">${d.up?'upside':'in forecast'}</span></td></tr>`).join(''):`<tr><td class="t" colspan="10">No deals match these filters. Clear the search or pick “All markets”.</td></tr>`);
-  const left=S.length-dShown;$('#d-more').hidden=left<=0;$('#d-more').textContent=`Show 25 more deals (${Math.max(0,left)} remaining)`;
+  const bm={};inF.forEach(d=>bm[d.market]=(bm[d.market]||0)+d.disc);
+  const mk=Object.entries(bm).sort((a,b)=>b[1]-a[1]).slice(0,10),m10=Math.max(1,...mk.map(x=>x[1]));
+  $('#d-top').innerHTML=mk.length?mk.map(([k,v],i)=>`<text x="120" y="${18+i*28}" text-anchor="end" style="font-size:12.5px;fill:var(--ink)">${esc(k)}</text><rect x="128" y="${8+i*28}" width="${Math.max(2,v/m10*330)}" height="12" rx="3" fill="var(--lease)"/><text x="${134+v/m10*330}" y="${18+i*28}" style="font-size:12px;fill:var(--ink)">${M(v)}</text>`).join(''):`<text x="0" y="20">No in-forecast deals for these filters.</text>`;
+  const S=L.slice().sort((a,b)=>b.gross-a.gross).slice(0,15);
+  $('#d-tab').innerHTML=`<tr><th class="t">Client</th><th class="t">Market</th><th class="t">Type</th><th>Close</th><th>Prob.</th><th>Gross</th><th>Discounted</th><th class="t">Status</th></tr>`+
+   (S.length?S.map(d=>`<tr><td class="t">${esc(d.client)}</td><td class="t">${esc(d.market)}</td><td class="t">${d.type}</td><td>${d.close}</td><td>${Math.round(d.prob*100)}%</td><td>${M(d.gross)}</td><td><b>${d.up?'–':M(d.disc)}</b></td><td class="t"><span class="pill ${d.up?'up':'in'}">${d.up?'upside':'in forecast'}</span></td></tr>`).join(''):`<tr><td class="t" colspan="8">No deals match these filters. Pick “All markets”.</td></tr>`);
 }
-['#d-mkt','#d-type','#d-brk','#d-prob'].forEach(i=>$(i).addEventListener('change',()=>{dShown=25;deals()}));
-$('#d-q').addEventListener('input',()=>{dShown=25;deals()});
-$('#d-more').addEventListener('click',()=>{dShown+=25;deals()});
+['#d-mkt','#d-type','#d-prob'].forEach(i=>$(i).addEventListener('change',deals));
 deals();
 
 /* =================== CLOSED =================== */
-const cms=[...new Set(CLOSED.map(d=>d.market))].sort(),ccs=[...new Set(CLOSED.map(d=>d.cc))].sort((a,b)=>a.name.localeCompare(b.name));
-$('#c-mkt').innerHTML='<option value="">All markets</option>'+cms.map(m=>`<option>${esc(m)}</option>`).join('');
-$('#c-cc').innerHTML='<option value="">All cost centers</option>'+ccs.map(c=>`<option value="${c.code}">${esc(c.name)}</option>`).join('');
+$('#c-mkt').innerHTML='<option value="">All markets</option>'+mkts.map(m=>`<option>${esc(m)}</option>`).join('');
 $('#c-from').innerHTML=MONTHS.map((m,i)=>`<option value="${i}">${m} 2026</option>`).join('');
 $('#c-to').innerHTML=MONTHS.map((m,i)=>`<option value="${i}"${i===10?' selected':''}>${m} 2026</option>`).join('');
-let cShown=25;
 function closed(){
-  const q=$('#c-q').value.trim().toLowerCase(),t=$('#c-type').value,m=$('#c-mkt').value,c=$('#c-cc').value,f=+$('#c-from').value,to=+$('#c-to').value;
-  const L=CLOSED.filter(d=>(!q||d.name.toLowerCase().includes(q))&&(!t||d.type===t)&&(!m||d.market===m)&&(!c||String(d.cc.code)===c)&&d.mo>=Math.min(f,to)&&d.mo<=Math.max(f,to));
+  const t=$('#c-type').value,m=$('#c-mkt').value,f=+$('#c-from').value,to=+$('#c-to').value;
+  const L=CLOSED.filter(d=>(!t||d.type===t)&&(!m||d.market===m)&&d.mo>=Math.min(f,to)&&d.mo<=Math.max(f,to));
   const total=L.reduce((a,d)=>a+d.rev,0),big=L.slice().sort((a,b)=>b.rev-a.rev);
   $('#c-lead').textContent=`Closed deals, booked ${MONTHS[Math.min(f,to)]} 2026 to ${MONTHS[Math.max(f,to)]} 2026`;
-  $('#c-cnt').textContent=`${L.length.toLocaleString()} deals listed`;
-  $('#c-kpi').innerHTML=`<div class="kpi"><div class="l">Deals booked</div><div class="n">${L.length.toLocaleString()}</div><div class="s">of ${CLOSED.length.toLocaleString()} booked 2026 year to date</div></div>
+  $('#c-cnt').textContent=`${L.length} deals`;
+  $('#c-kpi').innerHTML=`<div class="kpi"><div class="l">Deals booked</div><div class="n">${L.length}</div><div class="s">2026 year to date, sample data</div></div>
    <div class="kpi"><div class="l">Recognized revenue</div><div class="n">${M(total)}</div><div class="s">average ${L.length?K(total/L.length):'$0K'} per deal</div></div>
-   <div class="kpi"><div class="l">Largest deal</div><div class="n">${big[0]?M(big[0].rev):'–'}</div><div class="s">${big[0]?esc(big[0].name):'No deals match'}</div></div>`;
-  const mx=big[0]?big[0].rev:1;
-  $('#c-deals').innerHTML=`<tr><th class="t">#</th><th class="t">Deal</th><th class="t">Type</th><th class="t">Cost center</th><th class="t">Lead broker</th><th>Booked</th><th>Revenue</th><th>% total</th></tr>`+
-   (big.length?big.slice(0,cShown).map((d,i)=>`<tr class="${i<5?'top5':''}"><td class="t">${i+1}</td><td class="t"><b style="font-weight:600">${esc(d.name)}</b><br><span class="note" style="margin:0">ID ${d.id}</span></td><td class="t">${d.type}</td><td class="t">${esc(d.cc.name)}</td><td class="t">${esc(d.broker)}</td><td>${String(d.mo+1).padStart(2,'0')}/${String(d.day).padStart(2,'0')}/26</td><td><div class="barcell"><b>${M(d.rev)}</b><i style="width:${Math.max(4,d.rev/mx*70)}px"></i></div></td><td>${(d.rev/total*100).toFixed(1)}%</td></tr>`).join('')+
-   `<tr class="total"><td class="t" colspan="6">Shown (${Math.min(cShown,big.length)})</td><td>${M(big.slice(0,cShown).reduce((a,d)=>a+d.rev,0))}</td><td>${(big.slice(0,cShown).reduce((a,d)=>a+d.rev,0)/total*100).toFixed(1)}%</td></tr>`
-   :`<tr><td class="t" colspan="8">No closed deals match these filters.</td></tr>`);
-  const left=big.length-cShown;$('#c-more').hidden=left<=0;$('#c-more').textContent=`Show 25 more deals (${Math.max(0,left)} remaining)`;
-  const by={};L.forEach(d=>{const k=d.broker;(by[k]=by[k]||{b:k,cc:d.cc.name,n:0,r:0});by[k].n++;by[k].r+=d.rev});
-  const B=Object.values(by).sort((a,b)=>b.r-a.r),top=B.slice(0,25),bm=top[0]?top[0].r:1,tr=top.reduce((a,x)=>a+x.r,0);
-  $('#c-brk').innerHTML=`<tr><th class="t">#</th><th class="t">Lead broker</th><th class="t">Cost center</th><th>Deals</th><th>Revenue</th><th>% total</th></tr>`+
-   (top.length?top.map((x,i)=>`<tr class="${i<5?'top5':''}"><td class="t">${i+1}</td><td class="t"><b style="font-weight:600">${esc(x.b)}</b><br><span class="note" style="margin:0">${K(x.r/x.n)} per deal</span></td><td class="t">${esc(x.cc)}</td><td>${x.n}</td><td><div class="barcell"><b>${M(x.r)}</b><i style="width:${Math.max(4,x.r/bm*70)}px;background:var(--debt)"></i></div></td><td>${(x.r/total*100).toFixed(1)}%</td></tr>`).join('')+
-   `<tr class="total"><td class="t" colspan="3">Top ${top.length} of ${B.length} brokers</td><td>${top.reduce((a,x)=>a+x.n,0)}</td><td>${M(tr)}</td><td>${(tr/total*100).toFixed(1)}%</td></tr>`
-   :`<tr><td class="t" colspan="6">No brokers for these filters.</td></tr>`);
+   <div class="kpi"><div class="l">Largest deal</div><div class="n">${big[0]?M(big[0].rev):'–'}</div><div class="s">${big[0]?esc(big[0].name)+' · '+big[0].market:'No deals match'}</div></div>`;
+  const mx=big[0]?big[0].rev:1,top=big.slice(0,15),ts=top.reduce((a,d)=>a+d.rev,0);
+  $('#c-deals').innerHTML=`<tr><th class="t">#</th><th class="t">Client</th><th class="t">Type</th><th class="t">Market</th><th>Booked</th><th>Revenue</th><th>% total</th></tr>`+
+   (top.length?top.map((d,i)=>`<tr class="${i<3?'top5':''}"><td class="t">${i+1}</td><td class="t">${esc(d.name)}</td><td class="t">${d.type}</td><td class="t">${esc(d.market)}</td><td>${MONTHS[d.mo]}</td><td><div class="barcell"><b>${M(d.rev)}</b><i style="width:${Math.max(4,d.rev/mx*70)}px"></i></div></td><td>${(d.rev/total*100).toFixed(1)}%</td></tr>`).join('')+
+   `<tr class="total"><td class="t" colspan="5">Top ${top.length}</td><td>${M(ts)}</td><td>${(ts/total*100).toFixed(1)}%</td></tr>`
+   :`<tr><td class="t" colspan="7">No closed deals match these filters.</td></tr>`);
+  const by={};L.forEach(d=>{(by[d.market]=by[d.market]||{m:d.market,n:0,r:0});by[d.market].n++;by[d.market].r+=d.rev});
+  const B=Object.values(by).sort((a,b)=>b.r-a.r),bm=B[0]?B[0].r:1;
+  $('#c-brk').innerHTML=`<tr><th class="t">Market</th><th>Deals</th><th>Revenue</th><th>% total</th></tr>`+
+   (B.length?B.map(x=>`<tr><td class="t">${esc(x.m)}</td><td>${x.n}</td><td><div class="barcell"><b>${M(x.r)}</b><i style="width:${Math.max(4,x.r/bm*70)}px;background:var(--debt)"></i></div></td><td>${(x.r/total*100).toFixed(1)}%</td></tr>`).join('')+
+   `<tr class="total"><td class="t">Total</td><td>${L.length}</td><td>${M(total)}</td><td>100%</td></tr>`
+   :`<tr><td class="t" colspan="4">No deals for these filters.</td></tr>`);
 }
-['#c-type','#c-mkt','#c-cc','#c-from','#c-to'].forEach(i=>$(i).addEventListener('change',()=>{cShown=25;closed()}));
-$('#c-q').addEventListener('input',()=>{cShown=25;closed()});
-$('#c-more').addEventListener('click',()=>{cShown+=25;closed()});
+['#c-type','#c-mkt','#c-from','#c-to'].forEach(i=>$(i).addEventListener('change',closed));
 closed();
 
 /* =================== tabs =================== */
