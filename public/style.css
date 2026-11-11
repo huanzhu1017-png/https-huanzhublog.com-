@@ -209,3 +209,16 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   padding:0 6px;background:linear-gradient(100deg,transparent 2%,var(--hl) 4%,var(--hl) 94%,transparent 97%) no-repeat 0 75%/100% 45%}
 .hood-note{font-family:var(--f-hand);font-size:16px;color:var(--pencil);margin-top:-6px}
 .snaps.tall img{aspect-ratio:3/4}
+
+/* ---------- homepage portrait ---------- */
+.intro.hello{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px 40px;align-items:start}
+.hello-text{display:flex;flex-direction:column;gap:18px;min-width:0;grid-column:1;grid-row:1}
+.me{grid-column:2;grid-row:1;margin:8px 0 0;background:#fff;padding:9px 9px 30px;position:relative;transform:rotate(2.2deg);
+  box-shadow:0 1px 2px rgba(0,0,0,.12),3px 8px 14px rgba(30,35,40,.16)}
+.me::before{content:"";position:absolute;top:-12px;left:50%;width:84px;height:24px;background:var(--tape);transform:translateX(-50%) rotate(-3deg)}
+.me img{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:4/5;object-fit:cover}
+@media (max-width:640px){
+  .intro.hello{grid-template-columns:1fr}
+  .me{grid-column:1;grid-row:1;width:min(240px,70%);justify-self:center;transform:rotate(-1.5deg)}
+  .hello-text{grid-row:2}
+}
