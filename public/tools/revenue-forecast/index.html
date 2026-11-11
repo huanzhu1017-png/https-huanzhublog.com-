@@ -140,7 +140,7 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
       <div class="card"><h3>YoY and vs. prior cycle ($M)</h3><div class="scroll"><table id="s-yoy"></table></div>
         <p class="note">CM = Sales + Debt. Prior column is the 9/28 Q4 FYF. Year-ago is Q4 2025 actual.</p></div>
       <div class="card"><h3 id="s-regh"></h3><div class="scroll"><table id="s-reg"></table></div>
-        <p class="note">Change by region since the last cycle. Search below to see any cost center.</p></div>
+        <p class="note">Change by region since the last cycle.</p></div>
     </div>
     <div class="grid2">
       <div class="card"><h3>Q4 2026 forecast by line and source ($M)</h3>
@@ -151,12 +151,6 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
         <div class="legend"><span><i style="background:#c9d3de"></i>First forecast</span><span><i style="background:#7fa7d4"></i>Last forecast</span><span><i style="background:var(--navy)"></i>Actual</span></div>
         <svg id="s-fva" viewBox="0 0 620 260" role="img" aria-label="Grouped bars of first forecast, last forecast and actual revenue by quarter"></svg>
         <p class="note" id="s-fvanote"></p></div>
-    </div>
-    <div class="eyebrow">Lookup</div>
-    <div class="card lookup">
-      <label for="s-q" class="note" style="display:block;margin:0 0 6px">Search a cost center, market or region. Showing top 5 by forecast until you type.</label>
-      <input id="s-q" type="search" placeholder="e.g. Denver, Capital Markets, West">
-      <div class="scroll" style="margin-top:10px"><table id="s-look"></table></div>
     </div>
   </section>
 
@@ -400,7 +394,7 @@ function look(){
    (list.length?list.map(c=>{const d=tot(c.fc)-tot(c.prior),y=tot(c.fc)-tot(c.ly);
     return `<tr><td class="t">${esc(c.name)}</td><td class="t">${esc(c.market)}</td><td class="t">${c.region}</td><td>${M(tot(c.booked))}</td><td>${M(tot(c.pipe)+tot(c.nodet))}</td><td>${M(tot(c.mtop)+tot(c.ftop))}</td><td><b>${M(tot(c.fc))}</b></td><td class="${cls(d)}">${d?sgn(d,M):'–'}</td><td class="${cls(y)}">${y?sgn(y,M):'–'}</td></tr>`}).join(''):`<tr><td class="t" colspan="9">No cost center matches “${esc(q)}”. Try a city or region.</td></tr>`);
 }
-$('#s-q').addEventListener('input',look);look();
+
 
 /* =================== HISTORY =================== */
 (function(){
