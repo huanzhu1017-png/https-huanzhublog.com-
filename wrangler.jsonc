@@ -1,6 +1,6 @@
 {
   // Cloudflare 部署配置：网站文件都在 public 文件夹里
-  "name": "huanzhublog",
+  "name": "https-huanzhublog-com",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./public",
