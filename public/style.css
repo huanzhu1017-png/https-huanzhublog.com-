@@ -139,12 +139,13 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 @media print{body{background-image:none}}
 
 /* ---------- personal site additions ---------- */
-.doors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
 .door{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);background:#FFFEFA;padding:18px 16px 16px;
   border:1.5px solid var(--ink);border-radius:255px 12px 225px 10px/10px 225px 12px 255px;box-shadow:3px 4px 0 rgba(30,35,40,.12)}
 .door:nth-child(1){transform:rotate(-.8deg)}
 .door:nth-child(2){transform:rotate(.6deg)}
 .door:nth-child(3){transform:rotate(-.3deg)}
+.door:nth-child(4){transform:rotate(.8deg)}
 .door .label{font-family:var(--f-hand);font-size:16px;color:var(--red)}
 .door h3{font-size:24px;font-weight:700}
 .door p{font-size:17px;color:var(--pencil)}
