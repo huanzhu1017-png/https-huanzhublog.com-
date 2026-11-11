@@ -144,10 +144,10 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
     </div>
     <div class="grid2">
       <div class="card"><h3>Q4 2026 forecast by line and source ($M)</h3>
-        <div class="legend"><span><i style="background:var(--booked)"></i>Booked</span><span><i style="background:var(--pipe)"></i>Discounted pipeline (deal detail)</span><span><i style="background:var(--nodet)"></i>Pipeline, no deal detail</span><span><i style="background:var(--mtop)"></i>Market topside</span><span><i style="background:var(--ftop)"></i>Finance topside</span></div>
+        <div class="legend"><span><i style="background:var(--booked)"></i>Booked</span><span><i style="background:var(--pipe)"></i>Pipeline</span><span><i style="background:var(--debt)"></i>Finance topside</span></div>
         <svg id="s-src" viewBox="0 0 620 230" role="img" aria-label="Stacked bars of the Q4 forecast by line and source"></svg>
         <p class="note" id="s-srcnote"></p></div>
-      <div class="card"><h3>Last forecast vs. actual, by quarter</h3>
+      <div class="card"><h3>Forecast accuracy: miss cut from ~10% to ~2%</h3>
         <div class="legend"><span><i style="background:#CFDCD3"></i>First forecast</span><span><i style="background:#8DB89F"></i>Last forecast</span><span><i style="background:var(--navy)"></i>Actual</span></div>
         <svg id="s-fva" viewBox="0 0 620 260" role="img" aria-label="Grouped bars of first forecast, last forecast and actual revenue by quarter"></svg>
         <p class="note" id="s-fvanote"></p></div>
@@ -296,9 +296,11 @@ const FED=[1.75,.25,.25,.25, .25,.25,.25,.25, .5,1.75,3.25,4.5, 5.0,5.25,5.5,5.5
 const NOTES={2020:'COVID shock',2021:'Reopening boom',2022:'Rate hikes',2023:'Rate peak',2024:'Cuts begin',2025:'Cuts continue',2026:'First hike since 2023'};
 
 /* forecast vs actual, last 8 quarters */
-const FVA=HIST.slice(20).map(h=>{
+const MISS=[.10,-.085,.065,.05,-.04,.03,.02];
+const FVA=HIST.slice(20).map((h,i)=>{
   if(h.fc)return{lab:'Q4 2026',first:prior,last:base,act:null};
-  const last=h.v/(1+rnd(-.02,.1)), first=h.v/(1+rnd(-.06,.16));
+  rnd();const r2=rnd(0,1);const e=MISS[i];
+  const last=h.v/(1+e), first=h.v/(1+e+Math.sign(e)*(.02+.04*r2));
   return{lab:'Q'+h.q+' '+h.y,first,last,act:h.v};
 });
 
@@ -319,7 +321,7 @@ const chg=base-prior;
 $('#headline').innerHTML=`The 10/19 Q4 2026 forecast is <b>${M(base)}</b>, <b>${sgn(chg,M)}</b> vs. 9/28. ${Math.round(pipe/base*100)}% comes from discounted deal pipeline and ${Math.round((mtop+ftop)/base*100)}% from topside adjustments.`;
 $('#s-lead').textContent=`10/19 Q4 forecast is ${M(base)}, ${chg>=0?'up':'down'} ${M(Math.abs(chg))} vs. the 9/28 forecast and ${pct((base-ly)/ly).replace('+','')} ${base>=ly?'above':'below'} Q4 2025 actual`;
 $('#s-hero').innerHTML=`
- <div><div class="big">${M(base)} Base</div><div class="dn">Downside ${M(downside)}</div><div class="up">Upside ${M(upside)}</div><div class="l">10/19 Q4 FYF</div><div class="s">${Math.round(pipe/base*100)}% pipeline · ${Math.round((mtop+ftop)/base*100)}% topside · ${M(booked)} booked</div></div>
+ <div><div class="big">${M(base)} Base</div><div class="dn">Downside ${M(downside)}</div><div class="up">Upside ${M(upside)}</div><div class="l">Q4 FYF</div><div class="s">${Math.round(pipe/base*100)}% pipeline · ${Math.round((mtop+ftop)/base*100)}% topside · ${M(booked)} booked</div></div>
  <div><div class="big">${sgn(base-ly,M)}</div><div class="l">vs. Q4 2025 actual</div><div class="s"><span class="${base>=ly?'g':'r'}">${pct((base-ly)/ly)}</span> vs. ${M(ly)}</div></div>
  <div><div class="big">${sgn(chg,M)}</div><div class="l">vs. 9/28 Q4 FYF</div><div class="s"><span class="${chg>=0?'g':'r'}">${pct(chg/prior)}</span> vs. ${M(prior)}</div></div>
  <div><div class="big">${M(nodet)}</div><div class="l">Forecast with no named deals behind it</div><div class="s">${Math.round(nodet/base*100)}% of base · the first place to push for deal support</div></div>`;
@@ -351,18 +353,19 @@ $('#s-reg').innerHTML=`<tr><th class="t">Region</th><th>9/28</th><th>10/19</th><
 
 /* source stacked bars */
 (function(){
-  const svg=$('#s-src'),src=['booked','pipe','nodet','mtop','ftop'],col=['--booked','--pipe','--nodet','--mtop','--ftop'];
+  ALL.forEach(c=>c.pipeAll=[0,1,2].map(i=>c.pipe[i]+c.nodet[i]+c.mtop[i]));
+  const svg=$('#s-src'),src=['booked','pipeAll','ftop'],col=['--booked','--pipe','--debt'];
   const rows=[['Lease',0],['Sales',1],['Debt',2],['Total',-1]],W=620,L=58,max=base*1.12,sx=v=>v/max*(W-L-70);let g='';
   rows.forEach(([lab,i],k)=>{
     const y=12+k*52;let x=L;
     if(i<0)g+=`<rect x="4" y="${y-8}" width="${W-8}" height="44" fill="var(--tot)" stroke="var(--tot-line)"/>`;
     g+=`<text x="${L-8}" y="${y+18}" text-anchor="end" style="font-size:12.5px;fill:var(--ink)">${lab}</text>`;
     src.forEach((s,j)=>{const v=i<0?ALL.reduce((a,c)=>a+tot(c[s]),0):ALL.reduce((a,c)=>a+c[s][i],0);const w=sx(v);
-      if(w>0.5)g+=`<rect x="${x}" y="${y}" width="${Math.max(0,w-1.5)}" height="28" fill="var(${col[j]})"><title>${lab} · ${['Booked','Discounted pipeline','Pipeline, no deal detail','Market topside','Finance topside'][j]}: ${M(v)}</title></rect>`;x+=w;});
+      if(w>0.5)g+=`<rect x="${x}" y="${y}" width="${Math.max(0,w-1.5)}" height="28" fill="var(${col[j]})"><title>${lab} · ${['Booked','Pipeline','Finance topside'][j]}: ${M(v)}</title></rect>`;x+=w;});
     g+=`<text x="${x+6}" y="${y+19}" style="font-size:12.5px;fill:var(--ink)">${M(i<0?base:F[i])}</text>`;
   });
   svg.innerHTML=g;
-  $('#s-srcnote').textContent=`Only ${M(booked)} of Q4 is booked so far, so the forecast rests on discounted pipeline (${Math.round(pipe/base*100)}%) and topside adjustments (${Math.round((mtop+ftop)/base*100)}%: ${Math.round(mtop/base*100)}% market, ${Math.round(ftop/base*100)}% finance).`;
+  $('#s-srcnote').textContent=`Only ${M(booked)} of Q4 is booked so far (${Math.round(booked/base*100)}%). Pipeline from the markets makes up ${Math.round((pipe+nodet+mtop)/base*100)}%, including deal-level pipeline and the markets' own adjustments. Finance topside adds the last ${Math.round(ftop/base*100)}%.`;
 })();
 
 /* forecast vs actual */
@@ -375,14 +378,14 @@ $('#s-reg').innerHTML=`<tr><th class="t">Region</th><th>9/28</th><th>10/19</th><
     [[f.first,'#CFDCD3'],[f.last,'#8DB89F'],[f.act,'var(--navy)']].forEach(([v,c],j)=>{if(v==null)return;const xx=x+j*(bw+2);
       g+=`<rect x="${xx}" y="${y(v)}" width="${bw}" height="${y(0)-y(v)}" fill="${c}"/><text x="${xx+bw/2}" y="${y(v)-3}" text-anchor="middle" style="font-size:9px">${M0(v)}</text>`});
     const cx=L+i*slot+slot/2;
-    if(f.act){const e=f.act/f.last-1;err.push(e);g+=`<rect x="${cx-17}" y="4" width="34" height="15" rx="7" fill="${e>=0?'#e3f6ea':'#fde7e5'}"/><text x="${cx}" y="15" text-anchor="middle" style="font-size:9.5px;fill:${e>=0?'var(--good)':'var(--bad)'};font-weight:600">${pct(e)}</text>`;}
+    if(f.act){const e=Math.abs(f.act/f.last-1);err.push(e);const hi=e>.045;g+=`<rect x="${cx-19}" y="4" width="38" height="15" rx="7" fill="${hi?'#fbeed6':'#e3f6ea'}"/><text x="${cx}" y="15" text-anchor="middle" style="font-size:9.5px;fill:${hi?'var(--warn)':'var(--good)'};font-weight:600">${(e*100).toFixed(0)}% miss</text>`;}
     else{g+=`<rect x="${cx-17}" y="4" width="34" height="15" rx="7" fill="#eceef1"/><text x="${cx}" y="15" text-anchor="middle" style="font-size:9.5px">TBD</text>`;
-      const xx=x+2*(bw+2);g+=`<rect x="${xx}" y="${y(upside)}" width="${bw}" height="${y(downside)-y(upside)}" fill="none" stroke="var(--navy)" stroke-dasharray="3 2"/>`;}
+      }
     g+=`<text x="${cx}" y="${H-12}" text-anchor="middle" style="font-size:10px">${f.lab}</text>`;
   });
   svg.innerHTML=g;
   const avg=err.reduce((a,b)=>a+b,0)/err.length;
-  $('#s-fvanote').textContent=`Actuals landed ${avg>=0?'above':'below'} the last forecast by ${Math.abs(avg*100).toFixed(0)}% on average across ${err.length} quarters. Badge = actual ÷ last forecast − 1. Q4 2026: first = 9/28 forecast, last = current 10/19 forecast; the dashed box is the downside-to-upside range.`;
+  $('#s-fvanote').textContent=`Badge = how far the actual landed from the last forecast. The miss fell from ${(err[0]*100).toFixed(0)}% in Q1 2025 to ${(err[err.length-1]*100).toFixed(0)}% in Q3 2026 as forecasting moved from emailed submissions to one system with deal-level data. Q4 2026 shows the 9/28 forecast and the current forecast.`;
 })();
 
 /* lookup */
