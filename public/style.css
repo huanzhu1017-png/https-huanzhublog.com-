@@ -190,3 +190,14 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 .spot .order span{color:var(--red)}
 .spot .addr{font-size:16px;color:var(--pencil)}
 @media (max-width:640px){.spots{grid-template-columns:1fr}}
+.spot.wide{grid-column:1/-1;transform:rotate(-.25deg)}
+.snaps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:10px}
+.snaps figure{margin:0;background:#fff;padding:7px 7px 4px;box-shadow:0 1px 2px rgba(0,0,0,.12),2px 5px 9px rgba(30,35,40,.12);position:relative}
+.snaps figure:nth-child(1){transform:rotate(-1.6deg)}
+.snaps figure:nth-child(2){transform:rotate(1.2deg)}
+.snaps figure:nth-child(3){transform:rotate(-.7deg)}
+.snaps figure::before{content:"";position:absolute;top:-9px;left:50%;width:56px;height:18px;background:var(--tape);transform:translateX(-50%) rotate(-4deg)}
+.snaps img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;max-width:100%}
+.snaps figcaption{font-family:var(--f-hand);font-size:15px;color:var(--pencil);text-align:center;padding-top:3px}
+.snaps a:focus-visible{outline-offset:2px}
+@media (max-width:640px){.snaps{grid-template-columns:1fr}}
