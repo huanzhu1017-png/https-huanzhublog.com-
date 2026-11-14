@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>2027 Non-Comp Budget · Huan Zhu</title>
-<meta name="description" content="A demo of a non-comp budget Huan Zhu built: cost types with owners, savings, account detail, contract review and who pays. All figures are made up.">
+<meta name="description" content="A demo of a non-comp budget Huan Zhu built: cost types with owners, savings, contract review and event budget. All figures are made up.">
 <meta property="og:title" content="2027 Non-Comp Budget · Huan Zhu">
-<meta property="og:description" content="A demo of a non-comp budget Huan Zhu built: cost types with owners, savings, account detail, contract review and who pays. All figures are made up.">
+<meta property="og:description" content="A demo of a non-comp budget Huan Zhu built: cost types with owners, savings, contract review and event budget. All figures are made up.">
 <meta property="og:url" content="https://huanzhublog.com/tools/noncomp-budget/">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
@@ -202,19 +202,14 @@ tr.exp.open td.t:before{content:"▾ "}
       <p>All non-salary costs across five regions, $K. 2026 = Jan–Oct actual + Nov–Dec estimate.</p>
     </div>
   </div>
-  <p class="fict"><b>What this shows:</b> how I run a non-comp budget: every cost type has an owner and its own method, savings are entered line by line, contracts are reviewed one by one, and every dollar is traced to who pays. <b>All names and figures are made up.</b></p>
+  <p class="fict"><b>What this shows:</b> how I run a non-comp budget: every cost type has an owner and its own method, savings are entered line by line, and contracts and events each have their own review page. <b>All names and figures are made up.</b></p>
   <div class="grid5" id="kpi"></div>
 
-  <div class="tabs" role="tablist" style="margin-top:16px">
-    <button role="tab" id="tb-bud" aria-controls="p-bud" aria-selected="true">Budget by cost type</button>
-    <button role="tab" id="tb-con" aria-controls="p-con" aria-selected="false">Contracts</button>
-    <button role="tab" id="tb-fun" aria-controls="p-fun" aria-selected="false">Funding</button>
-  </div>
 
   <!-- BUDGET -->
-  <section role="tabpanel" id="p-bud" aria-labelledby="tb-bud">
+  <section id="p-bud">
     <h2 class="sec">Budget by cost type</h2>
-    <p class="sub">Enter cleanup and savings in $K; negative = lower. Events come from the <a href="../event-budget/index.html">event budget</a>, contracts from the Contracts tab.</p>
+    <p class="sub">Enter cleanup and savings in $K; negative = lower. Events come from the <a href="../event-budget/index.html">event budget</a>, contracts from the <a href="../contracts/index.html">contract review</a>.</p>
     <div class="scroll"><table id="t-bud"></table></div>
     <div class="side">
       <div class="card"><h3>2026 by month, $M</h3><svg id="c-mon" viewBox="0 0 700 300" role="img" aria-label="Stacked monthly spend by cost type, January to October 2026"></svg><div class="legend" id="l-mon"></div></div>
@@ -222,29 +217,13 @@ tr.exp.open td.t:before{content:"▾ "}
     </div>
   </section>
 
-  <!-- CONTRACTS -->
-  <section role="tabpanel" id="p-con" aria-labelledby="tb-con" hidden>
-    <div class="grid4" id="c-kpi" style="margin-top:16px"></div>
-    <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">Contracts</h2>
-      <label>Show<select class="st" id="c-f"><option value="">All contracts</option><option value="ren">Renews within a year</option><option value="exp">Expired</option><option value="none">No end date</option></select></label></div>
-    <p class="sub">Last twelve months of spend. Set a 2027 amount and a decision for each; blank keeps today's spend. The total flows into the budget.</p>
-    <div class="scroll"><table id="t-con"></table></div>
-  </section>
-
-  <!-- FUNDING -->
-  <section role="tabpanel" id="p-fun" aria-labelledby="tb-fun" hidden>
-    <h2 class="sec">Who pays</h2>
-    <p class="sub">Each invoice is tagged with who pays. Anything untagged is company-paid.</p>
-    <div class="legend" id="l-fun"></div>
-    <div class="scroll"><table id="t-fun"></table></div>
-  </section>
-
   <footer>
-    <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../event-budget/index.html">2027 event budget</a></div>
+    <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../event-budget/index.html">2027 event budget</a> · <a href="../contracts/index.html">2027 contract review</a></div>
     <div>Demo with generated data. Meridian is not a real company; every name and figure on this page is made up. Edits stay in your browser only.</div>
   </footer>
 </div>
 
+<script src="../contracts-data.js"></script>
 <script>
 (function(){
 const $=q=>document.querySelector(q);
@@ -261,26 +240,10 @@ const LOB=['East','West','Central','South','International'];
 /* events row comes from the event budget demo (all funding, incl. spend not tied to an event) */
 const EV_FY=8261, EV_SAVE=-1141;
 
-/* ---------- contracts (generic vendors) ---------- */
-const CN=['Vendor A','Vendor B','Vendor C','Vendor D','Vendor E','Vendor F','Vendor G','Vendor H','Vendor I','Vendor J','Vendor K','Vendor L','Vendor M','Vendor N','Vendor O','Vendor P','Vendor Q','Vendor R','Vendor S','Vendor T','Vendor U','Vendor V','Vendor W','Vendor X','Vendor Y','Vendor Z'];
-const GL=['Software','Data','Subscriptions','Marketing','Hiring'];
-const TODAY=new Date('2026-11-13');
-let amt=5200;
-const CONS=CN.map((n,i)=>{const ttm=Math.round(amt);amt*=rnd(.76,.93);
-  const r=R(),exp=r<.15?null:new Date(2025,8+Math.floor(R()*40),1+Math.floor(R()*27));
-  const k=1+Math.floor(R()*4),paid=[0].concat(LOB.slice(1).sort(()=>R()-.5).slice(0,k-1)).map(x=>typeof x==='number'?LOB[0]:x);
-  const gl=[GL[i%3]].concat(R()<.4?[GL[(i+1)%3]]:[]).concat(i===9?[GL[3]]:i===12?[GL[4]]:[]);
-  return{i,n,ttm:Math.max(40,ttm),exp,paid:[...new Set(paid)],gl:[...new Set(gl)],v27:null,dec:'',note:''}});
-CONS.forEach(c=>{const d=c.exp?(c.exp-TODAY)/864e5/30.4:null;c.st=d==null?'none':d<0?'exp':d<=6?'r6':d<=12?'r12':'act'});
-// a few decisions already made, so the demo has something to show
-const pre={1:[null,'Renew',''],2:[0.9,'Renegotiate','Asked for 10% off at renewal'],5:[0,'Cancel','Overlaps with another tool'],7:[0.85,'Renegotiate','Consolidate two contracts into one'],13:[0,'Cancel','Expired; nobody using it']};
-Object.entries(pre).forEach(([i,[f,d,n]])=>{const c=CONS[+i];if(f!=null)c.v27=Math.round(c.ttm*f);c.dec=d;c.note=n});
-const STL={none:['No end date','mut'],exp:['Expired','bad'],r6:['Renews soon','warn'],r12:['Renews this year','warn'],act:['Active','ok']};
-
 /* ---------- cost types ---------- */
-const CONTTM=sum(CONS.map(c=>c.ttm));
+const HC=window.HZ_CONTRACTS,CONS=HC.list,CONTTM=HC.ttm();
 const CT=[
- {k:'con',n:'Contracts',own:'IT',ctrl:1,nc:0,fy:CONTTM,m:'Reviewed one contract at a time: renew, renegotiate or cancel.',acc:[['Software',.45],['Data',.35],['Subscriptions',.2]],lob:[.7,.1,.06,.07,.07],col:'#1A1A1A'},
+ {k:'con',n:'Contracts',own:'IT',ctrl:1,nc:0,fy:CONTTM,link:'../contracts/index.html',m:'Reviewed one contract at a time on the contract review page: renew, renegotiate or cancel.',acc:[['Software',.45],['Data',.35],['Subscriptions',.2]],lob:[.7,.1,.06,.07,.07],col:'#1A1A1A'},
  {k:'occ',n:'Offices',own:'Facilities',ctrl:1,nc:0,fy:52800,m:'Lease schedules; mostly fixed. Exits and renewals agreed with Facilities.',acc:[['Rent',.62],['Equipment',.16],['Utilities',.12],['Repairs',.1]],lob:[.52,.13,.09,.1,.16],col:'#2F5E46'},
  {k:'ppl',n:'Travel and staff',own:'Team leads',ctrl:1,nc:.38,fy:21900,m:'Cost per head × next year\'s headcount plan.',acc:[['Travel',.55],['Phones',.2],['Training',.15],['Hiring',.1]],lob:[.58,.14,.06,.1,.12],col:'#7E9C8A'},
  {k:'dis',n:'Marketing and fees',own:'Business heads',ctrl:1,nc:.34,fy:37600,m:'Built from zero by each owner; every saving on its own line.',acc:[['Marketing',.34],['Legal and audit',.3],['Consulting',.16],['Printing',.08],['Other',.12]],lob:[.5,.17,.09,.08,.16],col:'#9A3B2A'},
@@ -304,10 +267,10 @@ CT.forEach(c=>{
 /* ---------- inputs (saved in this browser) ---------- */
 const S={cl:{dis:-600},sv:{occ:-1500,ppl:-1200,dis:-2400},st:{con:'In review',occ:'In review',ppl:'In review',evt:'Agreed',dis:'Not started'},nt:{occ:'Two office exits agreed',ppl:'Travel per head held flat',dis:'One-off rebrand removed',evt:'Agreed event by event'}};
 const KEY='hz-demo-noncomp';
-try{const sv=JSON.parse(localStorage.getItem(KEY)||'null');if(sv){Object.assign(S,sv.S||{});(sv.C||[]).forEach((x,i)=>{if(CONS[i])Object.assign(CONS[i],x)})}}catch(x){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({S,C:CONS.map(c=>({v27:c.v27,dec:c.dec,note:c.note}))}));$('#savedmsg').textContent='Saved in this browser.'}catch(x){}}
+try{const sv=JSON.parse(localStorage.getItem(KEY)||'null');if(sv)Object.assign(S,sv.S||{})}catch(x){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({S}));$('#savedmsg').textContent='Saved in this browser.'}catch(x){}}
 
-const con27=()=>sum(CONS.map(c=>c.v27==null?c.ttm:c.v27));
+const con27=()=>HC.next();
 function calc(){return CT.map(c=>{const cl=+(S.cl[c.k]||0),sv=c.k==='con'?con27()-CONTTM:c.k==='evt'?EV_SAVE:+(S.sv[c.k]||0);return{c,cl,sv,b27:c.fy+cl+sv,st:S.st[c.k]||'Not started'}})}
 
 function kpis(rows){
@@ -324,7 +287,7 @@ function renderBud(){
   const T=k=>sum(rows.map(k));
   $('#t-bud').innerHTML=`<tr><th class="t">Cost type</th><th class="t">Owner</th><th>2026 Jan–Oct</th><th>2026</th><th>Cleanup</th><th>Saving</th><th>2027 budget</th><th>vs base</th><th class="t">Status</th><th class="t">Notes</th></tr>`+
    rows.map(r=>{const c=r.c,ncs=sum(c.fund.map(f=>f[1]+f[2]+f[3]))/c.fy;
-     const sv=c.k==='con'?`<span class="note" style="margin:0">from Contracts<br><b class="${r.sv<0?'pos':''}">${fK(r.sv)}</b></span>`:c.k==='evt'?`<span class="note" style="margin:0">from Events<br><b class="pos">${fK(r.sv)}</b></span>`:`<input class="num" type="number" step="10" data-sv="${c.k}" value="${S.sv[c.k]||''}" aria-label="2027 saving for ${esc(c.n)}, $K">`;
+     const sv=c.k==='con'?`<span class="note" style="margin:0">from contract review<br><b class="${r.sv<0?'pos':''}">${fK(r.sv)}</b></span>`:c.k==='evt'?`<span class="note" style="margin:0">from event budget<br><b class="pos">${fK(r.sv)}</b></span>`:`<input class="num" type="number" step="10" data-sv="${c.k}" value="${S.sv[c.k]||''}" aria-label="2027 saving for ${esc(c.n)}, $K">`;
      return`<tr><td class="t" style="white-space:normal;min-width:180px"><b>${c.link?`<a href="${c.link}">${esc(c.n)} ↗</a>`:esc(c.n)}</b></td><td class="t" style="white-space:normal">${esc(c.own)}</td><td>${fK(c.ytd)}</td><td>${fK(c.fy)}</td>     <td><input class="num" type="number" step="10" data-cl="${c.k}" value="${S.cl[c.k]||''}" aria-label="Cleanup for ${esc(c.n)}, $K"></td><td>${sv}</td><td><b>${fK(r.b27)}</b></td><td class="${r.b27<c.fy?'pos':r.b27>c.fy?'neg':''}">${r.b27===c.fy?'–':pc(r.b27/c.fy-1)}</td>
      <td class="t">${r.st==='Agreed'?'<span class="chip on">Agreed</span>':`<select class="st" data-st="${c.k}" aria-label="Status for ${esc(c.n)}">${['Not started','In review','Agreed'].map(o=>`<option${o===r.st?' selected':''}>${o}</option>`).join('')}</select>`}</td>
      <td class="t"><input class="txt" data-nt="${c.k}" value="${esc(S.nt[c.k]||'')}" aria-label="Notes for ${esc(c.n)}"></td></tr>`}).join('')+
@@ -342,47 +305,8 @@ function renderMon(){
   $('#howto').innerHTML=CT.map(c=>`<p><b>${esc(c.n)}.</b> ${esc(c.m)}</p>`).join('');
 }
 
-/* contracts */
-function renderCon(){
-  const f=$('#c-f').value,L=CONS.filter(c=>!f||(f==='ren'?['r6','r12'].includes(c.st):c.st===f));
-  const ren=CONS.filter(c=>['r6','r12'].includes(c.st)),ex=CONS.filter(c=>c.st==='exp'),t27=con27();
-  $('#c-kpi').innerHTML=`<div class="kpi"><div class="l">Contract spend</div><div class="n">${fM(CONTTM)}</div><div class="s">${CONS.length} vendors</div></div>
-   <div class="kpi"><div class="l">Renews within a year</div><div class="n">${fM(sum(ren.map(c=>c.ttm)))}</div><div class="s">${ren.length} to price for 2027</div></div>
-   <div class="kpi"><div class="l">Expired, still paying</div><div class="n">${fM(sum(ex.map(c=>c.ttm)))}</div><div class="s">${ex.length} to renew or cancel</div></div>
-   <div class="kpi"><div class="l">2027 contracts</div><div class="n">${fM(t27)}</div><div class="s">${t27<CONTTM?'−':'+'}$${fK(Math.abs(t27-CONTTM))}K vs today</div></div>`;
-  $('#t-con').innerHTML=`<tr><th class="t">Vendor</th><th class="t">Expiry</th><th class="t">Status</th><th>Last 12 months</th><th class="t">Paid by</th><th class="t">Accounts</th><th>2027</th><th class="t">Decision</th><th class="t">Notes</th></tr>`+
-   (L.length?L.map(c=>`<tr><td class="t" style="white-space:normal;min-width:170px">${esc(c.n)}</td><td class="t" style="white-space:nowrap">${c.exp?c.exp.toISOString().slice(0,10):'–'}</td><td class="t"><span class="chip ${STL[c.st][1]}">${STL[c.st][0]}</span></td><td>${fK(c.ttm)}</td>
-     <td class="t" style="white-space:normal;min-width:130px;font-size:12px">${c.paid.join(', ')}</td><td class="t" style="white-space:normal;min-width:150px;font-size:12px">${c.gl.join(', ')}</td>
-     <td><input class="num" type="number" step="1" min="0" data-v="${c.i}" value="${c.v27==null?'':c.v27}" placeholder="${c.ttm}" aria-label="2027 amount for ${esc(c.n)}, $K"></td>
-     <td class="t"><select class="st" data-d="${c.i}" aria-label="Decision for ${esc(c.n)}">${['','Renew','Renegotiate','Cancel'].map(o=>`<option value="${o}"${o===c.dec?' selected':''}>${o||'—'}</option>`).join('')}</select></td>
-     <td class="t"><input class="txt" data-n="${c.i}" value="${esc(c.note)}" aria-label="Notes for ${esc(c.n)}"></td></tr>`).join(''):`<tr><td class="t" colspan="9">No contracts in this group.</td></tr>`)+
-   `<tr class="total"><td class="t" colspan="3">Total, ${L.length} vendors</td><td>${fK(sum(L.map(c=>c.ttm)))}</td><td colspan="2"></td><td>${fK(sum(L.map(c=>c.v27==null?c.ttm:c.v27)))}</td><td colspan="2"></td></tr>`;
-}
-$('#t-con').addEventListener('change',e=>{const t=e.target,d=t.dataset;let foc=null;
-  if(d.v){const c=CONS[+d.v];c.v27=t.value===''?null:Math.max(0,+t.value);if(c.dec===''&&c.v27===0)c.dec='Cancel';foc=`[data-v="${d.v}"]`}else if(d.d){const c=CONS[+d.d];c.dec=t.value;if(t.value==='Cancel')c.v27=0;foc=`[data-d="${d.d}"]`}else if(d.n){CONS[+d.n].note=t.value;save();return}else return;
-  save();renderCon();renderBud();if(foc){const n=$('#t-con '+foc);n&&n.focus()}});
-$('#c-f').addEventListener('change',renderCon);
-
-/* funding */
-function renderFun(){
-  const fc=['#1A1A1A','#2F5E46','#C7A25A','#A9A190'],fn=['Company','Team budget','Recharged','Client paid'];
-  $('#l-fun').innerHTML=fn.map((n,j)=>`<span><i style="background:${fc[j]}"></i>${n}</span>`).join('');
-  const mix=a=>{const t=sum(a);return`<div class="mix">${a.map((v,j)=>`<i style="width:${t?v/t*100:0}%;background:${fc[j]}"></i>`).join('')}</div>`};
-  let h=`<tr><th class="t">Cost type / region</th><th>2026</th>${fn.map(n=>`<th>${n}</th>`).join('')}<th class="t">Mix</th></tr>`;
-  CT.forEach(c=>{const t=[0,1,2,3].map(j=>sum(c.fund.map(f=>f[j])));
-    h+=`<tr class="grp"><td class="t">${esc(c.n)}</td><td>${fK(c.fy)}</td>${t.map(v=>`<td>${fK(v)}</td>`).join('')}<td class="t">${mix(t)}</td></tr>`;
-    c.fund.forEach((f,j)=>{if(c.byL[j]<1)return;h+=`<tr class="sub2"><td class="t">${LOB[j]}</td><td>${fK(c.byL[j])}</td>${f.map(v=>`<td>${fK(v)}</td>`).join('')}<td class="t">${mix(f)}</td></tr>`})});
-  const G=[0,1,2,3].map(j=>sum(CT.map(c=>sum(c.fund.map(f=>f[j])))));
-  h+=`<tr class="total"><td class="t">Total</td><td>${fK(sum(CT.map(c=>c.fy)))}</td>${G.map(v=>`<td>${fK(v)}</td>`).join('')}<td class="t">${mix(G)}</td></tr>`;
-  $('#t-fun').innerHTML=h;
-}
-
-/* tabs */
-const tabs=[...document.querySelectorAll('[role=tab]')];
-function show(id){tabs.forEach(t=>{const on=t.id==='tb-'+id;t.setAttribute('aria-selected',on);document.getElementById(t.getAttribute('aria-controls')).hidden=!on});}
-tabs.forEach(t=>t.addEventListener('click',()=>{const id=t.id.slice(3);show(id);try{history.replaceState(null,'','#'+id)}catch(e){}}));
-renderBud();renderMon();renderCon();renderFun();
-const hs=location.hash.slice(1);if(['bud','con','fun'].includes(hs))show(hs);
+renderBud();renderMon();
+window.addEventListener('pageshow',e=>{if(e.persisted)location.reload()});
 })();
 </script>
 </body>
