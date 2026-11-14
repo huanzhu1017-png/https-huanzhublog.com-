@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Revenue Forecast Dashboard · Huan Zhu</title>
+<title>Revenue Forecast and Budget · Huan Zhu</title>
 <meta name="description" content="A demo of the brokerage revenue forecast dashboard Huan Zhu built: forecast build, deal pipeline, revenue history and closed deals. All data is generated and fictional.">
 <meta property="og:title" content="Revenue Forecast Dashboard · Huan Zhu">
 <meta property="og:description" content="Interactive demo of a brokerage revenue forecast dashboard. All companies, people and figures are fictional.">
@@ -141,7 +141,7 @@ body{font-size:13px}
 <div class="wrap">
   <div class="head">
     <div>
-      <h1>Revenue Forecast</h1>
+      <h1>Revenue Forecast and Budget</h1>
       <p id="headline"></p>
     </div>
   </div>
@@ -149,6 +149,7 @@ body{font-size:13px}
 
   <div class="tabs" role="tablist">
     <button role="tab" id="tb-summary" aria-controls="p-summary" aria-selected="true" style="--c:var(--t1)">Summary</button>
+    <button role="tab" id="tb-bud" aria-controls="p-bud" aria-selected="false" style="--c:var(--t1)">2027 Revenue budget</button>
     <button role="tab" id="tb-hist" aria-controls="p-hist" aria-selected="false" style="--c:var(--t2)">Revenue history</button>
     <button role="tab" id="tb-deals" aria-controls="p-deals" aria-selected="false" style="--c:var(--t3)">Deal pipeline</button>
     <button role="tab" id="tb-closed" aria-controls="p-closed" aria-selected="false" style="--c:var(--t4)">Closed deals</button>
@@ -176,6 +177,23 @@ body{font-size:13px}
         <svg id="s-fva" viewBox="0 0 620 260" role="img" aria-label="Grouped bars of first forecast, last forecast and actual revenue by quarter"></svg>
         <p class="note" id="s-fvanote"></p></div>
     </div>
+  </section>
+
+  <!-- 2027 BUDGET -->
+  <section role="tabpanel" id="p-bud" aria-labelledby="tb-bud" hidden>
+    <div class="eyebrow">2027 budget</div>
+    <h2 class="lead" id="b-lead"></h2>
+    <div class="grid4" id="b-kpi"></div>
+    <div class="card" style="margin-top:16px"><h3>Assumptions <span class="note" style="font-weight:400">· edits save in this browser only</span></h3>
+      <div class="filters" id="b-ctl" style="align-items:flex-end;gap:14px"></div>
+      <p class="note">Start from 2026 full year (Q1–Q3 actual + Q4 forecast) by line and cost center, then apply market growth, producer headcount, the rate outlook and any region adjustment.</p></div>
+    <div class="grid2">
+      <div class="card"><h3>Bridge: 2026 full year to 2027 budget ($M)</h3><svg id="b-bridge" viewBox="0 0 620 280" role="img" aria-label="Waterfall from 2026 full year to 2027 budget by driver"></svg></div>
+      <div class="card"><h3>By quarter ($M)</h3><svg id="b-q" viewBox="0 0 620 280" role="img" aria-label="2026 and 2027 revenue by quarter"></svg>
+        <div class="legend"><span><i style="background:var(--debt)"></i>2026</span><span><i style="background:var(--lease)"></i>2027 budget</span></div><p class="note">2027 phased on the average seasonality of 2024–2026.</p></div>
+    </div>
+    <div class="card" style="margin-top:16px"><h3>By region ($M)</h3><div class="scroll"><table id="b-reg"></table></div></div>
+    <div class="card" style="margin-top:16px"><h3>By line ($M)</h3><div class="scroll"><table id="b-line"></table></div></div>
   </section>
 
   <!-- HISTORY -->
@@ -500,11 +518,68 @@ function closed(){
 ['#c-type','#c-mkt','#c-from','#c-to'].forEach(i=>$(i).addEventListener('change',closed));
 closed();
 
+/* =================== 2027 BUDGET =================== */
+(function(){
+  const KEY='hz-demo-revbud',D={g:[4,8,10],hc:3,rate:'base',reg:{}};
+  let S;try{S=Object.assign(JSON.parse(JSON.stringify(D)),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){S=JSON.parse(JSON.stringify(D))}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+  const RATES={base:['Base: two cuts in 2027',[0,0,0]],hold:['Rates on hold',[0,-.05,-.08]],fast:['Faster cuts',[0,.05,.08]]};
+  const LN3=['Lease','Sales','Debt'];
+  const H26=HIST.filter(h=>h.y===2026),FY=[0,1,2].map(i=>H26.reduce((a,h)=>a+h.l[i],0)),FYT=FY[0]+FY[1]+FY[2];
+  const seas=[1,2,3,4].map(q=>{const yrs=[2024,2025,2026];return yrs.reduce((a,y)=>{const t=HIST.filter(h=>h.y===y).reduce((x,h)=>x+h.v,0);return a+HIST.find(h=>h.y===y&&h.q===q).v/t},0)/3});
+  const q26=[1,2,3,4].map(q=>H26.find(h=>h.q===q).v);
+  $('#b-ctl').innerHTML=LN3.map((n,i)=>`<label class="note" style="margin:0;display:flex;flex-direction:column;gap:3px">${n} market growth %<input type="number" step="0.5" data-g="${i}" value="${S.g[i]}" style="width:90px"></label>`).join('')+
+    `<label class="note" style="margin:0;display:flex;flex-direction:column;gap:3px">Producer headcount %<input type="number" step="0.5" id="b-hc" value="${S.hc}" style="width:90px"></label>`+
+    `<label class="note" style="margin:0;display:flex;flex-direction:column;gap:3px">Rate outlook<select id="b-rate">${Object.entries(RATES).map(([k,[n]])=>`<option value="${k}"${k===S.rate?' selected':''}>${n}</option>`).join('')}</select></label>`+
+    `<button type="button" class="more" id="b-reset" style="align-self:flex-end">Reset</button>`;
+  function calc(){
+    const rt=RATES[S.rate][1],steps={mkt:0,hc:0,rate:0,reg:0},byReg={},byLine=[0,0,0];
+    ALL.forEach(c=>{[0,1,2].forEach(i=>{if(!F[i])return;const a=FY[i]*c.fc[i]/F[i];if(!a)return;
+      const m=a*(S.g[i]/100),h=(a+m)*(S.hc/100),r=(a+m+h)*rt[i],g=(a+m+h+r)*((S.reg[c.region]||0)/100),b=a+m+h+r+g;
+      steps.mkt+=m;steps.hc+=h;steps.rate+=r;steps.reg+=g;byLine[i]+=b;
+      const o=byReg[c.region]=byReg[c.region]||{a:0,b:0};o.a+=a;o.b+=b})});
+    return{steps,byReg,byLine,tot:byLine[0]+byLine[1]+byLine[2]};
+  }
+  function draw(){
+    const C=calc(),T=C.tot,gr=T/FYT-1;
+    $('#b-lead').textContent=`2027 revenue budget is ${M(T)}, ${pct(gr)} on 2026 full year of ${M(FYT)}.`;
+    $('#b-kpi').innerHTML=`<div class="kpi"><div class="l">2026 full year</div><div class="n">${M(FYT)}</div><div class="s">Q1–Q3 actual + Q4 forecast</div></div>
+     <div class="kpi"><div class="l">2027 budget</div><div class="n">${M(T)}</div><div class="s">${sgn(T-FYT,M)} vs 2026</div></div>
+     <div class="kpi"><div class="l">Growth</div><div class="n ${cls(gr)}">${pct(gr)}</div><div class="s">market ${pct(C.steps.mkt/FYT)} · producers ${pct(C.steps.hc/FYT)}</div></div>
+     <div class="kpi"><div class="l">Rate outlook</div><div class="n" style="font-size:18px">${RATES[S.rate][0]}</div><div class="s">${sgn(C.steps.rate,M)} on Sales and Debt</div></div>`;
+    // bridge
+    const st=[['Market growth',C.steps.mkt],['Producers',C.steps.hc],['Rate outlook',C.steps.rate],['Region adj.',C.steps.reg]].filter(x=>Math.abs(x[1])>1e4);
+    const W=620,H=280,T0=26,B=40,vals=[FYT,T];let run=FYT;st.forEach(x=>{run+=x[1];vals.push(run)});
+    const lo=Math.min(...vals)*.9,hi=Math.max(...vals)*1.03,y=v=>T0+(hi-v)/(hi-lo)*(H-T0-B),n=st.length+2,gw=(W-20)/n,bw=gw*.6;
+    let g='',cur=FYT;const bar=(i,a,b,c,t,l)=>{const x=10+i*gw+(gw-bw)/2,y0=y(Math.max(a,b)),h=Math.max(2,Math.abs(y(a)-y(b)));
+      g+=`<rect x="${x}" y="${y0}" width="${bw}" height="${h}" fill="${c}"/><text x="${x+bw/2}" y="${y0-6}" text-anchor="middle" style="fill:var(--ink);font-size:11.5px;font-weight:700">${t}</text><text x="${x+bw/2}" y="${H-B+16}" text-anchor="middle" style="font-size:11px">${l}</text>`};
+    bar(0,lo,FYT,'var(--lease)',M(FYT),'2026 FY');st.forEach(([l,v],i)=>{bar(i+1,cur,cur+v,v>=0?'var(--sales)':'var(--bad)',sgn(v,M),l);cur+=v});bar(n-1,lo,T,'var(--lease)',M(T),'2027 budget');
+    $('#b-bridge').innerHTML=g+`<line x1="0" x2="${W}" y1="${H-B}" y2="${H-B}" stroke="var(--ink)"/>`;
+    // quarters
+    const q27=seas.map(x=>x*T),mx=Math.max(...q26,...q27)*1.12,yq=v=>(H-B-T0)*v/mx;let gq='';
+    [0,1,2,3].forEach(q=>{const x=40+q*145;[[q26[q],'var(--debt)'],[q27[q],'var(--lease)']].forEach(([v,c],j)=>{const xx=x+j*52;
+      gq+=`<rect x="${xx}" y="${H-B-yq(v)}" width="46" height="${yq(v)}" fill="${c}"/><text x="${xx+23}" y="${H-B-yq(v)-5}" text-anchor="middle" style="fill:var(--ink);font-size:11px">${M0(v)}</text>`});
+      gq+=`<text x="${x+49}" y="${H-B+16}" text-anchor="middle" style="font-size:11.5px">Q${q+1}</text>`});
+    $('#b-q').innerHTML=gq+`<line x1="20" x2="${W-10}" y1="${H-B}" y2="${H-B}" stroke="var(--ink)"/>`;
+    // region table
+    $('#b-reg').innerHTML=`<tr><th class="t">Region</th><th>2026 FY</th><th>Region adj. %</th><th>2027 budget</th><th>Change</th><th class="tc">%</th></tr>`+
+      REG.filter(r=>C.byReg[r]).map(r=>{const o=C.byReg[r],d=o.b-o.a;return`<tr><td class="t">${r}</td><td>${M0(o.a)}</td><td><input type="number" step="0.5" data-r="${esc(r)}" value="${S.reg[r]||0}" style="width:70px;text-align:right" aria-label="Region adjustment % for ${esc(r)}"></td><td><b>${M0(o.b)}</b></td><td class="${cls(d)}">${sgn(d,M)}</td><td class="tc ${cls(d)}">${pct(d/o.a)}</td></tr>`}).join('')+
+      `<tr class="total"><td class="t">Total</td><td>${M0(FYT)}</td><td></td><td>${M0(T)}</td><td>${sgn(T-FYT,M)}</td><td>${pct(gr)}</td></tr>`;
+    $('#b-line').innerHTML=`<tr><th class="t">Line</th><th>2026 FY</th><th>Market growth</th><th>2027 budget</th><th>Change</th><th class="tc">%</th></tr>`+
+      LN3.map((n,i)=>{const d=C.byLine[i]-FY[i];return`<tr><td class="t">${n}</td><td>${M0(FY[i])}</td><td>${S.g[i]}%</td><td><b>${M0(C.byLine[i])}</b></td><td class="${cls(d)}">${sgn(d,M)}</td><td class="tc ${cls(d)}">${pct(d/FY[i])}</td></tr>`}).join('')+
+      `<tr class="total"><td class="t">Total</td><td>${M0(FYT)}</td><td></td><td>${M0(T)}</td><td>${sgn(T-FYT,M)}</td><td>${pct(gr)}</td></tr>`;
+  }
+  $('#b-ctl').addEventListener('change',e=>{const t=e.target;if(t.dataset.g!=null)S.g[+t.dataset.g]=+t.value||0;else if(t.id==='b-hc')S.hc=+t.value||0;else if(t.id==='b-rate')S.rate=t.value;else return;save();draw()});
+  $('#b-reset').addEventListener('click',()=>{S=JSON.parse(JSON.stringify(D));save();$('#b-ctl').querySelectorAll('[data-g]').forEach(x=>x.value=S.g[+x.dataset.g]);$('#b-hc').value=S.hc;$('#b-rate').value=S.rate;draw()});
+  $('#b-reg').addEventListener('change',e=>{const r=e.target.dataset.r;if(r==null)return;S.reg[r]=+e.target.value||0;save();draw();const n=$(`#b-reg [data-r="${r}"]`);n&&n.focus()});
+  draw();
+})();
+
 /* =================== tabs =================== */
 const tabs=[...document.querySelectorAll('[role=tab]')];
 function show(id){tabs.forEach(t=>{const on=t.id==='tb-'+id;t.setAttribute('aria-selected',on);document.getElementById(t.getAttribute('aria-controls')).hidden=!on});}
 tabs.forEach(t=>t.addEventListener('click',()=>{const id=t.id.slice(3);show(id);try{history.replaceState(null,'','#'+id)}catch(e){}}));
-const h=location.hash.slice(1);if(['summary','hist','deals','closed'].includes(h))show(h);
+const h=location.hash.slice(1);if(['summary','bud','hist','deals','closed'].includes(h))show(h);
 })();
 </script>
 </body>
