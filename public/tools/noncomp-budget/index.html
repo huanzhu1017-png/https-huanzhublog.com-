@@ -285,7 +285,7 @@ function kpis(rows){
 function renderBud(){
   const rows=calc();kpis(rows);
   const T=k=>sum(rows.map(k));
-  $('#t-bud').innerHTML=`<tr><th class="t">Cost type</th><th class="t">Owner</th><th>2026 Jan–Oct</th><th>2026</th><th>Cleanup</th><th>Saving</th><th>2027 budget</th><th>vs base</th><th class="t">Status</th><th class="t">Notes</th></tr>`+
+  $('#t-bud').innerHTML=`<tr><th class="t">Cost type</th><th class="t">Owner</th><th>2026 Jan–Oct</th><th>2026 base</th><th>Cleanup</th><th>Saving</th><th>2027 budget</th><th>vs base</th><th class="t">Status</th><th class="t">Notes</th></tr>`+
    rows.map(r=>{const c=r.c,ncs=sum(c.fund.map(f=>f[1]+f[2]+f[3]))/c.fy;
      const sv=c.k==='con'?`<span class="note" style="margin:0">from contract review<br><b class="${r.sv<0?'pos':''}">${fK(r.sv)}</b></span>`:c.k==='evt'?`<span class="note" style="margin:0">from event budget<br><b class="pos">${fK(r.sv)}</b></span>`:`<input class="num" type="number" step="10" data-sv="${c.k}" value="${S.sv[c.k]||''}" aria-label="2027 saving for ${esc(c.n)}, $K">`;
      return`<tr><td class="t" style="white-space:normal;min-width:180px"><b>${c.link?`<a href="${c.link}">${esc(c.n)} ↗</a>`:esc(c.n)}</b></td><td class="t" style="white-space:normal">${esc(c.own)}</td><td>${fK(c.ytd)}</td><td>${fK(c.fy)}</td>     <td><input class="num" type="number" step="10" data-cl="${c.k}" value="${S.cl[c.k]||''}" aria-label="Cleanup for ${esc(c.n)}, $K"></td><td>${sv}</td><td><b>${fK(r.b27)}</b></td><td class="${r.b27<c.fy?'pos':r.b27>c.fy?'neg':''}">${r.b27===c.fy?'–':pc(r.b27/c.fy-1)}</td>
