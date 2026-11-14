@@ -49,7 +49,7 @@ const feeS=load('dis',{v:{},d:{},n:{}});
 
 /* ---------------- FIXED COSTS: from Accounting ---------------- */
 const FIX=[['Property insurance','Insurance',3100,6,'Renewal quote'],['Professional liability insurance','Insurance',1900,4,'Broker estimate'],['Payroll and local taxes','Taxes',2600,3,'Follows headcount plan'],
- ['Equipment taxes','Taxes',1100,0,'Flat'],['Bank fees','Bank fees',1800,-5,'New bank pricing'],['FX losses','FX',1900,0,'Held at 2026']].map(([n,t,a,g,b],i)=>({i,n,t,a,g,b}));
+ ['Equipment taxes','Taxes',1100,0,'Flat'],['Bank fees','Bank fees',1800,-5,'New bank pricing'],['FX gains/losses','FX',1900,0,'Held at 2026']].map(([n,t,a,g,b],i)=>({i,n,t,a,g,b}));
 const fixS=load('nco',{g:{}});
 
 /* ---------------- SHARED SERVICES: our share of central pools ---------------- */
