@@ -1,4 +1,4 @@
-// Detail budgets behind each non-comp cost type (offices, travel and staff, fees, fixed costs, shared services).
+// Detail budgets behind each non-comp cost type (offices, travel and entertainment, fees, fixed costs, shared services).
 // Made-up data. Each page builds its own 2027 number; the non-comp budget reads the result.
 // Edits are saved only in the visitor's browser.
 (function(){
@@ -33,10 +33,10 @@ function offRow(o,S){const d=S.dec[o.i]||(o.end.startsWith('2027')?'Renew':'Keep
 
 /* ---------------- TRAVEL AND STAFF: cost per head x headcount ---------------- */
 const REG=['East','West','Central','South','International'],HC=[420,380,260,300,190],MULT=[1.1,1.05,.9,.95,1];
-const TCAT=[['Travel',7.6],['Phones',2.8],['Training',2.1],['Hiring',1.6]];
+const TCAT=[['Airfare',5.2],['Hotels',3.9],['Meals and entertainment',3.6],['Ground transport',1.4]];
 const RATE=REG.map((_,r)=>TCAT.map(([,v])=>v*MULT[r]));
 {const t=sum(REG.map((_,r)=>HC[r]*sum(RATE[r])));RATE.forEach(a=>a.forEach((v,j)=>a[j]=v*21900/t))}
-const tsS=load('ppl',{hc:[430,385,255,310,195],chg:[0,-5,0,-20]});
+const tsS=load('te',{hc:[430,385,255,310,195],chg:[0,0,-5,-10]});
 
 /* ---------------- FEES: zero-based by engagement ---------------- */
 const FEE=[['Outside counsel, contracts','Legal','General counsel',6200,6000,'Keep','Rate card agreed'],['Outside counsel, disputes','Legal','General counsel',5100,4600,'Reduce','Two matters close in Q1'],
@@ -62,7 +62,7 @@ const shS=load('all',{g:{},s:{}});
 /* ---------------- totals for the non-comp budget ---------------- */
 const T={
  occ:{base:52800,next:()=>sum(OFF.map(o=>offRow(o,offS).v)),page:'../offices/index.html',src:'office budget'},
- ppl:{base:21900,next:()=>sum(REG.map((_,r)=>tsS.hc[r]*sum(RATE[r].map((v,j)=>v*(1+tsS.chg[j]/100))))),page:'../travel-staff/index.html',src:'travel and staff budget'},
+ ppl:{base:21900,next:()=>sum(REG.map((_,r)=>tsS.hc[r]*sum(RATE[r].map((v,j)=>v*(1+tsS.chg[j]/100))))),page:'../travel-staff/index.html',src:'T&E budget'},
  dis:{base:37600,next:()=>sum(FEE.map(f=>feeV(f))),page:'../fees/index.html',src:'fees budget'},
  nco:{base:12400,next:()=>sum(FIX.map(x=>x.a*(1+(fixS.g[x.i]??x.g)/100))),page:'../fixed-costs/index.html',src:'fixed costs'},
  all:{base:58300,next:()=>sum(SH.map(x=>x.pool*(1+(shS.g[x.i]??x.g)/100)*(shS.s[x.i]??x.sh27)/100)),page:'../shared-services/index.html',src:'shared services'}};
@@ -100,8 +100,8 @@ window.HZ_PAGE=function(k){
           <td>${num(`data-h="${r}"`,tsS.hc[r],'2027 headcount '+g,70)}</td><td>${sum(per(r)).toFixed(1)}</td><td><b>${fK(b)}</b></td><td class="${b<a?'pos':b>a?'neg':''}">${sK(b-a)}</td></tr>`}).join('')+
         `<tr class="total"><td class="t">Total</td><td>${sum(HC)}</td><td></td><td>${fK(21900)}</td><td>${sum(tsS.hc)}</td><td></td><td>${fK(nx)}</td><td>${sK(nx-21900)}</td></tr>`;
       bars(TCAT.map(([n],j)=>({n,a:sum(REG.map((_,r)=>HC[r]*RATE[r][j])),b:sum(REG.map((_,r)=>tsS.hc[r]*RATE[r][j]*(1+tsS.chg[j]/100)))})))};
-    ctl.addEventListener('change',e=>{const j=e.target.dataset.c;if(j==null)return;tsS.chg[j]=+e.target.value||0;store('ppl',tsS)&&saved();draw()});
-    tb.addEventListener('change',e=>{const r=e.target.dataset.h;if(r==null)return;tsS.hc[r]=Math.max(0,+e.target.value||0);store('ppl',tsS)&&saved();draw();tb.querySelector(`[data-h="${r}"]`).focus()});
+    ctl.addEventListener('change',e=>{const j=e.target.dataset.c;if(j==null)return;tsS.chg[j]=+e.target.value||0;store('te',tsS)&&saved();draw()});
+    tb.addEventListener('change',e=>{const r=e.target.dataset.h;if(r==null)return;tsS.hc[r]=Math.max(0,+e.target.value||0);store('te',tsS)&&saved();draw();tb.querySelector(`[data-h="${r}"]`).focus()});
   }
   if(k==='dis'){
     ctl.innerHTML=`<span class="note" style="margin:0">Each owner lists the outside help they need next year. Stop sets the line to zero.</span>`;
