@@ -203,15 +203,13 @@ tr.exp.open td.t:before{content:"▾ "}
       <p>Every event, $K. 2026 = Jan–Oct actual + Nov–Dec estimate, cleaned so 2025 and 2026 compare like for like.</p>
     </div>
   </div>
-  <p class="fict"><b>What this shows:</b> how I build an event budget with each owner: every event reviewed, a walk from this year to next, a calendar, spend not tied to an event, and where each number comes from. <b>All names and figures are made up.</b></p>
+  <p class="fict"><b>What this shows:</b> how I build an event budget with each owner: every event reviewed, a walk from this year to next, and a calendar. <b>All names and figures are made up.</b></p>
   <p class="note" id="fundline"></p>
   <div class="grid4" id="kpi" style="margin-top:12px"></div>
 
   <div class="tabs" role="tablist" style="margin-top:16px">
     <button role="tab" id="tb-build" aria-controls="p-build" aria-selected="true">Budget build</button>
     <button role="tab" id="tb-cal" aria-controls="p-cal" aria-selected="false">2027 calendar</button>
-    <button role="tab" id="tb-oth" aria-controls="p-oth" aria-selected="false">Other expenses</button>
-    <button role="tab" id="tb-src" aria-controls="p-src" aria-selected="false">Data sources</button>
   </div>
 
   <!-- BUILD -->
@@ -252,32 +250,6 @@ tr.exp.open td.t:before{content:"▾ "}
     <p class="sub">Our events and the industry events we go to. $K = 2027 budget; twice-a-year events show half on each date; gold dates are not final. <span style="white-space:nowrap">● our event</span> <span style="white-space:nowrap;color:#A9A190">● industry event</span></p>
     <div class="grid3" id="cal-kpi"></div>
     <div class="cal" id="cal"></div>
-  </section>
-
-  <!-- OTHER -->
-  <section role="tabpanel" id="p-oth" aria-labelledby="tb-oth" hidden>
-    <h2 class="sec">Spend not tied to any event</h2>
-    <p class="sub">Booked as event costs, but no event owns it.</p>
-    <div class="grid3" id="o-kpi"></div>
-    <h2 class="sec" style="font-size:17px">Where it sits and who is following up</h2>
-    <div class="scroll"><table id="t-oth"></table></div>
-    <div class="qbox"><b>Open question:</b> should 2027 carry this group at the 2026 level, leave it out, or set a lower cap? It is only in the Budget build totals when "Include All other" is ticked. Bars: light = 2026, dark = 2027.</div>
-  </section>
-
-  <!-- SOURCES -->
-  <section role="tabpanel" id="p-src" aria-labelledby="tb-src" hidden>
-    <h2 class="sec">Data sources and review coverage</h2>
-    <p class="sub">Jan–Oct actual + Nov–Dec estimate, $K.</p>
-    <div class="grid4" id="s-kpi"></div>
-    <div class="grid2">
-      <div class="card"><h3>From events to all event spend</h3><svg id="c-src" viewBox="0 0 600 260" role="img" aria-label="Events plus other spend equals all event spend"></svg></div>
-      <div class="card"><h3>Event review with each owner</h3><div class="scroll"><table id="t-rev"></table></div><p class="note">Dark = confirmed, light = still open.</p></div>
-    </div>
-    <div class="card" style="margin-top:16px"><h3>Where the numbers come from</h3><div class="scroll"><table id="t-srcs"></table></div><p class="note">All sources, before corrections.</p></div>
-    <div class="grid2">
-      <div class="card"><h3>Who is following up</h3><div id="who"></div></div>
-      <div class="card"><h3>What has been investigated</h3><div id="inv"></div></div>
-    </div>
   </section>
 
   <div class="pop" id="pop" hidden role="dialog" aria-modal="true" aria-labelledby="pop-h"><div class="box"><button type="button" class="x" id="pop-x" aria-label="Close">×</button><h3 id="pop-h"></h3><p class="note" id="pop-s"></p><table id="pop-t"></table></div></div>
@@ -440,7 +412,7 @@ function render(){
   const fm=[0,1,2].map(j=>sum(E.map(e=>e.f26/e.fund[0]*e.fund[j]))),ft=sum(fm),fc=['#1A1A1A','#2F5E46','#A9A190'],fn=['Company','Team budget','Recharged'];
   $('#fmix').innerHTML=fm.map((v,j)=>`<i style="width:${v/ft*100}%;background:${fc[j]}"></i>`).join('');
   $('#fmixnote').textContent=fm.map((v,j)=>`${fn[j]} ${fK(v)}, ${Math.round(v/ft*100)}%`).join(' · ');
-  renderCal(rows);renderOth();renderSrc(rows,o);
+  renderCal(rows);
 }
 $('#t-build').addEventListener('change',e=>{const i=e.target.dataset.a;if(!i)return;const ev=E.find(x=>x.i===+i);ev.adj=+e.target.value||0;save();render();const n=$(`#t-build input[data-a="${i}"]`);n&&n.focus()});
 $('#t-build').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;const ev=E.find(x=>x.i===+b.dataset.v),o=opt(),f=o.fund==='all'?1/ev.fund[0]:1,tot=ev.f26*f;
@@ -463,44 +435,12 @@ function renderCal(rows){
   $('#cal').innerHTML=MO.map((mn,mi)=>{const L=items.filter(x=>x.m===mi+1),t=sum(L.map(x=>x.a));
     return`<div class="mon"><h4><span>${mn} 2027</span><span>${t?'$'+fK(t)+'K':''}</span></h4>${L.length?L.map(x=>`<div class="ev"><span class="d ${x.ph?'ph':''}">${esc(x.d)}</span><span class="dot ${x.own?'own':''}"></span><span><b>${esc(x.n)}</b><small>${esc(x.c||'')}</small></span><span>${x.a?'$'+fK(x.a)+'K':''}</span></div>`).join(''):'<div class="ev"><span></span><span></span><span class="note" style="margin:0">Nothing planned</span><span></span></div>'}</div>`}).join('');
 }
-function renderOth(){
-  $('#o-kpi').innerHTML=`<div class="kpi"><div class="l">2026 full year</div><div class="n">${fK(OTHT)}</div><div class="s">Jan–Oct actual + Nov–Dec forecast</div></div>
-   <div class="kpi"><div class="l">2027 carried at today's base</div><div class="n">${fK(OTH27)}</div><div class="s">${sK(OTH27-OTHT)} vs 2026</div></div>
-   <div class="kpi"><div class="l">Share of all 2026 spend</div><div class="n">${Math.round(OTHT/(OTHT+sum(E.map(e=>e.f26)))*100)}%</div><div class="s">of events plus this group</div></div>`;
-  const mx=Math.max(...OTH.map(o=>o.a));
-  $('#t-oth').innerHTML=`<tr><th class="t">Category</th><th>2026 full year</th><th>2027 saving</th><th>2027</th><th class="t"></th><th class="t">Owner</th><th class="t">Next step</th></tr>`+
-   OTH.map(o=>`<tr><td class="t" style="white-space:normal;min-width:180px">${o.n}</td><td>${fK(o.a)}</td><td class="${o.s<0?'pos':''}">${o.s?sK(o.s):'–'}</td><td>${fK(o.a+o.s)}</td><td class="t"><div style="width:110px"><i style="display:block;height:6px;width:${o.a/mx*100}%;background:#A9A190"></i><i style="display:block;height:6px;margin-top:2px;width:${(o.a+o.s)/mx*100}%;background:#1A1A1A"></i></div></td><td class="t">${o.o}</td><td class="t" style="white-space:normal;min-width:260px">${o.opp?'<span class="chip warn">Saving opportunity</span> ':''}${esc(o.nx.replace('Saving opportunity: ',''))}</td></tr>`).join('')+
-   `<tr class="total"><td class="t">Total</td><td>${fK(OTHT)}</td><td>${sK(OTH27-OTHT)}</td><td>${fK(OTH27)}</td><td colspan="3"></td></tr>`;
-}
-function renderSrc(rows,o){
-  const ev=sum(rows.map(r=>r.f26)),okv=sum(rows.filter(r=>r.e.ok).map(r=>r.f26));
-  $('#s-kpi').innerHTML=`<div class="kpi"><div class="l">Events</div><div class="n">${fK(ev)}</div><div class="s">2026 full year, ${E.length} events</div></div>
-   <div class="kpi"><div class="l">Spend not tied to an event</div><div class="n">+${fK(OTHT)}</div><div class="s">booked as event costs</div></div>
-   <div class="kpi"><div class="l">All event spend</div><div class="n">${fK(ev+OTHT)}</div><div class="s">2026 full year</div></div>
-   <div class="kpi"><div class="l">Events reviewed and confirmed</div><div class="n">${Math.round(okv/ev*100)}%</div><div class="s">${fK(okv)} of events</div></div>`;
-  const W=600,H=260,B=40,T=30,mx=(ev+OTHT)*1.05,y=v=>(H-B-T)*v/mx;
-  $('#c-src').innerHTML=`<rect x="40" y="${H-B-y(ev)}" width="130" height="${y(ev)}" fill="var(--sales)"/><text x="105" y="${H-B-y(ev)-8}" text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:14px">${fK(ev)}</text><text x="105" y="${H-B+20}" text-anchor="middle" style="font-size:12px;fill:var(--ink)">Events</text>
-   <rect x="235" y="${H-B-y(ev+OTHT)}" width="130" height="${y(OTHT)}" fill="#A9A190"/><text x="300" y="${H-B-y(ev+OTHT)-8}" text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:14px">+${fK(OTHT)}</text><text x="300" y="${H-B+20}" text-anchor="middle" style="font-size:12px;fill:var(--ink)">Not tied to an event</text>
-   <rect x="430" y="${H-B-y(ev+OTHT)}" width="130" height="${y(ev+OTHT)}" fill="#1A1A1A"/><text x="495" y="${H-B-y(ev+OTHT)-8}" text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:14px">${fK(ev+OTHT)}</text><text x="495" y="${H-B+20}" text-anchor="middle" style="font-size:12px;fill:var(--ink)">All event spend</text>
-   <line x1="170" x2="235" y1="${H-B-y(ev)}" y2="${H-B-y(ev)}" stroke="var(--muted)" stroke-dasharray="3 3"/><line x1="365" x2="430" y1="${H-B-y(ev+OTHT)}" y2="${H-B-y(ev+OTHT)}" stroke="var(--muted)" stroke-dasharray="3 3"/><line x1="20" x2="580" y1="${H-B}" y2="${H-B}" stroke="var(--ink)"/>`;
-  const G=Object.keys(OWN).map(k=>{const L=rows.filter(r=>r.e.g===k),c=L.filter(r=>r.e.ok);return{n:OWN[k],k:c.length,t:L.length,a:sum(L.map(r=>r.f26)),c:sum(c.map(r=>r.f26))}}),gm=Math.max(...G.map(g=>g.a));
-  $('#t-rev').innerHTML=`<tr><th class="t">Reviewed with</th><th>Events</th><th>2026 FY</th><th>Confirmed</th><th class="t"></th><th>Open</th></tr>`+G.map(g=>`<tr><td class="t">${g.n}</td><td>${g.k} of ${g.t}</td><td>${fK(g.a)}</td><td>${fK(g.c)} · ${g.a?Math.round(g.c/g.a*100):0}%</td><td class="t"><div style="display:flex;width:130px"><i style="display:block;height:10px;width:${g.c/gm*100}%;background:#1A1A1A"></i><i style="display:block;height:10px;width:${(g.a-g.c)/gm*100}%;background:#A9A190"></i></div></td><td>${fK(g.a-g.c)}</td></tr>`).join('');
-  $('#t-srcs').innerHTML=`<tr><th class="t">Source</th><th class="t">What it is</th><th>2026 lines</th><th>2026 $K</th><th>2025 lines</th><th>2025 $K</th></tr>
-   <tr><td class="t"><b>Invoices</b></td><td class="t">Invoices and expense reports</td><td>1,846</td><td>5,120</td><td>2,012</td><td>5,640</td></tr>
-   <tr><td class="t"><b>Journals</b></td><td class="t">Accruals and corrections</td><td>1,590</td><td>2,710</td><td>1,655</td><td>1,980</td></tr>
-   <tr><td class="t"><b>2026 budget</b></td><td class="t">Last year's budget, by event</td><td></td><td></td><td></td><td></td></tr>
-   <tr><td class="t"><b>Nov–Dec forecast</b></td><td class="t">Signed contracts found in review</td><td></td><td></td><td></td><td></td></tr>`;
-  const W2=[['Not yet assigned',sum(OTH.filter(x=>x.o==='To be assigned').map(x=>x.a)),'var(--bad)'],['Team leads',390,'var(--sales)'],['Accounting',232,'var(--sales)'],['Events lead',64,'var(--sales)']],wm=Math.max(...W2.map(w=>w[1]));
-  $('#who').innerHTML=W2.map(([n,v,c])=>`<div class="hbar"><span>${n}</span><i style="width:${v/wm*100}%;background:${c}"></i><b style="text-align:right">$${fK(v)}K</b><span style="text-align:right;color:var(--ink2)">${Math.round(v/OTHT*100)}%</span></div>`).join('');
-  $('#inv').innerHTML=[['Sponsor credits moved to the right event','$160K'],['Year-end items sent to Accounting to check','$232K'],['Events marked confirmed','$'+fK(okv)+'K'],['Every 2026 number on the Budget build tab opens vendor detail','']].map(([a,b])=>`<div class="inv"><span>${a}</span><b>${b}</b></div>`).join('');
-}
-
 /* tabs */
 const tabs=[...document.querySelectorAll('[role=tab]')];
 function show(id){tabs.forEach(t=>{const on=t.id==='tb-'+id;t.setAttribute('aria-selected',on);document.getElementById(t.getAttribute('aria-controls')).hidden=!on});}
 tabs.forEach(t=>t.addEventListener('click',()=>{const id=t.id.slice(3);show(id);try{history.replaceState(null,'','#'+id)}catch(e){}}));
 render();
-const hs=location.hash.slice(1);if(['build','cal','oth','src'].includes(hs))show(hs);
+const hs=location.hash.slice(1);if(['build','cal'].includes(hs))show(hs);
 window.__EV={f26:sum(E.map(e=>e.f26)),b27:totals(calc({fund:'corp',base:'fy',intl:0})).b27,oth:OTHT,all:sum(E.map(e=>e.f26/e.fund[0]))};
 })();
 </script>
