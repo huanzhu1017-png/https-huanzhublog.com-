@@ -249,8 +249,7 @@ const CT=[
  {k:'ppl',n:'Travel and entertainment',own:'Team leads',ctrl:1,nc:.38,fy:21900,link:'../travel-staff/index.html',m:'Cost per head × next year\'s headcount, by region.',acc:[['Airfare',.37],['Hotels',.28],['Meals and entertainment',.25],['Ground transport',.1]],lob:[.58,.14,.06,.1,.12],col:'#7E9C8A'},
  {k:'dis',n:'Professional and consulting fees',own:'Business heads',ctrl:1,nc:.34,fy:37600,link:'../fees/index.html',m:'Built from zero by each owner: which projects need outside help next year; every saving on its own line.',acc:[['Legal',.35],['Audit and tax',.25],['Consulting',.3],['Other advisory',.1]],lob:[.5,.17,.09,.08,.16],col:'#9A3B2A'},
  {k:'evt',n:'Events',own:'Events lead',ctrl:1,nc:.12,fy:EV_FY,m:'Done: the event budget, event by event.',acc:[['Events',.86],['Booths',.14]],lob:[.6,.15,.13,.06,.06],col:'#C7A25A',link:'../event-budget/index.html'},
- {k:'nco',n:'Fixed costs',own:'Accounting',ctrl:0,nc:0,fy:12400,link:'../fixed-costs/index.html',m:'Insurance, taxes and bank fees from Accounting; outside the savings target.',acc:[['Insurance',.4],['Taxes',.3],['Bank fees',.15],['FX',.15]],lob:[.55,.12,.1,.09,.14],col:'#A9A190'},
- {k:'all',n:'Shared services',own:'Corporate FP&A',ctrl:0,nc:0,fy:58300,link:'../shared-services/index.html',m:'Head office recharges; Corporate FP&A sets the number.',acc:[['IT',.4],['Head office',.25],['Legal',.2],['Accounting',.15]],lob:[.66,.14,.08,.05,.07],col:'#5A554B'}];
+ {k:'nco',n:'Fixed costs',own:'Accounting',ctrl:0,nc:0,fy:12400,link:'../fixed-costs/index.html',m:'Insurance, taxes and bank fees from Accounting; outside the savings target.',acc:[['Insurance',.4],['Taxes',.3],['Bank fees',.15],['FX',.15]],lob:[.55,.12,.1,.09,.14],col:'#A9A190'},];
 CT.forEach(c=>{
   c.ytd=c.fy/1.2;
   const w=MO.map((_,m)=>c.k==='occ'?1+rnd(-.02,.02):c.k==='all'?1+rnd(-.1,.1):c.k==='nco'&&m===9?2.2:c.k==='evt'?[.5,1.4,1.6,.9,1.8,1,.6,.5,1.1,1.2][m]:1+rnd(-.12,.12));
@@ -266,7 +265,7 @@ CT.forEach(c=>{
 });
 
 /* ---------- inputs (saved in this browser) ---------- */
-const S={cl:{},sv:{occ:-1500,ppl:-1200,dis:-2400},st:{con:'In review',occ:'In review',ppl:'In review',evt:'Agreed',dis:'Not started'},nt:{nco:'From Accounting',all:'From Corporate FP&A',occ:'Two office exits agreed',ppl:'Airfare and hotels per head held flat',dis:'Fewer outside advisers',evt:'Agreed event by event'}};
+const S={cl:{},sv:{occ:-1500,ppl:-1200,dis:-2400},st:{con:'In review',occ:'In review',ppl:'In review',evt:'Agreed',dis:'Not started'},nt:{nco:'From Accounting',occ:'Two office exits agreed',ppl:'Airfare and hotels per head held flat',dis:'Fewer outside advisers',evt:'Agreed event by event'}};
 const KEY='hz-demo-noncomp3';
 try{const sv=JSON.parse(localStorage.getItem(KEY)||'null');if(sv)Object.assign(S,sv.S||{})}catch(x){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({S}));$('#savedmsg').textContent='Saved in this browser.'}catch(x){}}

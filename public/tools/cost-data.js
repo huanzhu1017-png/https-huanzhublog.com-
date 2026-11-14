@@ -1,4 +1,4 @@
-// Detail budgets behind each non-comp cost type (offices, travel and entertainment, fees, fixed costs, shared services).
+// Detail budgets behind each non-comp cost type (offices, travel and entertainment, fees, fixed costs).
 // Made-up data. Each page builds its own 2027 number; the non-comp budget reads the result.
 // Edits are saved only in the visitor's browser.
 (function(){
@@ -53,19 +53,12 @@ const FIX=[['Property insurance','Insurance',3100,6,'Renewal quote'],['Professio
  ['Equipment taxes','Taxes',1100,0,'Flat'],['Bank fees','Bank fees',1800,-5,'New bank pricing'],['FX gains/losses','FX',1900,0,'Held at 2026']].map(([n,t,a,g,b],i)=>({i,n,t,a,g,b}));
 const fixS=load('nco',{g:{}});
 
-/* ---------------- SHARED SERVICES: our share of central pools ---------------- */
-const SH=[['IT','Headcount share',61000,38,4,37],['Head office','Revenue share',40000,36,0,36],['Legal','Revenue share',30000,40,2,40],['Accounting','Transaction volume',22000,39,-3,39]]
- .map(([n,drv,pool,sh,g,sh27],i)=>({i,n,drv,pool,sh,g,sh27}));
-{const t=sum(SH.map(s=>s.pool*s.sh/100)),k=58300/t;SH.forEach(s=>s.pool=Math.round(s.pool*k))}
-const shS=load('all',{g:{},s:{}});
-
 /* ---------------- totals for the non-comp budget ---------------- */
 const T={
  occ:{base:52800,next:()=>sum(OFF.map(o=>offRow(o,offS).v)),page:'../offices/index.html',src:'office budget'},
  ppl:{base:21900,next:()=>sum(REG.map((_,r)=>tsS.hc[r]*sum(RATE[r].map((v,j)=>v*(1+tsS.chg[j]/100))))),page:'../travel-staff/index.html',src:'T&E budget'},
  dis:{base:37600,next:()=>sum(FEE.map(f=>feeV(f))),page:'../fees/index.html',src:'fees budget'},
- nco:{base:12400,next:()=>sum(FIX.map(x=>x.a*(1+(fixS.g[x.i]??x.g)/100))),page:'../fixed-costs/index.html',src:'fixed costs'},
- all:{base:58300,next:()=>sum(SH.map(x=>x.pool*(1+(shS.g[x.i]??x.g)/100)*(shS.s[x.i]??x.sh27)/100)),page:'../shared-services/index.html',src:'shared services'}};
+ nco:{base:12400,next:()=>sum(FIX.map(x=>x.a*(1+(fixS.g[x.i]??x.g)/100))),page:'../fixed-costs/index.html',src:'fixed costs'}};
 function feeV(f){const d=feeS.d[f.i]??f.d;return d==='Stop'?0:(feeS.v[f.i]??f.b)}
 window.HZ_COST=T;
 
@@ -124,16 +117,6 @@ window.HZ_PAGE=function(k){
         `<tr class="total"><td class="t" colspan="2">Total</td><td>${fK(12400)}</td><td></td><td>${fK(nx)}</td><td>${sK(nx-12400)}</td><td></td></tr>`;
       bars(['Insurance','Taxes','Bank fees','FX'].map(t=>({n:t,a:sum(FIX.filter(x=>x.t===t).map(x=>x.a)),b:sum(FIX.filter(x=>x.t===t).map(x=>x.a*(1+(fixS.g[x.i]??x.g)/100)))})))};
     tb.addEventListener('change',e=>{const i=e.target.dataset.g;if(i==null)return;fixS.g[i]=+e.target.value||0;store('nco',fixS)&&saved();draw();tb.querySelector(`[data-g="${i}"]`).focus()});
-  }
-  if(k==='all'){
-    ctl.innerHTML=`<span class="note" style="margin:0">2027 = the central team's cost pool × our share. Corporate FP&amp;A sets the pools; the share follows each driver.</span>`;
-    draw=()=>{const nx=T.all.next();head(58300,nx,['Services',SH.length,'charged from head office']);
-      tb.innerHTML=`<tr><th class="t">Service</th><th class="t">Driver</th><th>2026 pool</th><th>2026 share</th><th>2026</th><th>Pool change %</th><th>2027 share %</th><th>2027</th><th>Change</th></tr>`+
-        SH.map(x=>{const g=shS.g[x.i]??x.g,s2=shS.s[x.i]??x.sh27,a=x.pool*x.sh/100,v=x.pool*(1+g/100)*s2/100;return`<tr><td class="t"><b>${x.n}</b></td><td class="t">${x.drv}</td><td>${fK(x.pool)}</td><td>${x.sh}%</td><td>${fK(a)}</td>
-          <td>${num(`data-g="${x.i}"`,g,'Pool change % for '+x.n,70,.5)}</td><td>${num(`data-s="${x.i}"`,s2,'2027 share % for '+x.n,70,.5)}</td><td><b>${fK(v)}</b></td><td class="${v<a?'pos':v>a?'neg':''}">${sK(v-a)}</td></tr>`}).join('')+
-        `<tr class="total"><td class="t" colspan="4">Total</td><td>${fK(58300)}</td><td></td><td></td><td>${fK(nx)}</td><td>${sK(nx-58300)}</td></tr>`;
-      bars(SH.map(x=>({n:x.n,a:x.pool*x.sh/100,b:x.pool*(1+(shS.g[x.i]??x.g)/100)*(shS.s[x.i]??x.sh27)/100})))};
-    tb.addEventListener('change',e=>{const d=e.target.dataset;let f=null;if(d.g!=null){shS.g[d.g]=+e.target.value||0;f=`[data-g="${d.g}"]`}else if(d.s!=null){shS.s[d.s]=Math.max(0,+e.target.value||0);f=`[data-s="${d.s}"]`}else return;store('all',shS)&&saved();draw();tb.querySelector(f).focus()});
   }
   draw();
 };
