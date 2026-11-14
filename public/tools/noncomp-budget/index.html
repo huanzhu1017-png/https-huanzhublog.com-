@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>2027 Non-Comp Budget · Huan Zhu</title>
+<meta name="description" content="A demo of a non-comp budget Huan Zhu built: cost types with owners, cleanup and savings, account detail, contract review and funding. All vendors and figures are made up.">
+<meta property="og:title" content="2027 Non-Comp Budget · Huan Zhu">
+<meta property="og:description" content="A demo of a non-comp budget Huan Zhu built: cost types with owners, cleanup and savings, account detail, contract review and funding. All vendors and figures are made up.">
+<meta property="og:url" content="https://huanzhublog.com/tools/noncomp-budget/">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Light, research-note look: navy top bar, coloured tab rails, navy hero band. Single theme on purpose. */
+:root{
+  color-scheme:light;
+  --bg:#F3F3F0; --surface:#fff; --panel:#EFEFEB; --ink:#0a0b0d; --ink2:#51565f; --muted:#8a8f98; --line:#e2e4e8; --grid:#eceef1;
+  --navy:#1E3B32; --blue:#2B6A4C; --title:#2B6A4C;
+  --lease:#1E5C45; --sales:#4E9A6F; --debt:#A9CC8C; --booked:#1E5C45; --pipe:#4E9A6F; --nodet:#2C8C88; --mtop:#A9CC8C; --ftop:#7A8C3A;
+  --good:#17874f; --bad:#c0302a; --warn:#a86500;
+  --tot:#fff3cf; --tot-line:#e0b93c; --hl:#fff6dc;
+  --t1:#1E3B32; --t2:#a5650f; --t3:#d4561f; --t4:#c0302a;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --sans:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.5 var(--sans);font-feature-settings:"tnum" 1}
+a{color:var(--blue)}
+button,select,input{font:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.topbar{background:var(--navy);color:#D3E0D9;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.wm{color:#fff;font-weight:700;letter-spacing:.32em;font-size:13px}
+.tb-r{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.tb-r .sep{width:1px;height:12px;background:#4C6D60}
+.tb-r .demo{color:#ffc65c;font-weight:600}
+.tb-r a{color:#A8DCC2;text-decoration:none}
+.wrap{max-width:1480px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 50px max(16px,env(safe-area-inset-left,0px))}
+.head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;background:#E7E7E2;padding:12px 14px}
+.head h1{font:400 26px/1.15 var(--serif);color:var(--title);margin:0}
+.head p{margin:4px 0 0;max-width:820px;font-size:13px}
+.cyc{display:inline-flex;border:1px solid var(--line);background:#fff}
+.cyc span{padding:8px 14px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.cyc .on{background:var(--navy);color:#fff;font-weight:600}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;background:#E7E7E2;padding:4px 10px 10px;margin-top:10px}
+.tabs button{border:0;border-top:4px solid var(--c);background:#fff;padding:12px 14px 10px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.tabs button[aria-selected="true"]{background:var(--c);color:#fff;transform:translateY(-3px);box-shadow:0 4px 10px rgba(0,0,0,.18)}
+.eyebrow{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin:22px 0 4px}
+h2.lead{font:400 21px/1.25 var(--serif);color:var(--title);margin:0 0 12px;text-wrap:balance}
+.hero{background:var(--navy);color:#fff;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.hero > div{padding:16px 22px;border-left:1px solid #3A5A4E;min-width:0}
+.hero > div:first-child{border-left:0}
+.hero .big{font:400 30px/1.1 var(--serif)}
+.hero .dn{font:400 19px/1.15 var(--serif);color:#ff7468}
+.hero .up{font:400 19px/1.15 var(--serif);color:#4fd59a}
+.hero .l{font-size:12.5px;color:#dfe6ee;margin-top:4px}
+.hero .s{font-size:11.5px;color:#A9C2B6;margin-top:3px}
+.hero .g{color:#4fd59a}.hero .r{color:#ff7468}
+.findings{margin:14px 0 6px}
+.findings h3{font-size:14px;margin:0 0 6px}
+.findings ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);padding:14px 16px;min-width:0}
+.card h3{margin:0 0 10px;font-size:15px;font-weight:600}
+.kpi{background:#fff;border:1px solid var(--line);padding:12px 14px;min-width:0}
+.kpi .l{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.kpi .n{font-size:24px;font-weight:600;margin-top:4px}
+.kpi .s{font-size:12px;color:var(--ink2)}
+.note{font-size:12px;color:var(--ink2);margin:8px 0 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--grid);white-space:nowrap}
+th.t,td.t{text-align:left}
+td.t{white-space:normal}
+tr.total td{font-weight:700;background:var(--tot);border-top:1px solid var(--tot-line)}
+td.tc,th.tc{background:var(--tot)}
+.pos{color:var(--good)}.neg{color:var(--bad)}
+.code{font-size:10.5px;color:var(--muted);background:#f0f1f3;padding:1px 5px;border-radius:3px;margin-left:4px}
+.pill{font-size:10.5px;padding:1px 6px;border-radius:3px;border:1px solid}
+.pill.in{color:#1c4e8f;border-color:#9cc3ef;background:#eaf3fd}
+.pill.up{color:#9c3d12;border-color:#f3b896;background:#fff1e8}
+.legend{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-bottom:8px}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+svg{display:block;width:100%;height:auto;max-width:100%}
+svg text{font-family:var(--sans);font-size:11px;fill:var(--ink2)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters select,.filters input{border:1px solid #cfd3d9;background:#fff;padding:6px 8px;min-width:0;max-width:220px}
+.filters input{min-width:180px}
+.filters .cnt{font-size:11.5px;color:var(--muted);align-self:center}
+.more{background:none;border:0;color:var(--blue);cursor:pointer;padding:8px 0;font-size:12.5px}
+.barcell{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.barcell i{display:block;height:3px;background:var(--blue);border-radius:2px}
+tr.top5 td{background:var(--hl)}
+tr.top5 td:first-child{box-shadow:inset 3px 0 0 var(--ftop)}
+.lookup input{width:100%;max-width:420px;border:1px solid #cfd3d9;padding:9px 10px;background:#fff}
+footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--ink2);display:flex;flex-direction:column;gap:6px}
+.fict{background:#fff8e1;border:1px solid #f0d27a;padding:8px 12px;font-size:12.5px;margin-top:12px}
+[role=tabpanel][hidden]{display:none!important}
+@media (max-width:1000px){.hero{grid-template-columns:repeat(2,minmax(0,1fr))}.hero > div:nth-child(3){border-left:0}.grid2{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.hero,.grid3,.grid4{grid-template-columns:1fr}.hero > div{border-left:0;border-top:1px solid #3A5A4E}.head h1{font-size:22px}}
+@media (prefers-reduced-motion:reduce){.tabs button{transform:none!important}}
+
+/* ---- Old financial newspaper theme: newsprint, black ink, double rules ---- */
+:root{
+  --bg:#EEE8DA; --panel:#F3EEE2; --line:#1A1A1A; --grid:#CFC7B5; --ink:#141414; --ink2:#3D3A33; --muted:#6E685C;
+  --navy:#1A1A1A; --title:#1A1A1A; --blue:#2F5E46;
+  --t1:#1A1A1A; --t2:#1A1A1A; --t3:#1A1A1A; --t4:#1A1A1A;
+  --tot:#E2DAC6; --tot-line:#1A1A1A; --hl:#E8E0CC;
+  --lease:#2B2B2B; --booked:#2B2B2B; --sales:#2F5E46; --pipe:#2F5E46; --debt:#A9A190; --ftop:#A9A190;
+  --serif:"Old Standard TT",Georgia,"Times New Roman",serif;
+  --sans:"Libre Baskerville",Georgia,"Times New Roman",serif;
+}
+body{font-size:13px}
+.topbar{color:#DDD6C6}
+.tb-r .sep{background:#5A564E}
+.head,.tabs{background:transparent;border-top:3px double #1A1A1A;border-bottom:1px solid #1A1A1A}
+.head h1{font-size:40px;font-weight:700;color:#141414;letter-spacing:-.01em}
+.kpi,.card{background:transparent;border:0;border-top:1px solid #1A1A1A;box-shadow:none}
+.tabs button{background:transparent;box-shadow:none;border-top:0;color:#1A1A1A}
+.tabs button[aria-selected="true"]{background:#1A1A1A;color:#EEE8DA;transform:none;box-shadow:none}
+.fict{background:transparent;border:1px solid #1A1A1A}
+.hero > div{border-left-color:#3A3A3A}
+.hero .s{color:#B9B2A2}
+.lookup input,.filters select,.filters input{background:#F6F1E6;border-color:#8C8576}
+.code{background:#E2DAC6}
+</style>
+<style>
+/* ---- shared budget-tool pieces ---- */
+.badge{display:inline-block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border:1px solid #1A1A1A;margin-top:8px}
+.badge.final{background:#2F5E46;color:#EEE8DA;border-color:#2F5E46}
+.badge.draft{background:#1A1A1A;color:#EEE8DA}
+.grid5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-top:14px}
+.kpi .n{font-family:var(--serif);font-weight:400;font-size:26px}
+.sub{font-size:12px;color:var(--ink2);margin:2px 0 10px}
+h2.sec{font:400 21px/1.25 var(--serif);margin:26px 0 4px}
+input.num,input.txt,select.st{border:1px solid #8C8576;background:#F6F1E6;padding:5px 7px;font:inherit;font-size:12.5px}
+input.num{width:84px;text-align:right}
+input.txt{width:100%;min-width:150px}
+td input,td select{margin:-3px 0}
+.chip{display:inline-block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border:1px solid currentColor;white-space:nowrap}
+.chip.ok{color:#2F5E46}.chip.warn{color:#9A6B12}.chip.bad{color:#9A3B2A}.chip.mut{color:#6E685C}.chip.on{background:#2F5E46;color:#EEE8DA;border-color:#2F5E46}
+tr.grp td{background:#E2DAC6;font-weight:700}
+tr.sub2 td.t{padding-left:22px}
+tr.sub3 td.t{padding-left:40px;color:var(--ink2)}
+tr.exp{cursor:pointer}
+tr.exp td.t:before{content:"▸ ";color:var(--muted)}
+tr.exp.open td.t:before{content:"▾ "}
+.mix{display:flex;height:14px;min-width:160px;border:1px solid #8C8576}
+.mix i{display:block;height:100%}
+.howto p{margin:0 0 9px;font-size:12.5px}
+.howto b{color:var(--ink)}
+.side{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;margin-top:10px}
+.ctlbar{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#E8E0CC;padding:12px 16px;margin:18px 0 10px}
+.ctlbar h4{margin:0 0 8px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase}
+.ctlbar .row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.ctlbar label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--ink2)}
+.ctlbar label.chk{flex-direction:row;align-items:center;gap:6px}
+.linkbtn{background:none;border:0;padding:0;color:var(--blue);text-decoration:underline;cursor:pointer;font:inherit}
+.nav2{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.nav2 a{border:1px solid #1A1A1A;padding:5px 11px;font-size:12px;text-decoration:none;color:#1A1A1A}
+.cal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:14px}
+.mon{border:1px solid #1A1A1A;min-width:0}
+.mon h4{margin:0;background:#1A1A1A;color:#EEE8DA;padding:8px 10px;font-size:12.5px;display:flex;justify-content:space-between}
+.ev{display:grid;grid-template-columns:74px 12px minmax(0,1fr) auto;gap:4px;padding:8px 10px;border-top:1px solid #CFC7B5;font-size:12px}
+.ev:first-of-type{border-top:0}
+.ev .d{color:var(--ink2)}.ev .d.ph{color:#9A6B12}
+.ev .dot{width:8px;height:8px;border-radius:50%;margin-top:4px;background:#A9A190}
+.ev .dot.own{background:#1A1A1A}
+.ev b{font-weight:700}.ev small{display:block;color:var(--ink2)}
+.qbox{background:#E8E0CC;padding:10px 14px;font-size:12.5px;margin-top:12px}
+.hbar{display:grid;grid-template-columns:240px minmax(0,1fr) 70px 44px;gap:10px;align-items:center;font-size:12.5px;padding:3px 0}
+.hbar i{display:block;height:12px}
+.inv{display:flex;justify-content:space-between;gap:12px;background:#E8E0CC;padding:10px 14px;margin-top:8px;font-size:12.5px}
+.pop{position:fixed;inset:0;background:rgba(20,20,20,.35);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.pop[hidden]{display:none}
+.pop .box{background:#F3EEE2;border:1px solid #1A1A1A;max-width:560px;width:100%;padding:16px 18px;max-height:80vh;overflow:auto}
+.pop .box h3{margin:0 0 4px;font:400 20px var(--serif)}
+.pop .x{float:right;background:none;border:1px solid #1A1A1A;cursor:pointer;padding:2px 8px}
+.saved{font-size:11.5px;color:var(--muted);margin-left:8px}
+@media (max-width:1000px){.grid5{grid-template-columns:repeat(2,minmax(0,1fr))}.side,.ctlbar{grid-template-columns:1fr}.cal{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.grid5,.cal{grid-template-columns:1fr}.hbar{grid-template-columns:120px minmax(0,1fr) 60px}.hbar span:last-child{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="wm">MERIDIAN</div>
+  <div class="tb-r"><span>FP&amp;A</span><span class="sep"></span><span>2027 Budget</span><span class="sep"></span><span class="demo">Demo · fictional company &amp; data</span><span class="sep"></span><a href="../../work/index.html">← Huan's work</a></div>
+</div>
+
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1>2027 Non-Comp Budget</h1>
+      <span class="badge draft">Working draft</span> <span class="saved" id="savedmsg">Edits save in this browser only.</span>
+      <p>Brokerage lines of business: Leasing, Capital Markets, Debt &amp; Finance, Valuation, International. Every non-compensation expense, $K. 2026 base = Jan–Oct actual + Nov–Dec run rate (Jan–Oct ÷ 10 × 2).</p>
+    </div>
+  </div>
+  <p class="fict"><b>What this shows:</b> how I run a non-comp budget: each cost type is forecast its own way and owned by someone, cleanup and savings are entered line by line, contracts are reviewed vendor by vendor, and every dollar is traced to who pays for it. <b>All vendors, owners and figures are made up.</b></p>
+  <div class="grid5" id="kpi"></div>
+
+  <div class="tabs" role="tablist" style="margin-top:16px">
+    <button role="tab" id="tb-bud" aria-controls="p-bud" aria-selected="true">Budget by cost type</button>
+    <button role="tab" id="tb-det" aria-controls="p-det" aria-selected="false">Detail by account</button>
+    <button role="tab" id="tb-con" aria-controls="p-con" aria-selected="false">Contracts</button>
+    <button role="tab" id="tb-fun" aria-controls="p-fun" aria-selected="false">Funding</button>
+  </div>
+
+  <!-- BUDGET -->
+  <section role="tabpanel" id="p-bud" aria-labelledby="tb-bud">
+    <h2 class="sec">Steps 1–2 and 4: 2026 base by cost type, owner review and 2027 savings</h2>
+    <p class="sub">Enter cleanup to the 2026 base (one-offs, wrong-year items) and the agreed 2027 saving in $K; negative = lower. Events come from the finished <a href="../event-budget/index.html">conference and event budget</a>; contracts roll up from the Contracts tab.</p>
+    <div class="scroll"><table id="t-bud"></table></div>
+    <div class="side">
+      <div class="card"><h3>2026 Jan–Oct by month ($M)</h3><svg id="c-mon" viewBox="0 0 700 300" role="img" aria-label="Stacked monthly spend by cost type, January to October 2026"></svg><div class="legend" id="l-mon"></div></div>
+      <div class="card howto"><h3>How each cost type is budgeted</h3><div id="howto"></div></div>
+    </div>
+  </section>
+
+  <!-- DETAIL -->
+  <section role="tabpanel" id="p-det" aria-labelledby="tb-det" hidden>
+    <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">2026 base by account and line of business</h2>
+      <label>Cost type<select class="st" id="d-ct"></select></label></div>
+    <p class="sub">FY base, $K. Click a cost type row to see its accounts.</p>
+    <div class="scroll"><table id="t-det"></table></div>
+  </section>
+
+  <!-- CONTRACTS -->
+  <section role="tabpanel" id="p-con" aria-labelledby="tb-con" hidden>
+    <div class="grid4" id="c-kpi" style="margin-top:16px"></div>
+    <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">Step 3: national contracts paid by the brokerage</h2>
+      <label>Show<select class="st" id="c-f"><option value="">All contracts</option><option value="ren">Renews within 12 months</option><option value="exp">Expired but still paying</option><option value="none">No expiry date</option></select></label></div>
+    <p class="sub">Invoice lines flagged as contracts, last twelve months (TTM). Set the 2027 amount ($K) and the decision for each contract; blank keeps the TTM spend. The total flows into the Contracts row of the budget. Vendor names are generic.</p>
+    <div class="scroll"><table id="t-con"></table></div>
+  </section>
+
+  <!-- FUNDING -->
+  <section role="tabpanel" id="p-fun" aria-labelledby="tb-fun" hidden>
+    <h2 class="sec">Who pays: 2026 base by funding source</h2>
+    <p class="sub">From the funding flag on each invoice: broker allowance, charged to the business, or client reimbursed. Everything else (journals, unflagged invoices, allocations) is corporate.</p>
+    <div class="legend" id="l-fun"></div>
+    <div class="scroll"><table id="t-fun"></table></div>
+  </section>
+
+  <footer>
+    <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../event-budget/index.html">2027 conference &amp; event budget</a></div>
+    <div>Demo with generated data. Meridian is not a real company; every vendor, owner and figure on this page is made up. Edits stay in your browser only.</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+const $=q=>document.querySelector(q);
+const fK=v=>{const r=Math.round(v);return r<0?'('+Math.abs(r).toLocaleString('en-US')+')':r.toLocaleString('en-US')};
+const fM=v=>'$'+(v/1000).toFixed(1)+'M';
+const pc=v=>(v>0?'+':v<0?'−':'')+Math.abs(v*100).toFixed(1)+'%';
+const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sum=a=>a.reduce((x,y)=>x+y,0);
+let seed=90217;const R=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+const rnd=(a,b)=>a+R()*(b-a);
+const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct'];
+const LOB=['Leasing','Capital Markets','Debt & Finance','Valuation','International'];
+
+/* events row comes from the event budget demo (all funding, incl. spend not tied to an event) */
+const EV_FY=8261, EV_SAVE=-1141;
+
+/* ---------- contracts (generic vendors) ---------- */
+const CN=['Market data platform A','Office software suite','Property database B','Research subscription C','Hardware reseller','Lease analysis software','Contact data provider','Index and analytics provider','Presentation templates tool','Listings marketing platform','Document workflow tool','Loan data service','Professional network (recruiting)','Debt market data D','Valuation software','Lease administration system','E-signature service','Mapping and survey tool','News subscription E','Expense management app','Video conferencing','Cloud file storage','Translation service','Print management','Sales comps database F','Tenant mix data G'];
+const GL=['Software licenses','Market data subscriptions','Subscriptions','Advertising','Recruiting'];
+const TODAY=new Date('2026-11-13');
+let amt=5200;
+const CONS=CN.map((n,i)=>{const ttm=Math.round(amt);amt*=rnd(.76,.93);
+  const r=R(),exp=r<.15?null:new Date(2025,8+Math.floor(R()*40),1+Math.floor(R()*27));
+  const k=1+Math.floor(R()*4),paid=[0].concat(LOB.slice(1).sort(()=>R()-.5).slice(0,k-1)).map(x=>typeof x==='number'?LOB[0]:x);
+  const gl=[GL[i%3]].concat(R()<.4?[GL[(i+1)%3]]:[]).concat(i===9?[GL[3]]:i===12?[GL[4]]:[]);
+  return{i,n,ttm:Math.max(40,ttm),exp,paid:[...new Set(paid)],gl:[...new Set(gl)],v27:null,dec:'',note:''}});
+CONS.forEach(c=>{const d=c.exp?(c.exp-TODAY)/864e5/30.4:null;c.st=d==null?'none':d<0?'exp':d<=6?'r6':d<=12?'r12':'act'});
+// a few decisions already made, so the demo has something to show
+const pre={1:[null,'Renew',''],2:[0.9,'Renegotiate','Asked for 10% off at renewal'],5:[0,'Cancel','Overlaps with the valuation software'],7:[0.85,'Renegotiate','Consolidate two contracts into one'],13:[0,'Cancel','Expired; nobody using it']};
+Object.entries(pre).forEach(([i,[f,d,n]])=>{const c=CONS[+i];if(f!=null)c.v27=Math.round(c.ttm*f);c.dec=d;c.note=n});
+const STL={none:['No expiry date','mut'],exp:['Expired, still paying','bad'],r6:['Renews within 6 months','warn'],r12:['Renews in 6–12 months','warn'],act:['Active','ok']};
+
+/* ---------- cost types ---------- */
+const CONTTM=sum(CONS.map(c=>c.ttm));
+const CT=[
+ {k:'con',n:'National contracts',own:'Procurement / IT',ctrl:1,nc:0,fy:CONTTM,m:'Contract by contract: expiry, renewal price, renew / renegotiate / cancel (Contracts tab).',acc:[['Software licenses',.45],['Market data subscriptions',.35],['Subscriptions',.2]],lob:[.7,.1,.06,.07,.07],col:'#1A1A1A'},
+ {k:'occ',n:'Occupancy and equipment',own:'Real estate / Facilities',ctrl:1,nc:0,fy:52800,m:'Lease schedules and equipment depreciation; mostly fixed. Confirm renewals and exits with Real Estate.',acc:[['Rent',.62],['Equipment depreciation',.16],['Utilities and service charges',.12],['Repairs and maintenance',.1]],lob:[.52,.13,.09,.1,.16],col:'#2F5E46'},
+ {k:'ppl',n:'People-driven (T&E, comms, staff costs)',own:'Market leaders',ctrl:1,nc:.38,fy:21900,m:'Rate per head × 2027 headcount plan, by market. The broker-allowance share stays with brokers.',acc:[['Travel and entertainment',.55],['Mobile and communications',.2],['Staff costs and training',.15],['Recruiting',.1]],lob:[.58,.14,.06,.1,.12],col:'#7E9C8A'},
+ {k:'dis',n:'Discretionary (marketing, professional fees, other)',own:'Business line heads',ctrl:1,nc:.34,fy:37600,m:'Zero-based by owner, like the event budget; each saving on its own line.',acc:[['Advertising and marketing',.34],['Professional fees',.3],['Consulting',.16],['Printing and signage',.08],['Other',.12]],lob:[.5,.17,.09,.08,.16],col:'#9A3B2A'},
+ {k:'evt',n:'Conferences and events',own:'Events lead',ctrl:1,nc:.12,fy:EV_FY,m:'Done: the conference and event budget, event by event, savings agreed with each owner.',acc:[['Conferences and events',.86],['Booth rental',.14]],lob:[.6,.15,.13,.06,.06],col:'#C7A25A',link:'../event-budget/index.html'},
+ {k:'nco',n:'Non-controllable (insurance, FX, tax, bank)',own:'Accounting',ctrl:0,nc:0,fy:12400,m:'Taken from Accounting; not part of the savings target.',acc:[['Insurance',.4],['Non-income taxes',.3],['Bank fees',.15],['FX gains and losses',.15]],lob:[.55,.12,.1,.09,.14],col:'#A9A190'},
+ {k:'all',n:'Corporate allocations',own:'Corporate FP&A',ctrl:0,nc:0,fy:58300,m:'Corporate recharges (IT, legal, home office, accounting). Corporate FP&A provides the 2027 number.',acc:[['IT allocation',.4],['Home office allocation',.25],['Legal and compliance allocation',.2],['Accounting allocation',.15]],lob:[.66,.14,.08,.05,.07],col:'#5A554B'},
+ {k:'int',n:'Warehouse line interest',own:'Debt & Finance / Treasury',ctrl:0,nc:0,fy:8900,m:'Driven by loan volume and rates; budgeted with Treasury, outside controllable non-comp.',acc:[['Warehouse line interest',1]],lob:[0,0,.8,0,.2],col:'#D9CFB8'}];
+CT.forEach(c=>{
+  c.ytd=c.fy/1.2;
+  const w=MO.map((_,m)=>c.k==='occ'?1+rnd(-.02,.02):c.k==='all'?1+rnd(-.1,.1):c.k==='nco'&&m===9?2.2:c.k==='int'&&m===3?1.5:c.k==='evt'?[.5,1.4,1.6,.9,1.8,1,.6,.5,1.1,1.2][m]:1+rnd(-.12,.12));
+  const t=sum(w);c.mon=w.map(x=>c.ytd*x/t);
+  // LOB split and accounts
+  const lw=c.lob.map(x=>x*rnd(.9,1.1)),lt=sum(lw);c.byL=lw.map(x=>c.fy*x/lt);
+  c.accL=c.acc.map(([a,w2])=>({a,v:c.byL.map(v=>v*w2*rnd(.85,1.15))}));
+  LOB.forEach((_,j)=>{const s=sum(c.accL.map(x=>x.v[j]));c.accL.forEach(x=>x.v[j]=s?x.v[j]*c.byL[j]/s:0)});
+  // funding: corporate, broker allowance, charged to business, client reimbursed
+  const sp={ppl:[.7,.18,.12],dis:[.15,.65,.2],evt:[.75,.15,.1]}[c.k]||[0,0,0];
+  const lnc=[1.6,.5,.15,.3,.1];
+  c.fund=c.byL.map((v,j)=>{const nc=Math.min(.85,c.nc*lnc[j]*rnd(.8,1.2)*(1/ (sum(c.lob.map((x,jj)=>x*lnc[jj]))||1)));return[v*(1-nc),v*nc*sp[0],v*nc*sp[1],v*nc*sp[2]]});
+});
+
+/* ---------- inputs (saved in this browser) ---------- */
+const S={cl:{dis:-600},sv:{occ:-1500,ppl:-1200,dis:-2400},st:{con:'In review',occ:'In review',ppl:'In review',evt:'Agreed',dis:'Not started'},nt:{occ:'Two office exits confirmed with Real Estate',ppl:'T&E per head held flat; allowance share unchanged',dis:'Cleanup: one-off rebrand removed from the base',evt:'Agreed event by event'}};
+const KEY='hz-demo-noncomp';
+try{const sv=JSON.parse(localStorage.getItem(KEY)||'null');if(sv){Object.assign(S,sv.S||{});(sv.C||[]).forEach((x,i)=>{if(CONS[i])Object.assign(CONS[i],x)})}}catch(x){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({S,C:CONS.map(c=>({v27:c.v27,dec:c.dec,note:c.note}))}));$('#savedmsg').textContent='Saved in this browser.'}catch(x){}}
+
+const con27=()=>sum(CONS.map(c=>c.v27==null?c.ttm:c.v27));
+function calc(){return CT.map(c=>{const cl=+(S.cl[c.k]||0),sv=c.k==='con'?con27()-CONTTM:c.k==='evt'?EV_SAVE:+(S.sv[c.k]||0);return{c,cl,sv,b27:c.fy+cl+sv,st:S.st[c.k]||'Not started'}})}
+
+function kpis(rows){
+  const ytd=sum(CT.map(c=>c.ytd)),fy=sum(CT.map(c=>c.fy)),b=sum(rows.map(r=>r.b27));
+  const cr=rows.filter(r=>r.c.ctrl),cf=sum(cr.map(r=>r.c.fy)),cb=sum(cr.map(r=>r.b27)),ag=rows.filter(r=>r.st==='Agreed').length;
+  $('#kpi').innerHTML=`<div class="kpi"><div class="l">2026 Jan–Oct actual</div><div class="n">${fM(ytd)}</div><div class="s">non-comp, all lines</div></div>
+   <div class="kpi"><div class="l">2026 full-year base</div><div class="n">${fM(fy)}</div><div class="s">Jan–Oct + Nov–Dec run rate</div></div>
+   <div class="kpi"><div class="l">2027 budget (draft)</div><div class="n">${fM(b)}</div><div class="s">${b<fy?'−':'+'}${fM(Math.abs(b-fy))} vs 2026 base (${pc(b/fy-1)})</div></div>
+   <div class="kpi"><div class="l">Controllable cost types</div><div class="n">${fM(cb)}</div><div class="s">${pc(cb/cf-1)} vs 2026 · target −15% to −20%</div></div>
+   <div class="kpi"><div class="l">Owner review</div><div class="n">${ag} of ${CT.length}</div><div class="s">cost types agreed</div></div>`;
+}
+function renderBud(){
+  const rows=calc();kpis(rows);
+  const T=k=>sum(rows.map(k));
+  $('#t-bud').innerHTML=`<tr><th class="t">Cost type</th><th class="t">Owner</th><th>2026 Jan–Oct</th><th>2026 FY base</th><th>Non-corporate share</th><th>Cleanup ($K)</th><th>2027 saving ($K)</th><th>2027 budget</th><th>vs base</th><th class="t">Status</th><th class="t">Notes</th></tr>`+
+   rows.map(r=>{const c=r.c,ncs=sum(c.fund.map(f=>f[1]+f[2]+f[3]))/c.fy;
+     const sv=c.k==='con'?`<span class="note" style="margin:0">from Contracts tab<br><b class="${r.sv<0?'pos':''}">${fK(r.sv)}</b></span>`:c.k==='evt'?`<span class="note" style="margin:0">from event budget<br><b class="pos">${fK(r.sv)}</b></span>`:`<input class="num" type="number" step="10" data-sv="${c.k}" value="${S.sv[c.k]||''}" aria-label="2027 saving for ${esc(c.n)}, $K">`;
+     return`<tr><td class="t" style="white-space:normal;min-width:180px"><b>${c.link?`<a href="${c.link}">${esc(c.n)} ↗</a>`:esc(c.n)}</b></td><td class="t" style="white-space:normal">${esc(c.own)}</td><td>${fK(c.ytd)}</td><td>${fK(c.fy)}</td><td>${Math.round(ncs*100)}%</td>
+     <td><input class="num" type="number" step="10" data-cl="${c.k}" value="${S.cl[c.k]||''}" aria-label="Cleanup for ${esc(c.n)}, $K"></td><td>${sv}</td><td><b>${fK(r.b27)}</b></td><td class="${r.b27<c.fy?'pos':r.b27>c.fy?'neg':''}">${r.b27===c.fy?'–':pc(r.b27/c.fy-1)}</td>
+     <td class="t">${r.st==='Agreed'?'<span class="chip on">Agreed</span>':`<select class="st" data-st="${c.k}" aria-label="Status for ${esc(c.n)}">${['Not started','In review','Agreed'].map(o=>`<option${o===r.st?' selected':''}>${o}</option>`).join('')}</select>`}</td>
+     <td class="t"><input class="txt" data-nt="${c.k}" value="${esc(S.nt[c.k]||'')}" aria-label="Notes for ${esc(c.n)}"></td></tr>`}).join('')+
+   `<tr class="total"><td class="t" colspan="2">Total</td><td>${fK(T(r=>r.c.ytd))}</td><td>${fK(T(r=>r.c.fy))}</td><td></td><td>${fK(T(r=>r.cl))}</td><td>${fK(T(r=>r.sv))}</td><td>${fK(T(r=>r.b27))}</td><td>${pc(T(r=>r.b27)/T(r=>r.c.fy)-1)}</td><td colspan="2"></td></tr>`;
+}
+$('#t-bud').addEventListener('change',e=>{const t=e.target,d=t.dataset;let focus=null;
+  if(d.cl){S.cl[d.cl]=t.value===''?0:+t.value;focus=`[data-cl="${d.cl}"]`}else if(d.sv){S.sv[d.sv]=t.value===''?0:+t.value;focus=`[data-sv="${d.sv}"]`}else if(d.st){S.st[d.st]=t.value}else if(d.nt){S.nt[d.nt]=t.value;save();return}else return;
+  save();renderBud();if(focus){const n=$('#t-bud '+focus);n&&n.focus()}});
+
+function renderMon(){
+  const W=700,H=300,L=46,B=30,T=14,tot=MO.map((_,m)=>sum(CT.map(c=>c.mon[m]))),mx=Math.max(...tot)*1.08,gw=(W-L)/10,bw=gw*.68,y=v=>(H-B-T)*v/mx;
+  let g='';for(let i=0;i<=4;i++){const v=mx*i/4,yy=H-B-y(v);g+=`<line x1="${L}" x2="${W}" y1="${yy}" y2="${yy}" stroke="var(--grid)"/><text x="${L-6}" y="${yy+4}" text-anchor="end">${(v/1000).toFixed(0)}</text>`}
+  MO.forEach((mn,m)=>{let y0=H-B;const x=L+m*gw+(gw-bw)/2;CT.forEach(c=>{const h=y(c.mon[m]);g+=`<rect x="${x}" y="${y0-h}" width="${bw}" height="${h}" fill="${c.col}"><title>${mn}: ${esc(c.n)} ${fK(c.mon[m])}</title></rect>`;y0-=h});g+=`<text x="${x+bw/2}" y="${H-B+16}" text-anchor="middle">${mn}</text>`});
+  $('#c-mon').innerHTML=g;$('#l-mon').innerHTML=CT.map(c=>`<span><i style="background:${c.col}"></i>${esc(c.n.replace(/ \(.*\)/,''))}</span>`).join('');
+  $('#howto').innerHTML=CT.map(c=>`<p><b>${esc(c.n)}.</b> ${esc(c.m)}</p>`).join('');
+}
+
+/* detail */
+$('#d-ct').innerHTML='<option value="">All cost types</option>'+CT.map(c=>`<option value="${c.k}">${esc(c.n)}</option>`).join('');
+const open=new Set();
+function renderDet(){
+  const f=$('#d-ct').value,L=CT.filter(c=>!f||c.k===f);if(f)open.add(f);
+  let h=`<tr><th class="t">Cost type / account</th>${LOB.map(l=>`<th>${l}</th>`).join('')}<th>Total</th></tr>`;
+  L.forEach(c=>{h+=`<tr class="grp exp ${open.has(c.k)?'open':''}" data-k="${c.k}" tabindex="0" aria-expanded="${open.has(c.k)}"><td class="t">${esc(c.n)}</td>${c.byL.map(v=>`<td>${v?fK(v):''}</td>`).join('')}<td>${fK(c.fy)}</td></tr>`;
+    if(open.has(c.k))c.accL.forEach(a=>h+=`<tr class="sub3"><td class="t">${esc(a.a)}</td>${a.v.map(v=>`<td>${v?fK(v):''}</td>`).join('')}<td>${fK(sum(a.v))}</td></tr>`)});
+  h+=`<tr class="total"><td class="t">Total</td>${LOB.map((_,j)=>`<td>${fK(sum(L.map(c=>c.byL[j])))}</td>`).join('')}<td>${fK(sum(L.map(c=>c.fy)))}</td></tr>`;
+  $('#t-det').innerHTML=h;
+}
+const tog=e=>{const r=e.target.closest('tr[data-k]');if(!r)return;const k=r.dataset.k;open.has(k)?open.delete(k):open.add(k);renderDet();const n=$(`#t-det tr[data-k="${k}"]`);n&&n.focus()};
+$('#t-det').addEventListener('click',tog);$('#t-det').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tog(e)}});
+$('#d-ct').addEventListener('change',renderDet);
+
+/* contracts */
+function renderCon(){
+  const f=$('#c-f').value,L=CONS.filter(c=>!f||(f==='ren'?['r6','r12'].includes(c.st):c.st===f));
+  const ren=CONS.filter(c=>['r6','r12'].includes(c.st)),ex=CONS.filter(c=>c.st==='exp'),t27=con27();
+  $('#c-kpi').innerHTML=`<div class="kpi"><div class="l">Contract spend (TTM)</div><div class="n">${fM(CONTTM)}</div><div class="s">${CONS.length} vendors</div></div>
+   <div class="kpi"><div class="l">Renews within 12 months</div><div class="n">${fM(sum(ren.map(c=>c.ttm)))}</div><div class="s">${ren.length} vendors to price for 2027</div></div>
+   <div class="kpi"><div class="l">Expired but still paying</div><div class="n">${fM(sum(ex.map(c=>c.ttm)))}</div><div class="s">${ex.length} vendors: renew or cancel</div></div>
+   <div class="kpi"><div class="l">2027 contracts (draft)</div><div class="n">${fM(t27)}</div><div class="s">${t27<CONTTM?'−':'+'}$${fK(Math.abs(t27-CONTTM))}K vs TTM</div></div>`;
+  $('#t-con').innerHTML=`<tr><th class="t">Vendor</th><th class="t">Expiry</th><th class="t">Status</th><th>TTM spend</th><th class="t">Paid by</th><th class="t">GL accounts</th><th>2027 ($K)</th><th class="t">Decision</th><th class="t">Notes</th></tr>`+
+   (L.length?L.map(c=>`<tr><td class="t" style="white-space:normal;min-width:170px">${esc(c.n)}</td><td class="t" style="white-space:nowrap">${c.exp?c.exp.toISOString().slice(0,10):'–'}</td><td class="t"><span class="chip ${STL[c.st][1]}">${STL[c.st][0]}</span></td><td>${fK(c.ttm)}</td>
+     <td class="t" style="white-space:normal;min-width:130px;font-size:12px">${c.paid.join(', ')}</td><td class="t" style="white-space:normal;min-width:150px;font-size:12px">${c.gl.join(', ')}</td>
+     <td><input class="num" type="number" step="1" min="0" data-v="${c.i}" value="${c.v27==null?'':c.v27}" placeholder="${c.ttm}" aria-label="2027 amount for ${esc(c.n)}, $K"></td>
+     <td class="t"><select class="st" data-d="${c.i}" aria-label="Decision for ${esc(c.n)}">${['','Renew','Renegotiate','Cancel'].map(o=>`<option value="${o}"${o===c.dec?' selected':''}>${o||'—'}</option>`).join('')}</select></td>
+     <td class="t"><input class="txt" data-n="${c.i}" value="${esc(c.note)}" aria-label="Notes for ${esc(c.n)}"></td></tr>`).join(''):`<tr><td class="t" colspan="9">No contracts in this group.</td></tr>`)+
+   `<tr class="total"><td class="t" colspan="3">Total (${L.length})</td><td>${fK(sum(L.map(c=>c.ttm)))}</td><td colspan="2"></td><td>${fK(sum(L.map(c=>c.v27==null?c.ttm:c.v27)))}</td><td colspan="2"></td></tr>`;
+}
+$('#t-con').addEventListener('change',e=>{const t=e.target,d=t.dataset;let foc=null;
+  if(d.v){const c=CONS[+d.v];c.v27=t.value===''?null:Math.max(0,+t.value);if(c.dec===''&&c.v27===0)c.dec='Cancel';foc=`[data-v="${d.v}"]`}else if(d.d){const c=CONS[+d.d];c.dec=t.value;if(t.value==='Cancel')c.v27=0;foc=`[data-d="${d.d}"]`}else if(d.n){CONS[+d.n].note=t.value;save();return}else return;
+  save();renderCon();renderBud();if(foc){const n=$('#t-con '+foc);n&&n.focus()}});
+$('#c-f').addEventListener('change',renderCon);
+
+/* funding */
+function renderFun(){
+  const fc=['#1A1A1A','#2F5E46','#C7A25A','#A9A190'],fn=['Corporate','Broker allowance','Charged to business','Client reimbursed'];
+  $('#l-fun').innerHTML=fn.map((n,j)=>`<span><i style="background:${fc[j]}"></i>${n}</span>`).join('');
+  const mix=a=>{const t=sum(a);return`<div class="mix">${a.map((v,j)=>`<i style="width:${t?v/t*100:0}%;background:${fc[j]}"></i>`).join('')}</div>`};
+  let h=`<tr><th class="t">Cost type / line of business</th><th>2026 FY base</th>${fn.map(n=>`<th>${n}</th>`).join('')}<th class="t">Mix</th></tr>`;
+  CT.forEach(c=>{const t=[0,1,2,3].map(j=>sum(c.fund.map(f=>f[j])));
+    h+=`<tr class="grp"><td class="t">${esc(c.n)}</td><td>${fK(c.fy)}</td>${t.map(v=>`<td>${fK(v)}</td>`).join('')}<td class="t">${mix(t)}</td></tr>`;
+    c.fund.forEach((f,j)=>{if(c.byL[j]<1)return;h+=`<tr class="sub2"><td class="t">${LOB[j]}</td><td>${fK(c.byL[j])}</td>${f.map(v=>`<td>${fK(v)}</td>`).join('')}<td class="t">${mix(f)}</td></tr>`})});
+  const G=[0,1,2,3].map(j=>sum(CT.map(c=>sum(c.fund.map(f=>f[j])))));
+  h+=`<tr class="total"><td class="t">Total</td><td>${fK(sum(CT.map(c=>c.fy)))}</td>${G.map(v=>`<td>${fK(v)}</td>`).join('')}<td class="t">${mix(G)}</td></tr>`;
+  $('#t-fun').innerHTML=h;
+}
+
+/* tabs */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function show(id){tabs.forEach(t=>{const on=t.id==='tb-'+id;t.setAttribute('aria-selected',on);document.getElementById(t.getAttribute('aria-controls')).hidden=!on});}
+tabs.forEach(t=>t.addEventListener('click',()=>{const id=t.id.slice(3);show(id);try{history.replaceState(null,'','#'+id)}catch(e){}}));
+renderBud();renderMon();renderDet();renderCon();renderFun();
+const hs=location.hash.slice(1);if(['bud','det','con','fun'].includes(hs))show(hs);
+})();
+</script>
+</body>
+</html>
