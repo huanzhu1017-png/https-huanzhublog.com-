@@ -207,7 +207,6 @@ tr.exp.open td.t:before{content:"▾ "}
 
   <div class="tabs" role="tablist" style="margin-top:16px">
     <button role="tab" id="tb-bud" aria-controls="p-bud" aria-selected="true">Budget by cost type</button>
-    <button role="tab" id="tb-det" aria-controls="p-det" aria-selected="false">Detail by account</button>
     <button role="tab" id="tb-con" aria-controls="p-con" aria-selected="false">Contracts</button>
     <button role="tab" id="tb-fun" aria-controls="p-fun" aria-selected="false">Funding</button>
   </div>
@@ -221,14 +220,6 @@ tr.exp.open td.t:before{content:"▾ "}
       <div class="card"><h3>2026 by month, $M</h3><svg id="c-mon" viewBox="0 0 700 300" role="img" aria-label="Stacked monthly spend by cost type, January to October 2026"></svg><div class="legend" id="l-mon"></div></div>
       <div class="card howto"><h3>How each cost type is budgeted</h3><div id="howto"></div></div>
     </div>
-  </section>
-
-  <!-- DETAIL -->
-  <section role="tabpanel" id="p-det" aria-labelledby="tb-det" hidden>
-    <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">2026 by account and region</h2>
-      <label>Cost type<select class="st" id="d-ct"></select></label></div>
-    <p class="sub">$K. Click a row to see its accounts.</p>
-    <div class="scroll"><table id="t-det"></table></div>
   </section>
 
   <!-- CONTRACTS -->
@@ -351,21 +342,6 @@ function renderMon(){
   $('#howto').innerHTML=CT.map(c=>`<p><b>${esc(c.n)}.</b> ${esc(c.m)}</p>`).join('');
 }
 
-/* detail */
-$('#d-ct').innerHTML='<option value="">All cost types</option>'+CT.map(c=>`<option value="${c.k}">${esc(c.n)}</option>`).join('');
-const open=new Set();
-function renderDet(){
-  const f=$('#d-ct').value,L=CT.filter(c=>!f||c.k===f);if(f)open.add(f);
-  let h=`<tr><th class="t">Cost type / account</th>${LOB.map(l=>`<th>${l}</th>`).join('')}<th>Total</th></tr>`;
-  L.forEach(c=>{h+=`<tr class="grp exp ${open.has(c.k)?'open':''}" data-k="${c.k}" tabindex="0" aria-expanded="${open.has(c.k)}"><td class="t">${esc(c.n)}</td>${c.byL.map(v=>`<td>${v?fK(v):''}</td>`).join('')}<td>${fK(c.fy)}</td></tr>`;
-    if(open.has(c.k))c.accL.forEach(a=>h+=`<tr class="sub3"><td class="t">${esc(a.a)}</td>${a.v.map(v=>`<td>${v?fK(v):''}</td>`).join('')}<td>${fK(sum(a.v))}</td></tr>`)});
-  h+=`<tr class="total"><td class="t">Total</td>${LOB.map((_,j)=>`<td>${fK(sum(L.map(c=>c.byL[j])))}</td>`).join('')}<td>${fK(sum(L.map(c=>c.fy)))}</td></tr>`;
-  $('#t-det').innerHTML=h;
-}
-const tog=e=>{const r=e.target.closest('tr[data-k]');if(!r)return;const k=r.dataset.k;open.has(k)?open.delete(k):open.add(k);renderDet();const n=$(`#t-det tr[data-k="${k}"]`);n&&n.focus()};
-$('#t-det').addEventListener('click',tog);$('#t-det').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tog(e)}});
-$('#d-ct').addEventListener('change',renderDet);
-
 /* contracts */
 function renderCon(){
   const f=$('#c-f').value,L=CONS.filter(c=>!f||(f==='ren'?['r6','r12'].includes(c.st):c.st===f));
@@ -405,8 +381,8 @@ function renderFun(){
 const tabs=[...document.querySelectorAll('[role=tab]')];
 function show(id){tabs.forEach(t=>{const on=t.id==='tb-'+id;t.setAttribute('aria-selected',on);document.getElementById(t.getAttribute('aria-controls')).hidden=!on});}
 tabs.forEach(t=>t.addEventListener('click',()=>{const id=t.id.slice(3);show(id);try{history.replaceState(null,'','#'+id)}catch(e){}}));
-renderBud();renderMon();renderDet();renderCon();renderFun();
-const hs=location.hash.slice(1);if(['bud','det','con','fun'].includes(hs))show(hs);
+renderBud();renderMon();renderCon();renderFun();
+const hs=location.hash.slice(1);if(['bud','con','fun'].includes(hs))show(hs);
 })();
 </script>
 </body>
