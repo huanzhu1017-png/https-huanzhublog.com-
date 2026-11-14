@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>2027 Conference &amp; Event Budget · Huan Zhu</title>
-<meta name="description" content="A demo of an event budget Huan Zhu built: event-by-event review, walk to next year, calendar and data sources. All events and figures are made up.">
-<meta property="og:title" content="2027 Conference &amp; Event Budget · Huan Zhu">
-<meta property="og:description" content="A demo of an event budget Huan Zhu built: event-by-event review, walk to next year, calendar and data sources. All events and figures are made up.">
+<title>2027 Event Budget · Huan Zhu</title>
+<meta name="description" content="A demo of an event budget Huan Zhu built: event-by-event review, walk to next year, calendar and data sources. All figures are made up.">
+<meta property="og:title" content="2027 Event Budget · Huan Zhu">
+<meta property="og:description" content="A demo of an event budget Huan Zhu built: event-by-event review, walk to next year, calendar and data sources. All figures are made up.">
 <meta property="og:url" content="https://huanzhublog.com/tools/event-budget/">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
@@ -195,15 +195,15 @@ tr.exp.open td.t:before{content:"▾ "}
 </div>
 
 <div class="wrap">
-  <div class="nav2"><a href="../noncomp-budget/index.html">← Back to 2027 Non-Comp Budget</a></div>
+  <div class="nav2"><a href="../noncomp-budget/index.html">← Back to 2027 Expense Budget</a></div>
   <div class="head">
     <div>
-      <h1>2027 Conference &amp; Event Budget</h1>
+      <h1>2027 Event Budget</h1>
       <span class="badge final">Final · 13 Nov 2026</span>
-      <p>Conferences and events + booth rental GLs, invoices + journals, $K. 2025 and 2026 on the same footing: items booked in the wrong year moved, year-end accruals and reversals dropped. 2026 = Jan–Oct actual + Nov–Dec forecast.</p>
+      <p>Every event, $K. 2026 = Jan–Oct actual + Nov–Dec estimate, cleaned so 2025 and 2026 compare like for like.</p>
     </div>
   </div>
-  <p class="fict"><b>What this shows:</b> how I build an event budget bottom-up with each owner: every event reviewed line by line, a walk from this year to next year's number, a calendar, the spend that isn't tied to any event, and where every figure comes from. <b>All events, people and figures are made up.</b></p>
+  <p class="fict"><b>What this shows:</b> how I build an event budget with each owner: every event reviewed, a walk from this year to next, a calendar, spend not tied to an event, and where each number comes from. <b>All names and figures are made up.</b></p>
   <p class="note" id="fundline"></p>
   <div class="grid4" id="kpi" style="margin-top:12px"></div>
 
@@ -221,25 +221,25 @@ tr.exp.open td.t:before{content:"▾ "}
       <div class="card"><h3>US vs. international events</h3><svg id="c-us" viewBox="0 0 360 250" role="img" aria-label="Stacked bars of US and international events"></svg><div class="legend" id="l-us"></div></div>
       <div class="card"><h3>Growth, year over year</h3><svg id="c-gr" viewBox="0 0 360 250" role="img" aria-label="Growth from 2026 budget to 2026 full year and to 2027 budget"></svg><div class="legend"><span><i style="background:var(--lease)"></i>2026 budget → 2026 FY</span><span><i style="background:var(--sales)"></i>2026 FY → 2027 budget</span></div></div>
     </div>
-    <div class="card" style="margin-top:16px"><h3>Where the draft's cut comes from ($K)</h3>
+    <div class="card" style="margin-top:16px"><h3>Where the 2027 cut comes from, $K</h3>
       <svg id="c-wf" viewBox="0 0 1000 320" role="img" aria-label="Waterfall from 2026 full year to the 2027 draft, with the 15% and 20% savings targets"></svg>
       <p class="note">Green saves money, red adds. The two lines are the savings targets: 15% and 20% below 2026 full year.</p></div>
 
     <div class="ctlbar">
       <div><h4>Show</h4><div class="row">
-        <label>Group events by<select class="st" id="o-grp"><option value="own">Event owner</option><option value="ie">Internal vs. external</option><option value="reg">US vs. international</option><option value="ind">Industry</option></select></label>
-        <label>Funding shown<select class="st" id="o-fund"><option value="corp">Corporate only</option><option value="all">All (corporate + allowance + charged to business)</option></select></label>
+        <label>Group events by<select class="st" id="o-grp"><option value="own">Team</option><option value="ie">Internal or external</option><option value="reg">US or international</option><option value="ind">Sector</option></select></label>
+        <label>Who pays<select class="st" id="o-fund"><option value="corp">Company only</option><option value="all">All sources</option></select></label>
         <label>Review status<select class="st" id="o-rev"><option value="">All events</option><option value="1">Confirmed</option><option value="0">To be confirmed</option></select></label>
       </div><p class="note" id="revcount"></p></div>
       <div><h4>Assumptions</h4><div class="row">
         <label>Base for 2027<select class="st" id="o-base"><option value="fy">2026 full year</option><option value="avg">Average of 2025 and 2026</option><option value="min">Lower of 2025 and 2026</option></select></label>
         <label>Extra growth, international %<input class="num" id="o-intl" type="number" step="1" value="0" style="width:70px"></label>
-        <label class="chk"><input type="checkbox" id="o-oth"> Include "All other" (spend not tied to an event)</label>
+        <label class="chk"><input type="checkbox" id="o-oth"> Include spend not tied to an event</label>
       </div></div>
     </div>
 
     <h2 class="sec">Where the 2027 number comes from</h2>
-    <p class="sub">Click any 2026 full-year number for vendor-level detail. Change a 2027 adjustment and everything above updates. <span class="saved" id="savedmsg"></span></p>
+    <p class="sub">Click a 2026 number to see vendors. Change a 2027 adjustment and everything updates. <span class="saved" id="savedmsg"></span></p>
     <div class="scroll"><table id="t-build"></table></div>
     <h2 class="sec" style="font-size:17px">Funding mix of the 2027 starting point</h2>
     <div class="mix" id="fmix" style="height:22px;margin-top:6px"></div>
@@ -248,8 +248,8 @@ tr.exp.open td.t:before{content:"▾ "}
 
   <!-- CALENDAR -->
   <section role="tabpanel" id="p-cal" aria-labelledby="tb-cal" hidden>
-    <h2 class="sec">2027 events calendar</h2>
-    <p class="sub">Our own events and the industry events we attend. $K = 2027 corporate budget for the event; events held twice a year show half on each date; gold dates are placeholders. <span style="white-space:nowrap">● our event</span> <span style="white-space:nowrap;color:#A9A190">● industry event</span></p>
+    <h2 class="sec">2027 calendar</h2>
+    <p class="sub">Our events and the industry events we go to. $K = 2027 budget; twice-a-year events show half on each date; gold dates are not final. <span style="white-space:nowrap">● our event</span> <span style="white-space:nowrap;color:#A9A190">● industry event</span></p>
     <div class="grid3" id="cal-kpi"></div>
     <div class="cal" id="cal"></div>
   </section>
@@ -257,7 +257,7 @@ tr.exp.open td.t:before{content:"▾ "}
   <!-- OTHER -->
   <section role="tabpanel" id="p-oth" aria-labelledby="tb-oth" hidden>
     <h2 class="sec">Spend not tied to any event</h2>
-    <p class="sub">Booked to the event GLs, but no event owns it. Each group has an owner and a next step.</p>
+    <p class="sub">Booked as event costs, but no event owns it.</p>
     <div class="grid3" id="o-kpi"></div>
     <h2 class="sec" style="font-size:17px">Where it sits and who is following up</h2>
     <div class="scroll"><table id="t-oth"></table></div>
@@ -267,15 +267,15 @@ tr.exp.open td.t:before{content:"▾ "}
   <!-- SOURCES -->
   <section role="tabpanel" id="p-src" aria-labelledby="tb-src" hidden>
     <h2 class="sec">Data sources and review coverage</h2>
-    <p class="sub">Event GLs, Jan–Oct 2026 actuals plus Nov–Dec forecast, $K. Funding follows the Budget build tab.</p>
+    <p class="sub">Jan–Oct actual + Nov–Dec estimate, $K.</p>
     <div class="grid4" id="s-kpi"></div>
     <div class="grid2">
-      <div class="card"><h3>From the event budget to everything in the two GLs</h3><svg id="c-src" viewBox="0 0 600 260" role="img" aria-label="Events plus other spend equals the GL total"></svg></div>
+      <div class="card"><h3>From events to all event spend</h3><svg id="c-src" viewBox="0 0 600 260" role="img" aria-label="Events plus other spend equals all event spend"></svg></div>
       <div class="card"><h3>Event review with each owner</h3><div class="scroll"><table id="t-rev"></table></div><p class="note">Dark = confirmed, light = still open.</p></div>
     </div>
-    <div class="card" style="margin-top:16px"><h3>Where the numbers come from</h3><div class="scroll"><table id="t-srcs"></table></div><p class="note">Line counts and $ cover all funding sources, before reclasses.</p></div>
+    <div class="card" style="margin-top:16px"><h3>Where the numbers come from</h3><div class="scroll"><table id="t-srcs"></table></div><p class="note">All sources, before corrections.</p></div>
     <div class="grid2">
-      <div class="card"><h3>Spend not tied to an event: who is addressing it</h3><div id="who"></div></div>
+      <div class="card"><h3>Who is following up</h3><div id="who"></div></div>
       <div class="card"><h3>What has been investigated</h3><div id="inv"></div></div>
     </div>
   </section>
@@ -283,7 +283,7 @@ tr.exp.open td.t:before{content:"▾ "}
   <div class="pop" id="pop" hidden role="dialog" aria-modal="true" aria-labelledby="pop-h"><div class="box"><button type="button" class="x" id="pop-x" aria-label="Close">×</button><h3 id="pop-h"></h3><p class="note" id="pop-s"></p><table id="pop-t"></table></div></div>
 
   <footer>
-    <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../noncomp-budget/index.html">2027 non-comp budget</a></div>
+    <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../noncomp-budget/index.html">2027 expense budget</a></div>
     <div>Demo with generated data. Meridian is not a real company; every event, vendor, person and figure on this page is made up. Edits stay in your browser only.</div>
   </footer>
 </div>
@@ -302,60 +302,59 @@ const MO=['January','February','March','April','May','June','July','August','Sep
  g owner group, ie, reg, ind, who = event contact (role), b26 = 2026 budget, f25/f26 = full year,
  adj = agreed 2027 change vs. base, why = reason for the walk, act = 2027 already contracted,
  ok = confirmed, m = calendar month(s), d = dates, c = city, own = our event, fund = [corp, allowance, charged to business] */
-const OWN={ev:'Events lead',cm:'Capital Markets marketing',df:'Debt & Finance marketing',ls:'Leasing marketing',in:'International'};
+const OWN={ev:'Company events',cm:'West team',df:'South team',ls:'East team',in:'International team'};
 const E=[
- {n:'Meridian Leasing Summit',g:'ev',ie:'Internal',reg:'US',ind:'Leasing',who:'Head of Leasing',b26:672,f25:638,f26:700,adj:13,why:'add',act:0,ok:1,note:'Held flat at the 2026 level.',m:[9],d:'Sep 14–16',c:'Chicago, IL',own:1},
- {n:'Supply Chain Forum',g:'ev',ie:'Internal + External',reg:'US',ind:'Industrial',who:'Industrial lead',b26:419,f25:377,f26:430,adj:-11,why:'scope',act:366,ok:1,note:'Venue contracted; sponsorship credits cover part of the cost.',m:[2],d:'Feb 9–11',c:'Phoenix, AZ',own:1},
- {n:'Client Strategy Summit',g:'ev',ie:'Internal',reg:'US',ind:'Leasing',who:'Occupier services lead',b26:403,f25:282,f26:0,adj:346,why:'add',act:0,ok:1,note:'Returns in 2027 after a year off.',m:[4],d:'Apr 12–14',c:'Chicago, IL',own:1},
- {n:'Leadership Offsite',g:'ev',ie:'Internal',reg:'US',ind:'Internal',who:'COO office',b26:0,f25:0,f26:280,adj:-280,why:'oneoff',act:0,ok:1,note:'One-off in 2026.',m:null,own:1},
- {n:'Client Holiday Dinner',g:'ev',ie:'External',reg:'US',ind:'Leasing',who:'Regional lead, East',b26:254,f25:247,f26:222,adj:-222,why:'elim',act:0,ok:1,note:'Removed for 2027; hosts can fund it from allowance.',m:[12],d:'Date TBD',ph:1,c:'New York, NY',own:1},
- {n:'Analyst Development Program',g:'ev',ie:'Internal',reg:'US',ind:'Internal',who:'Head of Talent',b26:260,f25:245,f26:227,adj:-227,why:'defer',act:0,ok:1,note:'Skipped in 2027, back in 2028.',m:null,own:1},
- {n:'Corporate occupiers network',g:'ls',ie:'External',reg:'US',ind:'Leasing',who:'Occupier services lead',b26:192,f25:184,f26:200,adj:-162,why:'scope',act:0,ok:1,note:'Smaller host package instead of a full sponsorship.',m:[11],d:'Nov 8–10',c:'Orlando, FL'},
- {n:'New York Holiday Party',g:'ev',ie:'Internal',reg:'US',ind:'Internal',who:'COO office',b26:188,f25:184,f26:188,adj:0,why:'add',act:0,ok:1,note:'Held at the 2026 level.',m:[12],d:'Dec 9 (evening)',c:'New York, NY',own:1},
- {n:'Real estate board gala',g:'ls',ie:'External',reg:'US',ind:'Leasing',who:'Regional lead, East',b26:80,f25:76,f26:151,adj:-151,why:'elim',act:0,ok:1,note:'Removed: table purchases move to broker allowance.',m:[1],d:'Jan 14',c:'New York, NY'},
- {n:'Data Center Roundtable',g:'ls',ie:'Internal',reg:'US',ind:'Data centers',who:'Data center lead',b26:69,f25:55,f26:67,adj:0,why:'add',act:0,ok:1,note:'Held at the 2026 level.',m:[6],d:'Jun 2–4',c:'Austin, TX',own:1},
- {n:'Trade press awards',g:'ls',ie:'External',reg:'US',ind:'Leasing',who:'Marketing director',b26:53,f25:48,f26:62,adj:-15,why:'scope',act:0,ok:0,flag:'To dig into 2026 actuals',note:'Fewer tables; checking 2026 actuals.',m:[7],d:'Jul (placeholder)',ph:1,c:'New York, NY'},
- {n:'Economic development expo',g:'ls',ie:'External',reg:'US',ind:'Unclassified',who:'Public sector lead',b26:21,f25:21,f26:21,adj:0,why:'add',act:0,ok:1,note:'Flat to 2026.',m:[5],d:'May 2–5',c:'National Harbor, MD'},
- {n:'Facility managers expo',g:'ls',ie:'External',reg:'US',ind:'Unclassified',who:'Facilities services lead',b26:12,f25:11,f26:12,adj:0,why:'add',act:0,ok:1,note:'Flat to 2026.',m:[10],d:'Oct 13–15',c:'Kansas City, MO'},
- {n:'Retail property convention, West',g:'cm',ie:'External',reg:'US',ind:'Retail',who:'Retail lead',b26:996,f25:967,f26:996,adj:15,why:'add',act:197,ok:1,note:'2026 full year plus inflation; booth deposit already paid.',m:[5],d:'May 24–26',c:'Las Vegas, NV',fund:[.96,.03,.01]},
- {n:'Retail property convention, East',g:'cm',ie:'External',reg:'US',ind:'Retail',who:'Retail lead',b26:420,f25:456,f26:549,adj:-196,why:'scope',act:0,ok:1,note:'Smaller booth proposal.',m:[12],d:'Dec 8–9',c:'New York, NY'},
- {n:'Land use institute meetings',g:'cm',ie:'External',reg:'US',ind:'Capital Markets',who:'Capital Markets leads',b26:127,f25:118,f26:130,adj:0,why:'add',act:2,ok:1,note:'Held at 2026; spring and fall meetings.',m:[5,10],d:['May 11–13','Oct 18–20'],c:['Seattle, WA','Philadelphia, PA']},
- {n:'Industrial brokers association',g:'cm',ie:'External',reg:'US',ind:'Industrial',who:'Industrial lead',b26:38,f25:36,f26:47,adj:-2,why:'scope',act:0,ok:1,note:'Spring and fall chapters.',m:[3,10],d:['Mar 9–10','Oct 20–21'],c:['Los Angeles, CA','Jersey City, NJ']},
- {n:'Mortgage bankers finance conference',g:'cm',ie:'External',reg:'US',ind:'Capital Markets',who:'Debt & Finance lead',b26:59,f25:51,f26:43,adj:0,why:'add',act:0,ok:1,note:'Held at 2026.',m:[2],d:'Feb 7–10',c:'San Diego, CA'},
- {n:'Industrial realtors meeting',g:'cm',ie:'External',reg:'US',ind:'Industrial',who:'Industrial lead',b26:11,f25:0,f26:0,adj:10,why:'add',act:0,ok:0,flag:'New proposal',note:'New proposal from the industrial team.',m:[5,11],d:['May 5–8','Nov 3–6'],c:['Fort Lauderdale, FL','Salt Lake City, UT']},
- {n:'Multifamily Capital Forum',g:'df',ie:'Internal + External',reg:'US',ind:'Multifamily',who:'Multifamily lead',b26:816,f25:766,f26:1047,adj:-418,why:'scope',act:375,ok:1,note:'Smaller venue, one night fewer.',m:[5],d:'May 10–12',c:'Location TBD',own:1,fund:[.98,.02,0]},
- {n:'Multifamily industry conference',g:'df',ie:'External',reg:'US',ind:'Multifamily',who:'Multifamily lead',b26:346,f25:319,f26:312,adj:107,why:'add',act:419,ok:1,note:'Contracts signed: booth and hospitality suites.',m:[1],d:'Jan 26–28',c:'Las Vegas, NV'},
- {n:'Lending team meeting',g:'df',ie:'Internal',reg:'US',ind:'Multifamily',who:'Debt & Finance lead',b26:183,f25:175,f26:17,adj:154,why:'add',act:0,ok:1,note:'Back in person; 2026 was held virtually.',m:[11],d:'Nov (placeholder)',ph:1,c:'Date to confirm',own:1},
- {n:'Regional capital markets client event',g:'df',ie:'External',reg:'US',ind:'Multifamily',who:'Multifamily lead',b26:19,f25:0,f26:0,adj:30,why:'add',act:0,ok:1,note:'New for 2027.',m:[9],d:'Date TBD',ph:1,c:'Dallas, TX',own:1},
- {n:'Coastal client event',g:'df',ie:'External',reg:'US',ind:'Multifamily',who:'Regional lead, West',b26:5,f25:7,f26:19,adj:-9,why:'scope',act:0,ok:1,note:'Halved from 2026.',m:[6],d:'Jun 6–8',c:'Newport Beach, CA',own:1},
- {n:'Affordable housing summit',g:'df',ie:'External',reg:'US',ind:'Multifamily',who:'Multifamily lead',b26:23,f25:0,f26:0,adj:26,why:'add',act:0,ok:1,note:'Confirmed by the team.',m:[11],d:'Date TBD',ph:1,c:'Washington, DC'},
- {n:'Golf tournament hospitality',g:'df',ie:'External',reg:'US',ind:'Capital Markets',who:'Regional lead, West',b26:90,f25:94,f26:149,adj:-149,why:'elim',act:0,ok:1,note:'2027 corporate $0: brokers cover it from allowance.',m:[2],d:'Feb 8–14',c:'Scottsdale, AZ',fund:[.9,.1,0]},
- {n:'European property fair',g:'in',ie:'External',reg:'International',ind:'Global',who:'International lead',b26:330,f25:317,f26:434,adj:0,why:'add',act:0,ok:1,note:'Held at 2026 full year.',m:[3],d:'Mar 16–19',c:'Cannes, France'},
- {n:'Munich property expo',g:'in',ie:'External',reg:'International',ind:'Global',who:'International lead',b26:384,f25:399,f26:462,adj:0,why:'add',act:0,ok:1,note:'Held at 2026; includes stand build.',m:[10],d:'Oct 4–6',c:'Munich, Germany'},
- {n:'UK property forum',g:'in',ie:'External',reg:'International',ind:'Global',who:'UK lead',b26:73,f25:66,f26:164,adj:0,why:'add',act:0,ok:0,flag:'Confirming with UK team',note:'Held at 2026; UK team to confirm.',m:[5],d:'May 18–20',c:'Leeds, UK'},
- {n:'Asia Pacific occupier summit',g:'in',ie:'External',reg:'International',ind:'Leasing',who:'APAC lead',b26:49,f25:45,f26:39,adj:0,why:'add',act:0,ok:1,note:'Flat to 2026.',m:[3],d:'Mar 2–4',c:'Hong Kong'}
+ {n:'Company summit',g:'ev',ie:'Internal',reg:'US',ind:'Office',who:'East lead',b26:672,f25:638,f26:700,adj:13,why:'add',act:0,ok:1,note:'Held flat at the 2026 level.',m:[9],d:'Sep 14–16',c:'Chicago, IL',own:1},
+ {n:'Industry forum',g:'ev',ie:'Both',reg:'US',ind:'Industrial',who:'West lead',b26:419,f25:377,f26:430,adj:-11,why:'scope',act:366,ok:1,note:'Venue booked; sponsor credits cover part.',m:[2],d:'Feb 9–11',c:'Denver, CO',own:1},
+ {n:'Client summit',g:'ev',ie:'Internal',reg:'US',ind:'Office',who:'Central lead',b26:403,f25:282,f26:0,adj:346,why:'add',act:0,ok:1,note:'Returns in 2027 after a year off.',m:[4],d:'Apr 12–14',c:'Atlanta, GA',own:1},
+ {n:'Leadership offsite',g:'ev',ie:'Internal',reg:'US',ind:'Internal',who:'COO office',b26:0,f25:0,f26:280,adj:-280,why:'oneoff',act:0,ok:1,note:'One-off in 2026.',m:null,own:1},
+ {n:'Client dinner',g:'ev',ie:'External',reg:'US',ind:'Office',who:'East lead',b26:254,f25:247,f26:222,adj:-222,why:'elim',act:0,ok:1,note:'Dropped for 2027.',m:[12],d:'Date TBD',ph:1,c:'Boston, MA',own:1},
+ {n:'Training program',g:'ev',ie:'Internal',reg:'US',ind:'Internal',who:'HR lead',b26:260,f25:245,f26:227,adj:-227,why:'defer',act:0,ok:1,note:'Skipped in 2027, back in 2028.',m:null,own:1},
+ {n:'Trade group A',g:'ls',ie:'External',reg:'US',ind:'Office',who:'Central lead',b26:192,f25:184,f26:200,adj:-162,why:'scope',act:0,ok:1,note:'Smaller host package instead of a full sponsorship.',m:[11],d:'Nov 8–10',c:'Nashville, TN'},
+ {n:'Holiday party',g:'ev',ie:'Internal',reg:'US',ind:'Internal',who:'COO office',b26:188,f25:184,f26:188,adj:0,why:'add',act:0,ok:1,note:'Held at the 2026 level.',m:[12],d:'Dec 9',c:'New York, NY',own:1},
+ {n:'Industry gala',g:'ls',ie:'External',reg:'US',ind:'Office',who:'East lead',b26:80,f25:76,f26:151,adj:-151,why:'elim',act:0,ok:1,note:'Dropped; teams can buy tables from their own budget.',m:[1],d:'Jan 14',c:'Philadelphia, PA'},
+ {n:'Roundtable',g:'ls',ie:'Internal',reg:'US',ind:'Tech',who:'Central lead',b26:69,f25:55,f26:67,adj:0,why:'add',act:0,ok:1,note:'Held at the 2026 level.',m:[6],d:'Jun 2–4',c:'Austin, TX',own:1},
+ {n:'Awards dinner',g:'ls',ie:'External',reg:'US',ind:'Office',who:'Marketing lead',b26:53,f25:48,f26:62,adj:-15,why:'scope',act:0,ok:0,flag:'Checking actuals',note:'Fewer tables.',m:[7],d:'July',ph:1,c:'Charlotte, NC'},
+ {n:'Trade show A',g:'ls',ie:'External',reg:'US',ind:'General',who:'South lead',b26:21,f25:21,f26:21,adj:0,why:'add',act:0,ok:1,note:'Flat to 2026.',m:[5],d:'May 2–5',c:'Baltimore, MD'},
+ {n:'Trade show B',g:'ls',ie:'External',reg:'US',ind:'General',who:'South lead',b26:12,f25:11,f26:12,adj:0,why:'add',act:0,ok:1,note:'Flat to 2026.',m:[10],d:'Oct 13–15',c:'St. Louis, MO'},
+ {n:'Spring convention',g:'cm',ie:'External',reg:'US',ind:'Retail',who:'West lead',b26:996,f25:967,f26:996,adj:15,why:'add',act:197,ok:1,note:'2026 plus inflation; deposit paid.',m:[5],d:'May 24–26',c:'Orlando, FL',fund:[.96,.03,.01]},
+ {n:'Fall convention',g:'cm',ie:'External',reg:'US',ind:'Retail',who:'West lead',b26:420,f25:456,f26:549,adj:-196,why:'scope',act:0,ok:1,note:'Smaller booth proposal.',m:[12],d:'Dec 8–9',c:'Boston, MA'},
+ {n:'Industry meetings',g:'cm',ie:'External',reg:'US',ind:'Finance',who:'Central lead',b26:127,f25:118,f26:130,adj:0,why:'add',act:2,ok:1,note:'Held flat; spring and fall.',m:[5,10],d:['May 11–13','Oct 18–20'],c:['Portland, OR','Pittsburgh, PA']},
+ {n:'Trade group B',g:'cm',ie:'External',reg:'US',ind:'Industrial',who:'West lead',b26:38,f25:36,f26:47,adj:-2,why:'scope',act:0,ok:1,note:'Spring and fall chapters.',m:[3,10],d:['Mar 9–10','Oct 20–21'],c:['San Antonio, TX','Columbus, OH']},
+ {n:'Finance conference',g:'cm',ie:'External',reg:'US',ind:'Finance',who:'South lead',b26:59,f25:51,f26:43,adj:0,why:'add',act:0,ok:1,note:'Held at 2026.',m:[2],d:'Feb 7–10',c:'San Jose, CA'},
+ {n:'Trade group C',g:'cm',ie:'External',reg:'US',ind:'Industrial',who:'West lead',b26:11,f25:0,f26:0,adj:10,why:'add',act:0,ok:0,flag:'New proposal',note:'New request from the team.',m:[5,11],d:['May 5–8','Nov 3–6'],c:['Tampa, FL','Minneapolis, MN']},
+ {n:'Investor forum',g:'df',ie:'Both',reg:'US',ind:'Housing',who:'South lead',b26:816,f25:766,f26:1047,adj:-418,why:'scope',act:375,ok:1,note:'Smaller venue, one night fewer.',m:[5],d:'May 10–12',c:'Location TBD',own:1,fund:[.98,.02,0]},
+ {n:'Industry conference',g:'df',ie:'External',reg:'US',ind:'Housing',who:'South lead',b26:346,f25:319,f26:312,adj:107,why:'add',act:419,ok:1,note:'Contracts signed.',m:[1],d:'Jan 26–28',c:'Las Vegas, NV'},
+ {n:'Team meeting',g:'df',ie:'Internal',reg:'US',ind:'Housing',who:'South lead',b26:183,f25:175,f26:17,adj:154,why:'add',act:0,ok:1,note:'Back in person; 2026 was held virtually.',m:[11],d:'November',ph:1,c:'To confirm',own:1},
+ {n:'Regional client event',g:'df',ie:'External',reg:'US',ind:'Housing',who:'South lead',b26:19,f25:0,f26:0,adj:30,why:'add',act:0,ok:1,note:'New for 2027.',m:[9],d:'Date TBD',ph:1,c:'Houston, TX',own:1},
+ {n:'Client reception',g:'df',ie:'External',reg:'US',ind:'Housing',who:'West lead',b26:5,f25:7,f26:19,adj:-9,why:'scope',act:0,ok:1,note:'Halved from 2026.',m:[6],d:'Jun 6–8',c:'San Diego, CA',own:1},
+ {n:'Policy summit',g:'df',ie:'External',reg:'US',ind:'Housing',who:'South lead',b26:23,f25:0,f26:0,adj:26,why:'add',act:0,ok:1,note:'Confirmed by the team.',m:[11],d:'Date TBD',ph:1,c:'Washington, DC'},
+ {n:'Sports hospitality',g:'df',ie:'External',reg:'US',ind:'Finance',who:'West lead',b26:90,f25:94,f26:149,adj:-149,why:'elim',act:0,ok:1,note:'Dropped; teams can pay from their own budget.',m:[2],d:'Feb 8–14',c:'Phoenix, AZ',fund:[.9,.1,0]},
+ {n:'International fair A',g:'in',ie:'External',reg:'International',ind:'Global',who:'International lead',b26:330,f25:317,f26:434,adj:0,why:'add',act:0,ok:1,note:'Held at 2026 full year.',m:[3],d:'Mar 16–19',c:'Amsterdam, Netherlands'},
+ {n:'International fair B',g:'in',ie:'External',reg:'International',ind:'Global',who:'International lead',b26:384,f25:399,f26:462,adj:0,why:'add',act:0,ok:1,note:'Held flat.',m:[10],d:'Oct 4–6',c:'Paris, France'},
+ {n:'International forum',g:'in',ie:'External',reg:'International',ind:'Global',who:'International lead',b26:73,f25:66,f26:164,adj:0,why:'add',act:0,ok:0,flag:'Team to confirm',note:'Held flat; team to confirm.',m:[5],d:'May 18–20',c:'Dublin, Ireland'},
+ {n:'Asia summit',g:'in',ie:'External',reg:'International',ind:'Office',who:'International lead',b26:49,f25:45,f26:39,adj:0,why:'add',act:0,ok:1,note:'Flat to 2026.',m:[3],d:'Mar 2–4',c:'Singapore'}
 ];
 const XTRA=[ // industry events on the calendar with no budget
- [1,'Jan 5–8','Commercial finance conference','Miami, FL'],[1,'Jan 18–22','Global economic forum','Davos, Switzerland'],[2,'Feb 8–10','Proptech expo','Las Vegas, NV'],
- [3,'Mar 7–9','Retail tenant summit','Fort Lauderdale, FL'],[3,'Mar 15–17','Seniors housing spring meeting','Dallas, TX'],[4,'Apr 27–29','Facility management fusion','New Orleans, LA'],
- [5,'May 10–12','Hotel investment forum','Berlin, Germany'],[6,'Jun 8–10','Hotel investment conference','New York, NY'],[8,'Aug 31–Sep 2','Data center connect','Austin, TX'],
- [9,'Sep 7–9','Real estate platform summit','Antibes, France'],[9,'Sep 20–22','Workplace summit, Europe','London, UK'],[10,'Oct 20–21','Real estate tech week','New York, NY'],[11,'Nov 3–4','Retail property fair','Cannes, France']];
+ [1,'Jan 12–14','Industry outlook day','Miami, FL'],[2,'Feb 17–19','Tech expo','Las Vegas, NV'],[3,'Mar 23–25','Spring trade show','Dallas, TX'],
+ [4,'Apr 20–22','Workplace forum','Denver, CO'],[5,'May 17–19','Investment forum','Berlin, Germany'],[6,'Jun 14–16','Summer conference','New York, NY'],
+ [8,'Aug 24–26','Tech summit','Austin, TX'],[9,'Sep 21–23','Workplace forum, Europe','London, UK'],[10,'Oct 26–27','Tech week','New York, NY'],[11,'Nov 16–17','Fall trade show','Atlanta, GA']];
 const VTYPE=['Venue and catering','Booth build and freight','Sponsorship and registration','Hotel block','AV and production','Travel agency','Gifts and printing'];
 let seed=4401;const R=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
 E.forEach((e,i)=>{e.i=i+1;e.fund=e.fund||[1,0,0];e.adj0=e.adj;
   const k=2+Math.floor(R()*3),w=Array.from({length:k},()=>.4+R()),t=sum(w),ty=VTYPE.slice().sort(()=>R()-.5).slice(0,k);
   e.vend=ty.map((v,j)=>({v,a:w[j]/t}));});
 
-/* other spend in the same GLs, not tied to an event */
+/* other spend booked as event costs, not tied to an event */
 const OTH=[
- {n:'Employee expense reports (market leaders)',a:390,s:0,o:'Market leaders',nx:'Saving opportunity: market leaders to review how much can move to broker allowance',opp:1},
- {n:'Accounting to investigate',a:232,s:-82,o:'Accounting team',nx:'Saving: a one-off prepaid cost removed from 2027. Rest: reclass to the right event or to T&E.'},
- {n:'International cost centers',a:180,s:0,o:'To be assigned',nx:'Not yet reviewed'},
- {n:'Corporate and shared cost centers',a:135,s:0,o:'To be assigned',nx:'Not yet reviewed'},
- {n:'Valuation cost centers',a:112,s:0,o:'To be assigned',nx:'Not yet reviewed'},
- {n:'Small cost centers (each under $8K)',a:71,s:0,o:'To be assigned',nx:'Not yet reviewed'},
- {n:'Events team expense reports',a:64,s:0,o:'Events lead',nx:'Events lead to tag the lines to events'},
- {n:'Leasing offices, other',a:30,s:0,o:'To be assigned',nx:'Not yet reviewed'}];
+ {n:'Expense reports',a:390,s:0,o:'Team leads',nx:'Saving opportunity: team leads to move what they can to team budgets',opp:1},
+ {n:'To investigate',a:232,s:-82,o:'Accounting team',nx:'One-off removed from 2027; the rest to move to the right event.'},
+ {n:'International',a:180,s:0,o:'To be assigned',nx:'Not yet reviewed'},
+ {n:'Head office',a:135,s:0,o:'To be assigned',nx:'Not yet reviewed'},
+ {n:'Other teams',a:112,s:0,o:'To be assigned',nx:'Not yet reviewed'},
+ {n:'Small items',a:71,s:0,o:'To be assigned',nx:'Not yet reviewed'},
+ {n:'Events team',a:64,s:0,o:'Events lead',nx:'Tag to events'},
+ {n:'Branch offices',a:30,s:0,o:'To be assigned',nx:'Not yet reviewed'}];
 const OTHT=sum(OTH.map(o=>o.a)), OTH27=sum(OTH.map(o=>o.a+o.s));
 
 /* ---------- state (edits stay in this browser) ---------- */
@@ -411,14 +410,14 @@ function waterfall(rows){
 /* ---------- render ---------- */
 function render(){
   const o=opt(),rows=calc(o),T=totals(rows),oth=o.oth?{f26:OTHT,b27:OTH27}:{f26:0,b27:0};
-  $('#fundline').innerHTML=`<b>Funding shown: ${o.fund==='corp'?'corporate only':'all sources'}</b> ${o.fund==='corp'?'(broker allowance and charged-to-business spend excluded)':'(corporate + broker allowance + charged to the business)'}`;
+  $('#fundline').innerHTML=`<b>Showing: ${o.fund==='corp'?'company-paid only':'all sources'}</b>`;
   const f26=T.f26+oth.f26,b27=T.b27+oth.b27;
   $('#kpi').innerHTML=`<div class="kpi"><div class="l">Total 2026 budget</div><div class="n">${fK(T.b26)}</div><div class="s">events, $K</div></div>
-   <div class="kpi"><div class="l">Total 2026 full year</div><div class="n">${fK(f26)}</div><div class="s">Jan–Oct actual + Nov–Dec forecast${o.oth?', incl. other spend':''}</div></div>
-   <div class="kpi"><div class="l">Total 2027 budget</div><div class="n">${fK(b27)}</div><div class="s">${sK(b27-f26)} vs 2026 FY (${pc(b27/f26-1)})</div></div>
-   <div class="kpi"><div class="l">Contracted for 2027</div><div class="n">${fK(T.act)}</div><div class="s">${Math.round(T.act/T.b27*100)}% of events; not yet contracted ${fK(T.open)}</div></div>`;
+   <div class="kpi"><div class="l">Total 2026 full year</div><div class="n">${fK(f26)}</div><div class="s">actual + estimate${o.oth?', with other spend':''}</div></div>
+   <div class="kpi"><div class="l">Total 2027 budget</div><div class="n">${fK(b27)}</div><div class="s">${sK(b27-f26)} vs 2026, ${pc(b27/f26-1)}</div></div>
+   <div class="kpi"><div class="l">Signed for 2027</div><div class="n">${fK(T.act)}</div><div class="s">${Math.round(T.act/T.b27*100)}% signed; ${fK(T.open)} still open</div></div>`;
   const C3=['#1A1A1A','#2F5E46','#A9A190'],by=(f)=>{const t=totals(rows.filter(f));return[t.b26,t.f26,t.b27]};
-  stack($('#c-ie'),$('#l-ie'),[{n:'Internal',v:by(r=>r.e.ie==='Internal')},{n:'External',v:by(r=>r.e.ie==='External')},{n:'Mixed',v:by(r=>r.e.ie==='Internal + External')}],C3);
+  stack($('#c-ie'),$('#l-ie'),[{n:'Internal',v:by(r=>r.e.ie==='Internal')},{n:'External',v:by(r=>r.e.ie==='External')},{n:'Both',v:by(r=>r.e.ie==='Both')}],C3);
   stack($('#c-us'),$('#l-us'),[{n:'US events',v:by(r=>r.e.reg==='US')},{n:'International',v:by(r=>r.e.reg!=='US')}].concat(o.oth?[{n:'Other spend',v:[0,OTHT,OTH27]}]:[]),C3);
   growth(rows);waterfall(rows);
   const conf=rows.filter(r=>r.e.ok),tbc=rows.filter(r=>!r.e.ok);
@@ -428,24 +427,24 @@ function render(){
   const key={own:r=>OWN[r.e.g],ie:r=>r.e.ie,reg:r=>r.e.reg==='US'?'US events':'International events',ind:r=>r.e.ind}[o.grp];
   const groups=[...new Set(vis.map(key))];
   const tr=(t,cls)=>`<tr class="${cls}"><td></td><td class="t" colspan="4">${t.n}</td><td>${fK(t.b26)}</td><td>${fK(t.f26)}</td><td>${sK(t.b27-t.f26)}</td><td>${fK(t.b27)}</td><td>${fK(t.act)}</td><td>${fK(t.open)}</td><td></td></tr>`;
-  let h=`<tr><th class="t">#</th><th class="t">Event</th><th class="t">Internal / external</th><th class="t">Event contact</th><th class="t">Industry</th><th>2026 BUD</th><th>2026 FY</th><th>2027 adj.</th><th>2027 BUD</th><th>2027 contracted</th><th>Not yet contracted</th><th class="t">Notes</th></tr>`;
+  let h=`<tr><th class="t">#</th><th class="t">Event</th><th class="t">Type</th><th class="t">Contact</th><th class="t">Sector</th><th>2026 BUD</th><th>2026 FY</th><th>2027 adj.</th><th>2027 BUD</th><th>Signed</th><th>Not signed</th><th class="t">Notes</th></tr>`;
   groups.forEach(gn=>{const L=vis.filter(r=>key(r)===gn);h+=tr({n:esc(gn),...totals(L)},'grp');
     L.forEach(r=>{const e=r.e;h+=`<tr><td class="t">${e.i}</td><td class="t" style="white-space:normal;min-width:190px">${esc(e.n)} ${e.ok?'<span class="chip ok">✓ confirmed</span>':`<span class="chip warn">${esc(e.flag||'to confirm')}</span>`}</td><td class="t">${e.ie}</td><td class="t">${esc(e.who)}</td><td class="t">${esc(e.ind)}</td><td>${fK(r.b26)}</td>
       <td><button class="linkbtn" data-v="${e.i}" aria-label="Vendor detail for ${esc(e.n)}">${fK(r.f26)}</button></td>
       <td><input class="num" type="number" step="1" data-a="${e.i}" value="${e.adj}" aria-label="2027 adjustment for ${esc(e.n)}, $K" style="width:70px"></td>
       <td><b>${fK(r.b27)}</b></td><td>${r.act?fK(r.act):''}</td><td>${fK(r.open)}</td><td class="t" style="white-space:normal;min-width:240px;font-size:12px;color:var(--ink2)">${esc(e.note)}</td></tr>`})});
   const VT=totals(vis);h+=tr({n:'Events total',...VT},'total');
-  if(o.oth)h+=`<tr class="grp"><td></td><td class="t" colspan="4">Spend not tied to an event (Other expenses tab)</td><td></td><td>${fK(OTHT)}</td><td>${sK(OTH27-OTHT)}</td><td>${fK(OTH27)}</td><td></td><td>${fK(OTH27)}</td><td></td></tr>`+tr({n:'Total incl. other spend',b26:VT.b26,f26:VT.f26+OTHT,b27:VT.b27+OTH27,act:VT.act,open:VT.open+OTH27},'total');
+  if(o.oth)h+=`<tr class="grp"><td></td><td class="t" colspan="4">Spend not tied to an event</td><td></td><td>${fK(OTHT)}</td><td>${sK(OTH27-OTHT)}</td><td>${fK(OTH27)}</td><td></td><td>${fK(OTH27)}</td><td></td></tr>`+tr({n:'Total with other spend',b26:VT.b26,f26:VT.f26+OTHT,b27:VT.b27+OTH27,act:VT.act,open:VT.open+OTH27},'total');
   $('#t-build').innerHTML=h;
   // funding mix of the starting point (all sources)
-  const fm=[0,1,2].map(j=>sum(E.map(e=>e.f26/e.fund[0]*e.fund[j]))),ft=sum(fm),fc=['#1A1A1A','#2F5E46','#A9A190'],fn=['Corporate','Broker allowance','Charged to business'];
+  const fm=[0,1,2].map(j=>sum(E.map(e=>e.f26/e.fund[0]*e.fund[j]))),ft=sum(fm),fc=['#1A1A1A','#2F5E46','#A9A190'],fn=['Company','Team budget','Recharged'];
   $('#fmix').innerHTML=fm.map((v,j)=>`<i style="width:${v/ft*100}%;background:${fc[j]}"></i>`).join('');
-  $('#fmixnote').textContent=fm.map((v,j)=>`${fn[j]} ${fK(v)} (${Math.round(v/ft*100)}%)`).join(' · ');
+  $('#fmixnote').textContent=fm.map((v,j)=>`${fn[j]} ${fK(v)}, ${Math.round(v/ft*100)}%`).join(' · ');
   renderCal(rows);renderOth();renderSrc(rows,o);
 }
 $('#t-build').addEventListener('change',e=>{const i=e.target.dataset.a;if(!i)return;const ev=E.find(x=>x.i===+i);ev.adj=+e.target.value||0;save();render();const n=$(`#t-build input[data-a="${i}"]`);n&&n.focus()});
 $('#t-build').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;const ev=E.find(x=>x.i===+b.dataset.v),o=opt(),f=o.fund==='all'?1/ev.fund[0]:1,tot=ev.f26*f;
-  $('#pop-h').textContent=ev.n;$('#pop-s').textContent=`2026 full year by vendor, $K (${o.fund==='all'?'all funding':'corporate'}). Vendors are generic placeholders.`;
+  $('#pop-h').textContent=ev.n;$('#pop-s').textContent=`2026 by vendor, $K. ${o.fund==='all'?'All sources.':'Company-paid only.'}`;
   $('#pop-t').innerHTML=`<tr><th class="t">Vendor</th><th>$K</th><th>%</th></tr>`+ev.vend.map(v=>`<tr><td class="t">${v.v}</td><td>${fK(tot*v.a)}</td><td>${Math.round(v.a*100)}%</td></tr>`).join('')+`<tr class="total"><td class="t">Total</td><td>${fK(tot)}</td><td>100%</td></tr>`;
   $('#pop').hidden=false;$('#pop-x').focus()});
 const closePop=()=>{$('#pop').hidden=true};
@@ -460,7 +459,7 @@ function renderCal(rows){
   const budgeted=items.filter(x=>x.a>0),tb=sum(budgeted.map(x=>x.a)),all27=sum(rows.map(r=>r.b27));
   $('#cal-kpi').innerHTML=`<div class="kpi"><div class="l">Events on the calendar</div><div class="n">${items.length}</div><div class="s">our events and industry events</div></div>
    <div class="kpi"><div class="l">Calendar entries with a budget</div><div class="n">${budgeted.length}</div><div class="s">twice-a-year events count twice</div></div>
-   <div class="kpi"><div class="l">2027 budget on the calendar</div><div class="n">$${fK(tb)}K</div><div class="s">of $${fK(all27)}K; the rest has no date (one-offs, deferred)</div></div>`;
+   <div class="kpi"><div class="l">2027 budget on the calendar</div><div class="n">$${fK(tb)}K</div><div class="s">of $${fK(all27)}K; the rest has no date</div></div>`;
   $('#cal').innerHTML=MO.map((mn,mi)=>{const L=items.filter(x=>x.m===mi+1),t=sum(L.map(x=>x.a));
     return`<div class="mon"><h4><span>${mn} 2027</span><span>${t?'$'+fK(t)+'K':''}</span></h4>${L.length?L.map(x=>`<div class="ev"><span class="d ${x.ph?'ph':''}">${esc(x.d)}</span><span class="dot ${x.own?'own':''}"></span><span><b>${esc(x.n)}</b><small>${esc(x.c||'')}</small></span><span>${x.a?'$'+fK(x.a)+'K':''}</span></div>`).join(''):'<div class="ev"><span></span><span></span><span class="note" style="margin:0">Nothing planned</span><span></span></div>'}</div>`}).join('');
 }
@@ -475,25 +474,25 @@ function renderOth(){
 }
 function renderSrc(rows,o){
   const ev=sum(rows.map(r=>r.f26)),okv=sum(rows.filter(r=>r.e.ok).map(r=>r.f26));
-  $('#s-kpi').innerHTML=`<div class="kpi"><div class="l">Event budget view</div><div class="n">${fK(ev)}</div><div class="s">2026 full year, ${E.length} events</div></div>
-   <div class="kpi"><div class="l">Spend not tied to an event</div><div class="n">+${fK(OTHT)}</div><div class="s">in the same GLs</div></div>
-   <div class="kpi"><div class="l">Everything in the two GLs</div><div class="n">${fK(ev+OTHT)}</div><div class="s">2026 full year</div></div>
-   <div class="kpi"><div class="l">Events reviewed and confirmed</div><div class="n">${Math.round(okv/ev*100)}%</div><div class="s">${fK(okv)} of the event view</div></div>`;
+  $('#s-kpi').innerHTML=`<div class="kpi"><div class="l">Events</div><div class="n">${fK(ev)}</div><div class="s">2026 full year, ${E.length} events</div></div>
+   <div class="kpi"><div class="l">Spend not tied to an event</div><div class="n">+${fK(OTHT)}</div><div class="s">booked as event costs</div></div>
+   <div class="kpi"><div class="l">All event spend</div><div class="n">${fK(ev+OTHT)}</div><div class="s">2026 full year</div></div>
+   <div class="kpi"><div class="l">Events reviewed and confirmed</div><div class="n">${Math.round(okv/ev*100)}%</div><div class="s">${fK(okv)} of events</div></div>`;
   const W=600,H=260,B=40,T=30,mx=(ev+OTHT)*1.05,y=v=>(H-B-T)*v/mx;
   $('#c-src').innerHTML=`<rect x="40" y="${H-B-y(ev)}" width="130" height="${y(ev)}" fill="var(--sales)"/><text x="105" y="${H-B-y(ev)-8}" text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:14px">${fK(ev)}</text><text x="105" y="${H-B+20}" text-anchor="middle" style="font-size:12px;fill:var(--ink)">Events</text>
    <rect x="235" y="${H-B-y(ev+OTHT)}" width="130" height="${y(OTHT)}" fill="#A9A190"/><text x="300" y="${H-B-y(ev+OTHT)-8}" text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:14px">+${fK(OTHT)}</text><text x="300" y="${H-B+20}" text-anchor="middle" style="font-size:12px;fill:var(--ink)">Not tied to an event</text>
-   <rect x="430" y="${H-B-y(ev+OTHT)}" width="130" height="${y(ev+OTHT)}" fill="#1A1A1A"/><text x="495" y="${H-B-y(ev+OTHT)-8}" text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:14px">${fK(ev+OTHT)}</text><text x="495" y="${H-B+20}" text-anchor="middle" style="font-size:12px;fill:var(--ink)">All event GL spend</text>
+   <rect x="430" y="${H-B-y(ev+OTHT)}" width="130" height="${y(ev+OTHT)}" fill="#1A1A1A"/><text x="495" y="${H-B-y(ev+OTHT)-8}" text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:14px">${fK(ev+OTHT)}</text><text x="495" y="${H-B+20}" text-anchor="middle" style="font-size:12px;fill:var(--ink)">All event spend</text>
    <line x1="170" x2="235" y1="${H-B-y(ev)}" y2="${H-B-y(ev)}" stroke="var(--muted)" stroke-dasharray="3 3"/><line x1="365" x2="430" y1="${H-B-y(ev+OTHT)}" y2="${H-B-y(ev+OTHT)}" stroke="var(--muted)" stroke-dasharray="3 3"/><line x1="20" x2="580" y1="${H-B}" y2="${H-B}" stroke="var(--ink)"/>`;
   const G=Object.keys(OWN).map(k=>{const L=rows.filter(r=>r.e.g===k),c=L.filter(r=>r.e.ok);return{n:OWN[k],k:c.length,t:L.length,a:sum(L.map(r=>r.f26)),c:sum(c.map(r=>r.f26))}}),gm=Math.max(...G.map(g=>g.a));
   $('#t-rev').innerHTML=`<tr><th class="t">Reviewed with</th><th>Events</th><th>2026 FY</th><th>Confirmed</th><th class="t"></th><th>Open</th></tr>`+G.map(g=>`<tr><td class="t">${g.n}</td><td>${g.k} of ${g.t}</td><td>${fK(g.a)}</td><td>${fK(g.c)} · ${g.a?Math.round(g.c/g.a*100):0}%</td><td class="t"><div style="display:flex;width:130px"><i style="display:block;height:10px;width:${g.c/gm*100}%;background:#1A1A1A"></i><i style="display:block;height:10px;width:${(g.a-g.c)/gm*100}%;background:#A9A190"></i></div></td><td>${fK(g.a-g.c)}</td></tr>`).join('');
   $('#t-srcs').innerHTML=`<tr><th class="t">Source</th><th class="t">What it is</th><th>2026 lines</th><th>2026 $K</th><th>2025 lines</th><th>2025 $K</th></tr>
-   <tr><td class="t"><b>AP invoices</b></td><td class="t">Vendor invoices and employee expense reports paid through AP</td><td>1,846</td><td>5,120</td><td>2,012</td><td>5,640</td></tr>
-   <tr><td class="t"><b>GL journals</b></td><td class="t">Accruals, prepaid amortization, reclasses and trial balance journals</td><td>1,590</td><td>2,710</td><td>1,655</td><td>1,980</td></tr>
-   <tr><td class="t"><b>2026 budget</b></td><td class="t">Last year's event budget file, by event</td><td></td><td></td><td></td><td></td></tr>
-   <tr><td class="t"><b>Nov–Dec forecast</b></td><td class="t">Signed contracts and open expense reports found in review</td><td></td><td></td><td></td><td></td></tr>`;
-  const W2=[['Not yet assigned',sum(OTH.filter(x=>x.o==='To be assigned').map(x=>x.a)),'var(--bad)'],['Market leaders (expense reports)',390,'var(--sales)'],['Accounting team (investigating)',232,'var(--sales)'],['Events lead (tag to events)',64,'var(--sales)']],wm=Math.max(...W2.map(w=>w[1]));
+   <tr><td class="t"><b>Invoices</b></td><td class="t">Invoices and expense reports</td><td>1,846</td><td>5,120</td><td>2,012</td><td>5,640</td></tr>
+   <tr><td class="t"><b>Journals</b></td><td class="t">Accruals and corrections</td><td>1,590</td><td>2,710</td><td>1,655</td><td>1,980</td></tr>
+   <tr><td class="t"><b>2026 budget</b></td><td class="t">Last year's budget, by event</td><td></td><td></td><td></td><td></td></tr>
+   <tr><td class="t"><b>Nov–Dec forecast</b></td><td class="t">Signed contracts found in review</td><td></td><td></td><td></td><td></td></tr>`;
+  const W2=[['Not yet assigned',sum(OTH.filter(x=>x.o==='To be assigned').map(x=>x.a)),'var(--bad)'],['Team leads',390,'var(--sales)'],['Accounting',232,'var(--sales)'],['Events lead',64,'var(--sales)']],wm=Math.max(...W2.map(w=>w[1]));
   $('#who').innerHTML=W2.map(([n,v,c])=>`<div class="hbar"><span>${n}</span><i style="width:${v/wm*100}%;background:${c}"></i><b style="text-align:right">$${fK(v)}K</b><span style="text-align:right;color:var(--ink2)">${Math.round(v/OTHT*100)}%</span></div>`).join('');
-  $('#inv').innerHTML=[['Sponsorship credits moved out of "All other" into the Supply Chain Forum','$160K'],['Year-end accruals and a one-off prepaid sent to Accounting to investigate; 940 lines sent','$232K'],['Events marked confirmed','$'+fK(okv)+'K'],['Every 2026 full-year number on the Budget build tab opens vendor-level detail','']].map(([a,b])=>`<div class="inv"><span>${a}</span><b>${b}</b></div>`).join('');
+  $('#inv').innerHTML=[['Sponsor credits moved to the right event','$160K'],['Year-end items sent to Accounting to check','$232K'],['Events marked confirmed','$'+fK(okv)+'K'],['Every 2026 number on the Budget build tab opens vendor detail','']].map(([a,b])=>`<div class="inv"><span>${a}</span><b>${b}</b></div>`).join('');
 }
 
 /* tabs */
