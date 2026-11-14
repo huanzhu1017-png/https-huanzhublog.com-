@@ -209,7 +209,7 @@ tr.exp.open td.t:before{content:"▾ "}
   <!-- BUDGET -->
   <section id="p-bud">
     <h2 class="sec">Budget by cost type</h2>
-    <p class="sub">Enter the 2027 saving in $K; negative = lower. Events come from the <a href="../event-budget/index.html">event budget</a>, contracts from the <a href="../contracts/index.html">contract review</a>.</p>
+    <p class="sub">Each cost type has its own budget page; click a name to open it. The saving flows back here. Negative = lower.</p>
     <div class="scroll"><table id="t-bud"></table></div>
     <div class="side">
       <div class="card"><h3>2026 by month, $M</h3><svg id="c-mon" viewBox="0 0 700 300" role="img" aria-label="Stacked monthly spend by cost type, January to October 2026"></svg><div class="legend" id="l-mon"></div></div>
@@ -224,6 +224,7 @@ tr.exp.open td.t:before{content:"▾ "}
 </div>
 
 <script src="../contracts-data.js"></script>
+<script src="../cost-data.js"></script>
 <script>
 (function(){
 const $=q=>document.querySelector(q);
@@ -244,12 +245,12 @@ const EV_FY=8261, EV_SAVE=-1141;
 const HC=window.HZ_CONTRACTS,CONS=HC.list,CONTTM=HC.ttm();
 const CT=[
  {k:'con',n:'Contracts',own:'IT',ctrl:1,nc:0,fy:CONTTM,link:'../contracts/index.html',m:'Reviewed one contract at a time on the contract review page: renew, renegotiate or cancel.',acc:[['Software',.45],['Data',.35],['Subscriptions',.2]],lob:[.7,.1,.06,.07,.07],col:'#1A1A1A'},
- {k:'occ',n:'Offices',own:'Facilities',ctrl:1,nc:0,fy:52800,m:'Lease schedules; mostly fixed. Exits and renewals agreed with Facilities.',acc:[['Rent',.62],['Equipment',.16],['Utilities',.12],['Repairs',.1]],lob:[.52,.13,.09,.1,.16],col:'#2F5E46'},
- {k:'ppl',n:'Travel and staff',own:'Team leads',ctrl:1,nc:.38,fy:21900,m:'Cost per head × next year\'s headcount plan.',acc:[['Travel',.55],['Phones',.2],['Training',.15],['Hiring',.1]],lob:[.58,.14,.06,.1,.12],col:'#7E9C8A'},
- {k:'dis',n:'Professional and consulting fees',own:'Business heads',ctrl:1,nc:.34,fy:37600,m:'Built from zero by each owner: which projects need outside help next year; every saving on its own line.',acc:[['Legal',.35],['Audit and tax',.25],['Consulting',.3],['Other advisory',.1]],lob:[.5,.17,.09,.08,.16],col:'#9A3B2A'},
+ {k:'occ',n:'Offices',own:'Facilities',ctrl:1,nc:0,fy:52800,link:'../offices/index.html',m:'Lease by lease: keep, renew, downsize or exit.',acc:[['Rent',.62],['Equipment',.16],['Utilities',.12],['Repairs',.1]],lob:[.52,.13,.09,.1,.16],col:'#2F5E46'},
+ {k:'ppl',n:'Travel and staff',own:'Team leads',ctrl:1,nc:.38,fy:21900,link:'../travel-staff/index.html',m:'Cost per head × next year\'s headcount, by region.',acc:[['Travel',.55],['Phones',.2],['Training',.15],['Hiring',.1]],lob:[.58,.14,.06,.1,.12],col:'#7E9C8A'},
+ {k:'dis',n:'Professional and consulting fees',own:'Business heads',ctrl:1,nc:.34,fy:37600,link:'../fees/index.html',m:'Built from zero by each owner: which projects need outside help next year; every saving on its own line.',acc:[['Legal',.35],['Audit and tax',.25],['Consulting',.3],['Other advisory',.1]],lob:[.5,.17,.09,.08,.16],col:'#9A3B2A'},
  {k:'evt',n:'Events',own:'Events lead',ctrl:1,nc:.12,fy:EV_FY,m:'Done: the event budget, event by event.',acc:[['Events',.86],['Booths',.14]],lob:[.6,.15,.13,.06,.06],col:'#C7A25A',link:'../event-budget/index.html'},
- {k:'nco',n:'Fixed costs',own:'Accounting',ctrl:0,nc:0,fy:12400,m:'Insurance, taxes and bank fees from Accounting; outside the savings target.',acc:[['Insurance',.4],['Taxes',.3],['Bank fees',.15],['FX',.15]],lob:[.55,.12,.1,.09,.14],col:'#A9A190'},
- {k:'all',n:'Shared services',own:'Corporate FP&A',ctrl:0,nc:0,fy:58300,m:'Head office recharges; Corporate FP&A sets the number.',acc:[['IT',.4],['Head office',.25],['Legal',.2],['Accounting',.15]],lob:[.66,.14,.08,.05,.07],col:'#5A554B'}];
+ {k:'nco',n:'Fixed costs',own:'Accounting',ctrl:0,nc:0,fy:12400,link:'../fixed-costs/index.html',m:'Insurance, taxes and bank fees from Accounting; outside the savings target.',acc:[['Insurance',.4],['Taxes',.3],['Bank fees',.15],['FX',.15]],lob:[.55,.12,.1,.09,.14],col:'#A9A190'},
+ {k:'all',n:'Shared services',own:'Corporate FP&A',ctrl:0,nc:0,fy:58300,link:'../shared-services/index.html',m:'Head office recharges; Corporate FP&A sets the number.',acc:[['IT',.4],['Head office',.25],['Legal',.2],['Accounting',.15]],lob:[.66,.14,.08,.05,.07],col:'#5A554B'}];
 CT.forEach(c=>{
   c.ytd=c.fy/1.2;
   const w=MO.map((_,m)=>c.k==='occ'?1+rnd(-.02,.02):c.k==='all'?1+rnd(-.1,.1):c.k==='nco'&&m===9?2.2:c.k==='evt'?[.5,1.4,1.6,.9,1.8,1,.6,.5,1.1,1.2][m]:1+rnd(-.12,.12));
@@ -265,13 +266,13 @@ CT.forEach(c=>{
 });
 
 /* ---------- inputs (saved in this browser) ---------- */
-const S={cl:{},sv:{occ:-1500,ppl:-1200,dis:-2400},st:{con:'In review',occ:'In review',ppl:'In review',evt:'Agreed',dis:'Not started'},nt:{occ:'Two office exits agreed',ppl:'Travel per head held flat',dis:'Fewer outside advisers',evt:'Agreed event by event'}};
-const KEY='hz-demo-noncomp2';
+const S={cl:{},sv:{occ:-1500,ppl:-1200,dis:-2400},st:{con:'In review',occ:'In review',ppl:'In review',evt:'Agreed',dis:'Not started'},nt:{nco:'From Accounting',all:'From Corporate FP&A',occ:'Two office exits agreed',ppl:'Travel per head held flat',dis:'Fewer outside advisers',evt:'Agreed event by event'}};
+const KEY='hz-demo-noncomp3';
 try{const sv=JSON.parse(localStorage.getItem(KEY)||'null');if(sv)Object.assign(S,sv.S||{})}catch(x){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({S}));$('#savedmsg').textContent='Saved in this browser.'}catch(x){}}
 
 const con27=()=>HC.next();
-function calc(){return CT.map(c=>{const cl=0,sv=c.k==='con'?con27()-CONTTM:c.k==='evt'?EV_SAVE:+(S.sv[c.k]||0);return{c,cl,sv,b27:c.fy+cl+sv,st:S.st[c.k]||'Not started'}})}
+function calc(){return CT.map(c=>{const cl=0,sv=c.k==='con'?con27()-CONTTM:c.k==='evt'?EV_SAVE:window.HZ_COST[c.k].next()-window.HZ_COST[c.k].base;return{c,cl,sv,b27:c.fy+cl+sv,st:S.st[c.k]||'Not started'}})}
 
 function kpis(rows){
   const ytd=sum(CT.map(c=>c.ytd)),fy=sum(CT.map(c=>c.fy)),b=sum(rows.map(r=>r.b27));
@@ -287,14 +288,14 @@ function renderBud(){
   const T=k=>sum(rows.map(k));
   $('#t-bud').innerHTML=`<tr><th class="t">Cost type</th><th class="t">Owner</th><th>2026 Jan–Oct</th><th>2026 base</th><th>Saving</th><th>2027 budget</th><th>vs base</th><th class="t">Status</th><th class="t">Notes</th></tr>`+
    rows.map(r=>{const c=r.c,ncs=sum(c.fund.map(f=>f[1]+f[2]+f[3]))/c.fy;
-     const sv=c.k==='con'?`<span class="note" style="margin:0">from contract review<br><b class="${r.sv<0?'pos':''}">${fK(r.sv)}</b></span>`:c.k==='evt'?`<span class="note" style="margin:0">from event budget<br><b class="pos">${fK(r.sv)}</b></span>`:`<input class="num" type="number" step="10" data-sv="${c.k}" value="${S.sv[c.k]||''}" aria-label="2027 saving for ${esc(c.n)}, $K">`;
+     const src=c.k==='con'?'contract review':c.k==='evt'?'event budget':window.HZ_COST[c.k].src;const sv=`<span class="note" style="margin:0">from ${src}<br><b class="${r.sv<0?'pos':r.sv>0?'neg':''}">${r.sv<0?fK(r.sv):'+'+fK(r.sv)}</b></span>`;
      return`<tr><td class="t" style="white-space:normal;min-width:180px"><b>${c.link?`<a href="${c.link}">${esc(c.n)} ↗</a>`:esc(c.n)}</b></td><td class="t" style="white-space:normal">${esc(c.own)}</td><td>${fK(c.ytd)}</td><td>${fK(c.fy)}</td><td>${sv}</td><td><b>${fK(r.b27)}</b></td><td class="${r.b27<c.fy?'pos':r.b27>c.fy?'neg':''}">${r.b27===c.fy?'–':pc(r.b27/c.fy-1)}</td>
      <td class="t">${r.st==='Agreed'?'<span class="chip on">Agreed</span>':`<select class="st" data-st="${c.k}" aria-label="Status for ${esc(c.n)}">${['Not started','In review','Agreed'].map(o=>`<option${o===r.st?' selected':''}>${o}</option>`).join('')}</select>`}</td>
      <td class="t"><input class="txt" data-nt="${c.k}" value="${esc(S.nt[c.k]||'')}" aria-label="Notes for ${esc(c.n)}"></td></tr>`}).join('')+
    `<tr class="total"><td class="t" colspan="2">Total</td><td>${fK(T(r=>r.c.ytd))}</td><td>${fK(T(r=>r.c.fy))}</td><td>${fK(T(r=>r.sv))}</td><td>${fK(T(r=>r.b27))}</td><td>${pc(T(r=>r.b27)/T(r=>r.c.fy)-1)}</td><td colspan="2"></td></tr>`;
 }
 $('#t-bud').addEventListener('change',e=>{const t=e.target,d=t.dataset;let focus=null;
-  if(d.sv){S.sv[d.sv]=t.value===''?0:+t.value;focus=`[data-sv="${d.sv}"]`}else if(d.st){S.st[d.st]=t.value}else if(d.nt){S.nt[d.nt]=t.value;save();return}else return;
+  if(d.st){S.st[d.st]=t.value}else if(d.nt){S.nt[d.nt]=t.value;save();return}else return;
   save();renderBud();if(focus){const n=$('#t-bud '+focus);n&&n.focus()}});
 
 function renderMon(){
