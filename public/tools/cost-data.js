@@ -21,14 +21,13 @@ const OFF=[['New York','East',120,'2031-04',14000],['Boston','East',35,'2027-06'
  ['Seattle','West',18,'2028-11',1600],['London','International',45,'2030-01',6100],['Toronto','International',16,'2027-05',1300]]
  .map(([n,r,sf,end,c],i)=>({i,n,r,sf,end,c}));
 fit(OFF,'c',52800);
-const ESC=[3,3,3,3,2.5,3,3,3,3,3.5,3,3,2,2],REN=[8,6,5,5,4,6,4,5,7,8,9,6,5,4]; // default rent increase % and renewal uplift % per office
+const ESC=[3,3,3,3,2.5,3,3,3,3,3.5,3,3,2,2]; // default rent increase % per office
 const offS=load('occ2',{e:{},r:{},dec:{10:'Exit',13:'Exit',2:'Downsize'}});
-const oE=o=>offS.e[o.i]??ESC[o.i],oR=o=>offS.r[o.i]??REN[o.i];
+const oE=o=>offS.e[o.i]??ESC[o.i];
 function offRow(o,S){const d=S.dec[o.i]||(o.end.startsWith('2027')?'Renew':'Keep'),y=+o.end.slice(0,4),m=+o.end.slice(5,7),e=1+oE(o)/100;
   // leases ending after 2027: exit or downsize from July, with a sublease covering part of the rent
   let v;if(d==='Exit')v=y<2027?0:y===2027?o.c*e*(m-1)/12:o.c*e*(.5+.5*.4);
   else if(d==='Downsize'){const f=y<2027?0:y===2027?(m-1)/12:.5;v=o.c*e*(f+(1-f)*.65)}
-  else if(d==='Renew'&&y===2027)v=o.c*e*((m-1)/12+(13-m)/12*(1+oR(o)/100)/e);
   else v=o.c*e;
   return{d,v}}
 
@@ -83,14 +82,14 @@ window.HZ_PAGE=function(k){
   const tb=$('#tbl'),ctl=$('#ctl');
   let draw;
   if(k==='occ'){
-    ctl.innerHTML=`<span class="note" style="margin:0">Each office has its own rent increase and, if the lease ends in 2027, its own uplift on renewal. The uplift applies from the month the lease ends.</span>`;
+    ctl.innerHTML=`<span class="note" style="margin:0">Each office has its own rent increase. Renew and Keep both carry the rent increase; Downsize and Exit save from the month the lease ends.</span>`;
     draw=()=>{const R=OFF.map(o=>({o,...offRow(o,offS)}));head(52800,sum(R.map(r=>r.v)),['Offices',OFF.length,`${R.filter(r=>r.d==='Exit').length} exits planned`]);
-      tb.innerHTML=`<tr><th class="t">Office</th><th class="t">Region</th><th>Sq ft (K)</th><th class="t">Lease ends</th><th>2026</th><th>Rent increase %</th><th>Uplift on renewal %</th><th class="t">Decision</th><th>2027</th><th>Change</th></tr>`+
-        R.map(({o,d,v})=>`<tr><td class="t"><b>${o.n}</b></td><td class="t">${o.r}</td><td>${o.sf}</td><td class="t">${o.end}${o.end<'2028'?' <span class="chip warn">ends soon</span>':''}</td><td>${fK(o.c)}</td><td>${num(`data-e="${o.i}"`,oE(o),'Rent increase % for '+o.n,64,.5)}</td><td>${num(`data-r="${o.i}"`,oR(o),'Uplift on renewal % for '+o.n,64,.5)}</td>
+      tb.innerHTML=`<tr><th class="t">Office</th><th class="t">Region</th><th>Sq ft (K)</th><th class="t">Lease ends</th><th>2026</th><th>Rent increase %</th><th class="t">Decision</th><th>2027</th><th>Change</th></tr>`+
+        R.map(({o,d,v})=>`<tr><td class="t"><b>${o.n}</b></td><td class="t">${o.r}</td><td>${o.sf}</td><td class="t">${o.end}${o.end<'2028'?' <span class="chip warn">ends soon</span>':''}</td><td>${fK(o.c)}</td><td>${num(`data-e="${o.i}"`,oE(o),'Rent increase % for '+o.n,64,.5)}</td>
         <td class="t">${sel(`data-o="${o.i}"`,d,['Keep','Renew','Downsize','Exit'],'Decision for '+o.n)}</td><td><b>${fK(v)}</b></td><td class="${v<o.c?'pos':v>o.c?'neg':''}">${sK(v-o.c)}</td></tr>`).join('')+
-        `<tr class="total"><td class="t" colspan="4">Total</td><td>${fK(52800)}</td><td></td><td></td><td></td><td>${fK(sum(R.map(r=>r.v)))}</td><td>${sK(sum(R.map(r=>r.v))-52800)}</td></tr>`;
+        `<tr class="total"><td class="t" colspan="4">Total</td><td>${fK(52800)}</td><td></td><td></td><td>${fK(sum(R.map(r=>r.v)))}</td><td>${sK(sum(R.map(r=>r.v))-52800)}</td></tr>`;
       bars(REG.map(g=>({n:g,a:sum(R.filter(r=>r.o.r===g).map(r=>r.o.c)),b:sum(R.filter(r=>r.o.r===g).map(r=>r.v))})))};
-        tb.addEventListener('change',e=>{const d=e.target.dataset;let f;if(d.o!=null){offS.dec[d.o]=e.target.value;f=`[data-o="${d.o}"]`}else if(d.e!=null){offS.e[d.e]=+e.target.value||0;f=`[data-e="${d.e}"]`}else if(d.r!=null){offS.r[d.r]=+e.target.value||0;f=`[data-r="${d.r}"]`}else return;store('occ2',offS)&&saved();draw();tb.querySelector(f).focus()});
+        tb.addEventListener('change',e=>{const d=e.target.dataset;let f;if(d.o!=null){offS.dec[d.o]=e.target.value;f=`[data-o="${d.o}"]`}else if(d.e!=null){offS.e[d.e]=+e.target.value||0;f=`[data-e="${d.e}"]`}else return;store('occ2',offS)&&saved();draw();tb.querySelector(f).focus()});
   }
   if(k==='ppl'){
     ctl.innerHTML=TCAT.map(([n],j)=>`<label>${n} per head, change %${num(`data-c="${j}"`,tsS.chg[j],n+' change %',70)}</label>`).join('');
