@@ -130,6 +130,7 @@ body{font-size:13px}
 .hero .s{color:#B9B2A2}
 .lookup input,.filters select,.filters input{background:#F6F1E6;border-color:#8C8576}
 .code{background:#E2DAC6}
+.node{cursor:pointer}.node:focus{outline:none}.node:focus rect,.node:hover rect{stroke-width:3}
 </style>
 <style>
 /* ---- shared budget-tool pieces ---- */
@@ -228,9 +229,8 @@ tr.exp.open td.t:before{content:"▾ "}
   </div></div>
   <p class="fict"><b>What this shows:</b> the operating system I designed for a brokerage FP&amp;A team: who does what, who checks whom, and where a human signs off. The tools are static demos with made-up data; click any agent to see what it owns.</p>
 
-  <div class="lead2"><b>Team lead: Huan</b><span>sets priorities, reviews every output, and is the only one who sends anything outside the team</span></div>
-
-  <div class="flow" id="flow"></div>
+  <div class="scroll" style="margin-top:16px"><svg id="chart" viewBox="0 0 1260 660" style="min-width:900px;width:100%;display:block" role="img" aria-label="Flowchart of the FP&amp;A agent team: the PMO feeds five build agents, the Controller checks their work, Reporting and Admin turn it into drafts, and Huan reviews and sends"></svg></div>
+  <p class="note">Click a box to see what the agent takes in, produces and hands off. Solid arrows pass work on; the dashed arrow sends work back when it doesn't tie out.</p>
   <div class="detail" id="detail" aria-live="polite"></div>
 
   <h2 class="sec">Rules every agent follows</h2>
@@ -249,25 +249,63 @@ tr.exp.open td.t:before{content:"▾ "}
 <script>
 (function(){
 const A=[
- {s:0,id:'pmo',no:'PMO',n:'Cycle tracker',d:'Keeps every cycle on schedule',in:'Calendar of forecast, budget and month-end dates; list of markets expected to submit',out:'Who has submitted and who has not; reminder drafts; status of each step',to:'Agents 1–9',tool:null},
- {s:1,id:'a1',no:'Agent 1',n:'Revenue',d:'Forecast and budget, market by market',in:'Market forecast submissions, deal pipeline, booked revenue',out:'Quarterly forecast; next year\'s budget built broker by broker',to:'Agent 4 Controller',tool:['Revenue forecast and budget','../revenue-forecast/index.html']},
- {s:1,id:'a2',no:'Agent 2',n:'Non-comp',d:'Every non-salary cost, with an owner per cost type',in:'Actuals by account; inputs from each cost owner',out:'Non-comp budget with offices, travel, fees, events, fixed costs and shared services',to:'Agent 4 Controller',tool:['Non-comp budget','../noncomp-budget/index.html']},
- {s:1,id:'a3',no:'Agent 3',n:'Headcount',d:'Headcount and compensation plan',in:'HR roster, open roles, hiring plan',out:'Headcount and comp plan by team',to:'Agent 4 Controller',tool:null,rel:['A headcount model I built earlier (case study)','../../headcount/index.html']},
- {s:1,id:'a6',no:'Agent 6',n:'Contract',d:'Every vendor contract, one by one',in:'Invoices flagged as contracts, end dates',out:'Renew, renegotiate or cancel for each contract; flows into Non-comp',to:'Agent 2 Non-comp',tool:['Contract review','../contracts/index.html']},
- {s:1,id:'a8',no:'Agents 8–9',n:'International',d:'Two overseas entities, local rules and currency',in:'Local ledgers and forecasts',out:'Entity forecasts in group format',to:'Agent 1 Revenue',tool:null},
- {s:2,id:'a4',no:'Agent 4',n:'Controller',d:'Ties out every number before it moves',in:'Outputs from agents 1, 2, 3, 6, 8, 9; the ledger',out:'Pass or hold for each output; accounting issue log; month-end calendar',to:'Agent 5 Reporting',tool:null},
- {s:3,id:'a5',no:'Agent 5',n:'Reporting',d:'One version of the numbers',in:'Checked outputs from the Controller',out:'Monthly packages and forecast reports',to:'Agent 7 Admin',tool:['Real-time reporting','../../variance/index.html']},
- {s:4,id:'a7',no:'Agent 7',n:'Admin',d:'Writes for each audience',in:'Reports from Agent 5',out:'Email drafts written in each stakeholder\'s style, waiting for review',to:'Huan (review and send)',tool:null}
+ {s:0,id:'pmo',short:'keeps every cycle on time',no:'PMO',n:'Cycle tracker',d:'Keeps every cycle on schedule',in:'Calendar of forecast, budget and month-end dates; list of markets expected to submit',out:'Who has submitted and who has not; reminder drafts; status of each step',to:'Agents 1–9',tool:null},
+ {s:1,id:'a1',short:'forecast and budget',no:'Agent 1',n:'Revenue',d:'Forecast and budget, market by market',in:'Market forecast submissions, deal pipeline, booked revenue',out:'Quarterly forecast; next year\'s budget built broker by broker',to:'Agent 4 Controller',tool:['Revenue forecast and budget','../revenue-forecast/index.html']},
+ {s:1,id:'a2',short:'every non-salary cost',no:'Agent 2',n:'Non-comp',d:'Every non-salary cost, with an owner per cost type',in:'Actuals by account; inputs from each cost owner',out:'Non-comp budget with offices, travel, fees, events, fixed costs and shared services',to:'Agent 4 Controller',tool:['Non-comp budget','../noncomp-budget/index.html']},
+ {s:1,id:'a3',short:'headcount and comp',no:'Agent 3',n:'Headcount',d:'Headcount and compensation plan',in:'HR roster, open roles, hiring plan',out:'Headcount and comp plan by team',to:'Agent 4 Controller',tool:null,rel:['A headcount model I built earlier (case study)','../../headcount/index.html']},
+ {s:1,id:'a6',short:'every vendor contract',no:'Agent 6',n:'Contract',d:'Every vendor contract, one by one',in:'Invoices flagged as contracts, end dates',out:'Renew, renegotiate or cancel for each contract; flows into Non-comp',to:'Agent 2 Non-comp',tool:['Contract review','../contracts/index.html']},
+ {s:1,id:'a8',short:'two overseas entities',no:'Agents 8–9',n:'International',d:'Two overseas entities, local rules and currency',in:'Local ledgers and forecasts',out:'Entity forecasts in group format',to:'Agent 1 Revenue',tool:null},
+ {s:2,id:'a4',short:'ties out every number',no:'Agent 4',n:'Controller',d:'Ties out every number before it moves',in:'Outputs from agents 1, 2, 3, 6, 8, 9; the ledger',out:'Pass or hold for each output; accounting issue log; month-end calendar',to:'Agent 5 Reporting',tool:null},
+ {s:3,id:'a5',short:'one set of numbers',no:'Agent 5',n:'Reporting',d:'One version of the numbers',in:'Checked outputs from the Controller',out:'Monthly packages and forecast reports',to:'Agent 7 Admin',tool:['Real-time reporting','../../variance/index.html']},
+ {s:4,id:'a7',short:'drafts for each audience',no:'Agent 7',n:'Admin',d:'Writes for each audience',in:'Reports from Agent 5',out:'Email drafts written in each stakeholder\'s style, waiting for review',to:'Huan (review and send)',tool:null}
 ];
-const ST=[['Collect','data in, on time'],['Build','forecasts and budgets'],['Check','tie out'],['Report','one set of numbers'],['Communicate','drafts for review']];
 const $=q=>document.querySelector(q);
-$('#flow').innerHTML=ST.map(([h,sd],i)=>`<div class="stage"><h4>${i+1}. ${h} ${i<4?'→':''}</h4><p class="sd">${sd}</p>${A.filter(a=>a.s===i).map(a=>`<button type="button" class="ag" data-id="${a.id}" aria-pressed="false"><span class="no">${a.no}</span><b>${a.n}</b><span class="ar ${a.tool?'':'soon'}">${a.tool?'Tool: '+a.tool[0]+' ↗':'Tool coming soon'}</span></button>`).join('')}</div>`).join('');
-function show(id){const a=A.find(x=>x.id===id);
-  document.querySelectorAll('.ag').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id));
-  $('#detail').innerHTML=`<span class="no" style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)">${a.no}</span><h3>${a.n}</h3><p style="margin:4px 0 0">${a.d}.</p>
+const BX={pmo:[20,270,150,100],a1:[240,50,210,92],a8:[240,160,210,80],a2:[240,265,210,92],a6:[240,375,210,80],a3:[240,480,210,92],
+ a4:[540,265,170,110],a5:[790,270,150,100],a7:[1010,270,130,100],me:[1180,270,70,100]};
+const STG=[['1 · Collect',20,170],['2 · Build',240,450],['3 · Check',540,710],['4 · Report',790,940],['5 · Communicate',1010,1250]];
+const mid=k=>{const[x,y,w,h]=BX[k];return{l:[x,y+h/2],r:[x+w,y+h/2],t:[x+w/2,y],b:[x+w/2,y+h]}};
+function box(k){const[x,y,w,h]=BX[k];
+  if(k==='me')return`<g class="node" data-id="me" tabindex="0" role="button" aria-label="Huan reviews and sends"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#1A1A1A"/><text x="${x+w/2}" y="${y+40}" text-anchor="middle" style="fill:#EEE8DA;font:400 17px var(--serif)">Huan</text><text x="${x+w/2}" y="${y+60}" text-anchor="middle" style="fill:#CFC7B5;font-size:10.5px">reviews</text><text x="${x+w/2}" y="${y+74}" text-anchor="middle" style="fill:#CFC7B5;font-size:10.5px">and sends</text></g>`;
+  const a=A.find(z=>z.id===k),ctl=k==='a4';
+  return`<g class="node" data-id="${k}" tabindex="0" role="button" aria-label="${a.no} ${a.n}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${ctl?'#E3EAE2':'#F6F1E4'}" stroke="${ctl?'#2F5E46':'#2A2520'}" stroke-width="${ctl?2.5:1.2}"/>
+   <text x="${x+12}" y="${y+20}" style="font-size:10px;letter-spacing:.14em;fill:#6E685C">${a.no.toUpperCase()}</text>
+   <text x="${x+12}" y="${y+42}" style="font:400 19px var(--serif);fill:var(--ink)">${a.n}</text>
+   <text x="${x+12}" y="${y+60}" style="font-size:11px;fill:var(--ink2)">${a.short}</text>
+   ${h>85?`<text x="${x+12}" y="${y+h-12}" style="font-size:10.5px;fill:${a.tool?'#2F5E46':'#9A6B12'}">${a.tool?'Tool: '+a.tool[0]+' ↗':'Tool coming soon'}</text>`:`<text x="${x+w-10}" y="${y+20}" text-anchor="end" style="font-size:10px;fill:${a.tool?'#2F5E46':'#9A6B12'}">${a.tool?'tool ↗':'soon'}</text>`}</g>`}
+function arrow(p1,p2,lab,dash,lx,ly){const[x1,y1]=p1,[x2,y2]=p2,mx=(x1+x2)/2;
+  const d=Math.abs(y1-y2)<2||Math.abs(x1-x2)<2?`M${x1},${y1}L${x2},${y2}`:`M${x1},${y1}C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
+  return`<path d="${d}" fill="none" stroke="${dash?'#9A3B2A':'#1A1A1A'}" stroke-width="1.6" ${dash?'stroke-dasharray="6 4"':''} marker-end="url(#${dash?'ah2':'ah'})"/>`+(lab?`<text x="${lx??mx}" y="${ly??(Math.min(y1,y2)-6)}" text-anchor="middle" style="font-size:11px;fill:${dash?'#9A3B2A':'var(--ink2)'};font-style:italic">${lab}</text>`:'')}
+function draw(){
+  const m=mid;let g=`<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#1A1A1A"/></marker><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#9A3B2A"/></marker></defs>`;
+  STG.forEach(([t,x1,x2],i)=>{g+=`<text x="${x1}" y="18" style="font-size:11px;letter-spacing:.18em;font-weight:700;fill:var(--ink)">${t.toUpperCase()}</text><line x1="${x1}" x2="${x2}" y1="26" y2="26" stroke="#1A1A1A" stroke-width="2"/>`});
+  // PMO fans out to the five build agents
+  ['a1','a2','a3'].forEach(k=>g+=arrow(m('pmo').r,m(k).l));
+  g+=arrow(m('pmo').r,m('a8').l);g+=arrow(m('pmo').r,m('a6').l);
+  g+=`<text x="95" y="258" text-anchor="middle" style="font-size:11px;font-style:italic;fill:var(--ink2)">data, dates</text>`;
+  // feeders inside Build
+  g+=arrow([BX.a8[0]+BX.a8[2]-30,BX.a8[1]],[BX.a1[0]+BX.a1[2]-30,BX.a1[1]+BX.a1[3]]);
+  g+=arrow([BX.a6[0]+BX.a6[2]-30,BX.a6[1]],[BX.a2[0]+BX.a2[2]-30,BX.a2[1]+BX.a2[3]]);
+  // build -> controller
+  ['a1','a2','a3'].forEach(k=>g+=arrow(m(k).r,[BX.a4[0],m('a4').l[1]+(k==='a1'?-25:k==='a3'?25:0)]));
+  g+=`<text x="500" y="470" text-anchor="middle" style="font-size:11px;font-style:italic;fill:var(--ink2)">numbers to check</text>`;
+  // hold loop
+  g+=`<path d="M${BX.a4[0]+BX.a4[2]/2},${BX.a4[1]+BX.a4[3]} C${BX.a4[0]+BX.a4[2]/2},620 ${BX.a3[0]+BX.a3[2]/2},640 ${BX.a3[0]+BX.a3[2]/2},${BX.a3[1]+BX.a3[3]+2}" fill="none" stroke="#9A3B2A" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah2)"/><text x="560" y="625" text-anchor="middle" style="font-size:11px;font-style:italic;fill:#9A3B2A">doesn't tie out → back to the agent</text>`;
+  g+=arrow(m('a4').r,m('a5').l,'ties out ✓',0,750,312);
+  g+=arrow(m('a5').r,m('a7').l,'reports',0,986,312);
+  g+=arrow(m('a7').r,m('me').l,'drafts',0,1160,312);
+  g+=`<text x="1215" y="400" text-anchor="middle" style="font-size:11px;fill:var(--ink2)">↓</text><text x="1215" y="418" text-anchor="middle" style="font-size:11px;fill:var(--ink2);font-style:italic">stakeholders</text>`;
+  Object.keys(BX).forEach(k=>g+=box(k));
+  $('#chart').innerHTML=g;
+}
+const ME={no:'Team lead',n:'Huan',d:'Sets priorities, reviews every output, and is the only one who sends anything outside the team',in:'Drafts from Agent 7; any item an agent stops on',out:'Approved emails and reports',to:'Stakeholders',tool:null};
+function show(id){const a=id==='me'?ME:A.find(x=>x.id===id);
+  document.querySelectorAll('.node').forEach(n=>n.querySelector('rect').setAttribute('stroke-width',n.dataset.id===id?3.5:(n.dataset.id==='a4'?2.5:1.2)));
+  $('#detail').innerHTML=`<span style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)">${a.no}</span><h3>${a.n}</h3><p style="margin:4px 0 0">${a.d}.</p>
    <dl><dt>Takes in</dt><dd>${a.in}</dd><dt>Produces</dt><dd>${a.out}</dd><dt>Hands off to</dt><dd>${a.to}</dd>
-   <dt>Tool</dt><dd>${a.tool?`<a href="${a.tool[1]}">${a.tool[0]} ↗</a>`:'<span class="chip warn">Coming soon</span>'}</dd>${a.rel?`<dt>Related</dt><dd><a href="${a.rel[1]}">${a.rel[0]} ↗</a></dd>`:''}</dl>`;}
-$('#flow').addEventListener('click',e=>{const b=e.target.closest('.ag');if(b)show(b.dataset.id)});
+   ${id==='me'?'':`<dt>Tool</dt><dd>${a.tool?`<a href="${a.tool[1]}">${a.tool[0]} ↗</a>`:'<span class="chip warn">Coming soon</span>'}</dd>`}${a.rel?`<dt>Related</dt><dd><a href="${a.rel[1]}">${a.rel[0]} ↗</a></dd>`:''}</dl>`;}
+draw();
+$('#chart').addEventListener('click',e=>{const n=e.target.closest('.node');if(n)show(n.dataset.id)});
+$('#chart').addEventListener('keydown',e=>{const n=e.target.closest('.node');if(n&&(e.key==='Enter'||e.key===' ')){e.preventDefault();show(n.dataset.id)}});
 show('a1');
 })();
 </script>
