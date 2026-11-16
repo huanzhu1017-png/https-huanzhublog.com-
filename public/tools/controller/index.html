@@ -198,10 +198,15 @@ tr.exp.open td.t:before{content:"▾ "}
   <div class="head"><div>
     <h1>Controller: Tie-out and Issue Log</h1>
     <span class="badge draft">Demo</span> <span class="saved" id="savedmsg"></span>
-    <p>Every number an agent produces is checked against its source before it moves on. Anything that does not tie goes back, and every accounting question is logged.</p>
+    <p>The full P&amp;L by market, built from every agent's numbers. Each number is checked against its source before it moves on; anything that does not tie goes back, and every accounting question is logged.</p>
   </div></div>
-  <p class="fict"><b>What this shows:</b> the control point in the agent team: tie-outs with a tolerance that tightens each cycle, a hold that sends work back, an issue log that outlives any single cycle, and the month-end calendar. <b>All names and figures are made up.</b></p>
+  <p class="fict"><b>What this shows:</b> the control point in the agent team: the full P&amp;L by market, tie-outs with a tolerance that tightens each cycle, a hold that sends work back, an issue log that outlives any single cycle, and the month-end calendar. <b>All names and figures are made up.</b></p>
   <div class="grid4" id="kpi" style="margin-top:14px"></div>
+  <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">Full P&amp;L by market</h2>
+    <label>Year<select class="st" id="yr"><option value="2027">2027 budget</option><option value="2026">2026 base</option></select></label></div>
+  <p class="sub">Revenue and commission come broker by broker from the revenue budget and the broker contracts. Office, travel, event, contract and fee costs are spread by number of brokers; corporate comp, shared services and fixed costs by share of revenue. Click a market for its full statement. $M.</p>
+  <div class="scroll"><table id="pl"></table></div>
+  <div class="card" style="margin-top:14px" id="stmt-card"><h3 id="stmt-h"></h3><div class="scroll"><table id="stmt"></table></div></div>
   <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">Tie-out: does each agent's number match its source?</h2>
     <label>Cycle<select class="st" id="cyc"><option value="1">Cycle 1 · tolerance 0.5%</option><option value="2">Cycle 2 · tolerance 0.25%</option><option value="3" selected>Cycle 3 onward · must tie exactly</option></select></label></div>
   <p class="sub">Small gaps are allowed in the first cycles while sources settle; after that, everything must tie. A hold sends the work back to the agent. $K.</p>
@@ -219,6 +224,7 @@ tr.exp.open td.t:before{content:"▾ "}
     <div><b>Independent project built on my own time with fictional data. Not affiliated with or endorsed by any employer.</b></div>
   </footer>
 </div>
+<script src="../brokers-data.js"></script>
 <script>
 (function(){
 const $=q=>document.querySelector(q),$$=q=>[...document.querySelectorAll(q)];
@@ -230,6 +236,7 @@ const sum=a=>a.reduce((x,y)=>x+y,0);
 const TIE=[['Agent 1 Revenue','Q4 forecast: booked revenue','Ledger, Oct close',41820,41820],['Agent 1 Revenue','Q4 forecast: pipeline total','Pipeline system',58310,58260],['Agent 2 Non-comp','2026 base, all cost types','Ledger, Jan–Oct',225619,225619],['Agent 2 Non-comp','Events, 2026 full year','Event GLs',8261,8213],
  ['Agent 2 Non-comp','Contracts, last 12 months','Invoices flagged as contracts',34358,34358],['Agent 6 Broker contracts','2027 commission','Commission system',190700,190700],['Agent 3 Headcount','2026 comp run rate','Payroll register',69287,69287],['Agent 3 Headcount','Heads in plan','HR roster',259,259]];
 const TOL={1:.005,2:.0025,3:0};
+TIE.push(['Agent 4 Controller','Market P&Ls, operating income','Total P&L',40300,40300]);
 const LOG=[['AI-014','Nov 3','Revenue','Fee booked to the wrong market in October','Accounting lead','Open','Nov 20'],['AI-013','Oct 28','Non-comp','Year-end accrual for an event reversed twice','Accounting lead','Open','Nov 20'],['AI-012','Oct 21','Headcount','Bonus accrual true-up missing for one team','Payroll lead','In progress','Nov 18'],['AI-011','Oct 9','Contracts','Expired contract still billing monthly','Procurement','Resolved','Oct 31'],['AI-010','Sep 30','Revenue','Intercompany fee not eliminated','Accounting lead','Resolved','Oct 15']];
 const CAL=[['WD1','Dec 1','Close sub-ledgers; accruals posted'],['WD2','Dec 2','Revenue and fee entries final'],['WD3','Dec 3','Controller first tie-out pass'],['WD4','Dec 4','Allocations posted'],['WD5','Dec 5','Final tie-out; issues logged'],['WD6','Dec 8','Monthly packages built (Agent 5)'],['WD7','Dec 9','Drafts to Huan for review (Agent 7)'],['WD8','Dec 10','Packages sent']];
 function draw(){
@@ -246,6 +253,43 @@ function draw(){
 const sc={Open:'bad','In progress':'warn',Resolved:'ok'};
 $('#log').innerHTML=`<tr><th class="t">ID</th><th class="t">Opened</th><th class="t">Area</th><th class="t">Issue</th><th class="t">Owner</th><th class="t">Status</th><th class="t">Due</th></tr>`+LOG.map(l=>`<tr><td class="t">${l[0]}</td><td class="t">${l[1]}</td><td class="t">${l[2]}</td><td class="t" style="white-space:normal;min-width:240px">${l[3]}</td><td class="t">${l[4]}</td><td class="t"><span class="chip ${sc[l[5]]}">${l[5]}</span></td><td class="t">${l[6]}</td></tr>`).join('');
 $('#cal').innerHTML=`<tr><th class="t">Day</th><th class="t">Date</th><th class="t">What happens</th></tr>`+CAL.map(c=>`<tr><td class="t"><b>${c[0]}</b></td><td class="t">${c[1]}</td><td class="t">${c[2]}</td></tr>`).join('');
+
+/* ---------- full P&L by market ---------- */
+const H=window.HZ_BROKERS,RS=H.settings(),KS=H.kSettings();
+const NC={2026:{'Contracts':34358,'Offices':52800,'Travel and entertainment':21900,'Professional and consulting fees':37600,'Events':8261},2027:{'Contracts':30690,'Offices':48445,'Travel and entertainment':21761,'Professional and consulting fees':35314,'Events':7120}};
+const AL={2026:{'Corporate comp':69287,'Shared services':58300,'Fixed costs':12400},2027:{'Corporate comp':77680,'Shared services':58576,'Fixed costs':12650}};
+const RG=['East','West','International'],LN=['Lease','Sales','Debt'];let selMk='New York';
+function pnl(yr){
+  const rows={};H.MK.forEach(([m,rg])=>rows[m]={m,rg,rev:[0,0,0],nh:0,com:0,loan:0,n:0});
+  H.terms.forEach(c=>{const b=c.b,r=rows[b.mk],p=yr===2027?H.p27(b,RS):b.p26;r.rev[b.ln]+=p;r.com+=H.commission(c,p,KS,yr);r.loan+=c.loan;r.n++});
+  if(yr===2027)H.MK.forEach(([m])=>{const n=RS.nh[m]||0,p=RS.nhp*1e3*.5;rows[m].nh=n*p;rows[m].com+=n*H.gridC(p,KS.grid,0);rows[m].n+=n});
+  const corp={m:'Corporate (fees, finance topside)',rg:'Corporate',rev:[0,0,0],nh:0,other:yr===2027?H.NB*(1+RS.nbg/100):H.NB,com:0,loan:0,n:0};
+  const L=Object.values(rows).concat([corp]);L.forEach(r=>r.revT=r.rev[0]+r.rev[1]+r.rev[2]+r.nh+(r.other||0));
+  const totRev=L.reduce((a,r)=>a+r.revT,0),totN=L.reduce((a,r)=>a+r.n,0);
+  const nc=NC[yr],al=AL[yr];
+  L.forEach(r=>{r.direct={};Object.entries(nc).forEach(([k,v])=>r.direct[k]=v*1e3*r.n/totN);r.alloc={};Object.entries(al).forEach(([k,v])=>r.alloc[k]=v*1e3*r.revT/totRev);
+    r.dT=Object.values(r.direct).reduce((a,b)=>a+b,0);r.aT=Object.values(r.alloc).reduce((a,b)=>a+b,0);r.contrib=r.revT-r.com-r.loan;r.op=r.contrib-r.dT-r.aT});
+  return L}
+const fm=v=>(v/1e6).toFixed(1),fmn=v=>v<0?'('+fm(-v)+')':fm(v),mg=r=>r.revT?(r.op/r.revT*100).toFixed(0)+'%':'–';
+function drawPL(){
+  const yr=+$('#yr').value,L=pnl(yr),cols=['revT','com','loan','contrib','dT','aT','op'];
+  const tr=(r,cls,lab)=>`<tr class="${cls||''}"${r.m&&r.rg!=='Corporate'&&!cls?` data-m="${esc(r.m)}" tabindex="0" style="cursor:pointer"`:''}><td class="t">${lab||esc(r.m)}</td>${cols.map(k=>`<td class="${k==='op'&&r[k]<0?'neg':''}">${['com','loan','dT','aT'].includes(k)?fmn(-r[k]):fmn(r[k])}</td>`).join('')}<td>${mg(r)}</td></tr>`;
+  const add=a=>{const o={revT:0,com:0,loan:0,contrib:0,dT:0,aT:0,op:0};a.forEach(r=>cols.forEach(k=>o[k]+=r[k]));return o};
+  let h=`<tr><th class="t">Market</th><th>Revenue</th><th>Commission</th><th>Sign-on loans</th><th>Contribution</th><th>Direct costs</th><th>Allocated costs</th><th>Operating income</th><th>Margin</th></tr>`;
+  RG.forEach(rg=>{const ms=L.filter(r=>r.rg===rg);h+=tr(add(ms),'grp',rg);ms.forEach(r=>{h+=tr(r).replace('<td class="t">','<td class="t" style="padding-left:22px">'+(r.m===selMk?'▸ ':''))})});
+  const c=L.find(r=>r.rg==='Corporate');h+=tr(c,'grp',c.m);h+=tr(add(L),'total','Total');
+  $('#pl').innerHTML=h;
+  const r=L.find(x=>x.m===selMk),line=(lab,v,cls,ind)=>`<tr class="${cls||''}"><td class="t" style="padding-left:${ind?22:8}px">${lab}</td><td>${fmn(v)}</td><td>${r.revT?(v/r.revT*100).toFixed(1)+'%':''}</td></tr>`;
+  $('#stmt-h').textContent=`${selMk}: ${yr===2027?'2027 budget':'2026 base'} P&L ($M)`;
+  $('#stmt').innerHTML=`<tr><th class="t"></th><th>$M</th><th>% of revenue</th></tr>`+LN.map((n,i)=>line(n+' revenue',r.rev[i],'',1)).join('')+(r.nh?line('New hires',r.nh,'',1):'')+line('Revenue',r.revT,'grp')+
+    line('Broker commission',-r.com,'',1)+line('Sign-on loans written off',-r.loan,'',1)+line('Contribution',r.contrib,'grp')+
+    Object.entries(r.direct).map(([k,v])=>line(k,-v,'',1)).join('')+line('Direct costs',-r.dT,'grp')+
+    Object.entries(r.alloc).map(([k,v])=>line(k,-v,'',1)).join('')+line('Allocated costs',-r.aT,'grp')+line('Operating income',r.op,'total');
+  return L}
+$('#yr').addEventListener('change',drawPL);
+$('#pl').addEventListener('click',e=>{const t=e.target.closest('tr[data-m]');if(t){selMk=t.dataset.m;drawPL();$('#stmt-card').scrollIntoView({behavior:'smooth',block:'nearest'})}});
+$('#pl').addEventListener('keydown',e=>{const t=e.target.closest('tr[data-m]');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();selMk=t.dataset.m;drawPL()}});
+drawPL();
 $('#cyc').addEventListener('change',draw);draw();
 
 })();
