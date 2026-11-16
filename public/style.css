@@ -323,13 +323,144 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 .mp-credit{font-size:12px;color:var(--pencil);margin:6px 0 0;line-height:1.3}
 @media print{.music-panel{display:none}}
 
-/* ---- Vintage scrapbook theme (matches the revenue forecast dashboard) ---- */
-:root{--paper:#EEE8DA;--grid:rgba(0,0,0,0);--ink:#1E1A16;--pencil:#5A554B;--blue:#2F5E46;--red:#9A3B2A;--hl:#E9D9A6;--note:#F1E4B8;--tape:rgba(196,180,140,.75);--f-head:"IM Fell English",Georgia,serif;--f-body:"EB Garamond","Crimson Pro",Georgia,serif}
-body{background-image:none!important}
-h1,h2,h3{font-family:var(--f-head)!important;font-weight:400!important}
-.intro h1{font-size:68px!important;letter-spacing:-.01em}
-.sec>h2 svg{display:none}
-.sec>h2{border-bottom:1px solid #1A1A1A;align-self:stretch!important;padding-bottom:4px}
-.top{border-bottom:3px double #1A1A1A;padding-bottom:10px}
-.door,.hold,.spot,.card,.guest{background:#F6F1E4!important;border:1px solid #2A2520!important;border-radius:2px!important}
-@media (max-width:600px){.intro h1{font-size:44px!important}}
+/* ============================================================
+   Professional theme. Same register as the finance tools:
+   newsprint ground, black ink, double rules, no ornament.
+   It sits last on purpose and overrides the notebook styles above.
+   ============================================================ */
+:root{
+  --paper:#EEE8DA; --grid:rgba(0,0,0,0); --ink:#141414; --pencil:#4A463E; --mute:#6E685C;
+  --blue:#2F5E46; --red:#8C3A2B; --line:#CFC7B5; --rule:#1A1A1A; --panel:#F3EEE2; --hl:transparent; --note:#F3EEE2; --tape:transparent;
+  --f-head:"Old Standard TT",Georgia,"Times New Roman",serif;
+  --f-body:"Libre Baskerville",Georgia,"Times New Roman",serif;
+  --f-hand:"Libre Baskerville",Georgia,"Times New Roman",serif;
+}
+body{background-image:none!important;font-family:var(--f-body);font-size:16px;line-height:1.6}
+.page{max-width:820px;gap:52px}
+h1,h2,h3{font-family:var(--f-head)!important;font-weight:700!important;letter-spacing:-.005em}
+a{color:var(--blue);text-decoration-thickness:1px;text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* kill every notebook ornament */
+.top a:hover,.entry:hover h3,.door:hover h3,.posts a:hover h3,.hold .tkr,.hood-name,.pager a:hover,.mp-list button:hover .mp-t{text-decoration:none!important;background:none!important}
+.entry:hover h3,.door:hover h3{text-decoration:underline!important;text-decoration-color:var(--blue)!important;text-underline-offset:4px}
+.sec>h2 svg,.card .tape,.guest .tape,.player .tape,.snaps figure::before{display:none!important}
+.sticky,.door,.hold,.spot,.card,.guest,.player,.entry,.snaps figure,.tool,.tabs button,.music-btn,.empty{transform:none!important;box-shadow:none!important;border-radius:0!important}
+.how li::before{border-radius:0!important;transform:none!important;font-family:var(--f-head)!important}
+
+/* masthead */
+.top{border-bottom:3px double var(--rule);padding-bottom:10px;font-family:var(--f-body);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);align-items:baseline}
+.top .wordmark,.top>a{font-weight:700;letter-spacing:.26em;color:var(--ink);text-decoration:none;font-size:13px}
+.top nav{gap:22px}
+.top a{color:var(--mute);text-decoration:none}
+.top a:hover{color:var(--blue)}
+
+/* opening block */
+.intro{gap:14px}
+.kicker{font-family:var(--f-body);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.intro h1{font-size:clamp(32px,4.6vw,50px)!important;line-height:1.1;max-width:20ch}
+.intro .sub{font-family:var(--f-body);font-size:16px;color:var(--mute);transform:none;font-style:italic}
+.intro p.body{max-width:68ch;font-size:16px}
+.intro p.lead{font-size:17.5px}
+.intro.hello{display:block}
+.hello-text{gap:14px}
+
+/* section rules */
+.sec{gap:18px}
+.sec>h2{font-size:26px;border-bottom:1px solid var(--rule);align-self:stretch!important;padding-bottom:6px;font-weight:700!important}
+.sec>.aside,.aside{font-family:var(--f-body);font-size:13.5px;color:var(--mute);margin-top:-6px;max-width:72ch;font-style:italic}
+
+/* results band */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.stat{background:var(--paper);padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.stat b{font-family:var(--f-head);font-weight:700;font-size:25px;line-height:1.05;color:var(--ink);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;line-height:1.45;color:var(--pencil)}
+
+/* work entries */
+.entries{gap:0}
+.entry{border-top:1px solid var(--line);padding:18px 0;gap:5px}
+.entry:first-child{border-top:0;padding-top:4px}
+.entry .tag{font-family:var(--f-body);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.entry h3{font-size:21px}
+.entry p{max-width:72ch;font-size:15px;color:var(--pencil)}
+.entry .go{font-family:var(--f-body);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-top:3px}
+.entry:hover .go{color:var(--blue)}
+
+/* roles */
+.jobs{gap:18px}
+.job{grid-template-columns:148px minmax(0,1fr);gap:18px}
+.job .yr{font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding-top:5px}
+.job h3{font-size:19px}
+.job .role{font-style:italic;color:var(--pencil);font-size:14.5px}
+.job .pts{font-size:15px;max-width:72ch}
+.job .pts li::marker{color:var(--mute)}
+.job p{font-size:15px;color:var(--pencil)}
+.jobs.brief .job{align-items:baseline}
+
+/* method, toolbox, results panel */
+.how li::before{font-size:17px;border-width:1px;color:var(--ink);border-color:var(--rule);width:30px;height:30px}
+.how li{grid-template-columns:40px minmax(0,1fr)}
+.how p{font-size:15px;max-width:72ch}
+.kit-label{font-family:var(--f-body);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);padding-top:4px}
+.kit > div{grid-template-columns:148px minmax(0,1fr);gap:18px;border-top:1px solid var(--line);padding-top:14px}
+.kit > div:first-child{border-top:0;padding-top:0}
+.kit p{font-size:14.5px;color:var(--pencil)}
+.sticky{background:var(--panel)!important;border:1px solid var(--line);padding:16px 18px;font-family:var(--f-body);font-size:14px;max-width:none;align-self:stretch;margin-top:12px}
+.sticky h2{font-family:var(--f-head)!important;font-size:12px!important;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
+.sticky ul{padding-left:18px;columns:2;column-gap:28px}
+.sticky li{margin:3px 0;break-inside:avoid}
+.sticky .arr{color:var(--mute)}
+
+/* tool links */
+.tools{gap:0;align-self:stretch;border-top:1px solid var(--line)}
+.tools-label{font-family:var(--f-body);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);padding:12px 0 2px}
+.tool{display:block;width:100%;font-family:var(--f-body);font-weight:400;font-size:15px;color:var(--ink);background:transparent!important;
+  border:0!important;border-bottom:1px solid var(--line)!important;padding:10px 0;text-decoration:none}
+.tool:last-of-type{border-bottom:0!important}
+.tool b{font-weight:700}
+.tool:after{content:" ↗";color:var(--mute);font-size:12px}
+.tool:hover{color:var(--blue)}
+
+/* sketch pages */
+.case h1,.post h1{font-size:clamp(28px,4vw,40px)!important}
+.case .tag,.case .tags,.post .date{font-family:var(--f-body);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.case p,.post p{font-size:15.5px;max-width:72ch}
+.case h2,.post h2{font-size:20px}
+.card{background:var(--panel)!important;border:1px solid var(--line)!important;padding:18px}
+.card .cap{font-family:var(--f-body);font-size:13px;color:var(--mute)}
+.card .small{font-family:var(--f-body);font-size:12px;color:var(--mute)}
+.tabs button{font:400 12px/1.4 var(--f-body);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--rule);padding:5px 12px}
+.tabs button[aria-pressed="true"]{background:var(--rule);color:var(--paper)}
+.nums{font-family:var(--f-body);font-size:13px}
+.nums b{font-family:var(--f-head);font-size:21px;color:var(--ink)}
+.scrib{font-family:var(--f-body);font-size:14px;color:var(--pencil);border-left:2px solid var(--line)}
+.sl label{font-family:var(--f-body);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.sl output{font-family:var(--f-head);font-size:19px}
+svg text{font-family:var(--f-body);font-size:11px;fill:var(--mute)}
+.margin{font-family:var(--f-body);font-size:13px;color:var(--mute);transform:none;font-style:italic}
+.pager{font-family:var(--f-body);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;border-top:1px solid var(--line)}
+
+/* contact */
+.guest{background:var(--panel)!important;border:1px solid var(--line)!important;padding:20px;max-width:640px;gap:14px}
+.guest h3{display:none}
+.guest label{font-family:var(--f-body);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.guest input[type=text],.guest input[type=email],.guest textarea{font:400 15px/1.5 var(--f-body);border:1px solid var(--line);background:#F8F4EA;padding:8px 10px;border-radius:0}
+.guest textarea{background:#F8F4EA}
+.guest input:focus,.guest textarea:focus{border-color:var(--blue)}
+.guest button{font:400 12px/1.4 var(--f-body);letter-spacing:.14em;text-transform:uppercase;background:var(--rule);color:var(--paper);border:1px solid var(--rule);padding:9px 22px}
+.guest button:hover{background:var(--blue);border-color:var(--blue)}
+.guest #g-status{font-family:var(--f-body);font-size:13px;color:var(--blue)}
+.guest .small{font-family:var(--f-body);font-size:11.5px;color:var(--mute)}
+
+.foot{font-family:var(--f-body);font-size:11.5px;color:var(--mute);border-top:1px solid var(--line);padding-top:14px;line-height:1.5}
+
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){
+  body{font-size:15.5px}
+  .page{gap:40px}
+  .intro h1{font-size:30px!important}
+  .stats{grid-template-columns:1fr}
+  .sticky ul{columns:1}
+  .job,.kit > div{grid-template-columns:1fr;gap:3px}
+  .top{flex-direction:column;gap:8px;align-items:flex-start}
+}

@@ -11,14 +11,14 @@
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Kalam:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 <div class="page">
   <div class="top">
     <a href="../index.html">← huan zhu</a>
-    <nav><a href="../work/index.html">all work</a><a href="../index.html#hi">say hi</a></nav>
+    <nav><a href="../work/index.html">Experience</a><a href="../tools/agents/index.html">Finance tools</a><a href="../index.html#contact">Contact</a></nav>
   </div>
 
   <article class="case">
@@ -40,20 +40,20 @@
 
     <div class="card">
       <span class="tape" aria-hidden="true"></span>
-      <div class="margin">click between the two, the yellow gap is the miss</div>
-      <div class="cap"><span>monthly revenue, $M</span>
+      <div class="margin">Switch between the two; the shaded gap is the forecast miss</div>
+      <div class="cap"><span>Monthly revenue, $M</span>
         <div class="tabs" role="group" aria-label="Forecast method">
           <button id="before" type="button" aria-pressed="false">old way (email)</button>
           <button id="after" type="button" aria-pressed="true">new system</button>
         </div>
       </div>
-      <div class="nums"><span>avg miss <b id="mape">–</b></span><span>worst month <b id="worst">–</b></span><span>months within 3% <b id="within">–</b></span></div>
+      <div class="nums"><span>Average miss <b id="mape">–</b></span><span>Worst month <b id="worst">–</b></span><span>Months within 3% <b id="within">–</b></span></div>
       <svg id="chart" viewBox="0 0 600 250" role="img" aria-label="Hand-drawn line chart of forecast against actual revenue"></svg>
-      <div class="small">made-up data · "Meridian Brokerage" (not a real company) · FY25</div>
+      <div class="small">Fictional data · Meridian Brokerage is not a real company · FY25</div>
     </div>
   </article>
 
-  <nav class="pager"><a href="../work/index.html">← all work</a><a href="../headcount/index.html">next: headcount model →</a></nav>
+  <nav class="pager"><a href="../work/index.html">← Experience</a><a href="../headcount/index.html">Next: headcount model →</a></nav>
 </div>
 <script src="../sketch.js"></script>
 <script>

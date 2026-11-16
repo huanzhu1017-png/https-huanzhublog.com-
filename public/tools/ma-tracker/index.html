@@ -53,6 +53,11 @@ th:first-child,td:first-child{text-align:left}
 th{font-weight:700;color:var(--navy);font-size:11px;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--navy)}
 tr.t td{font-weight:700;color:var(--navy)}tr.sub td:first-child{padding-left:22px;color:var(--royal)}
 .scroll{overflow-x:auto}
+.ctls{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+.ctls label{display:flex;flex-direction:column;gap:3px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--blue)}
+.ctls input{font:inherit;font-size:13px;width:92px;padding:5px 7px;border:1px solid var(--navy);background:#fff;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+td.hl,th.hl{background:var(--tint);font-weight:700}
+tr.fc td:first-child:after{content:" forecast";font-size:10px;color:var(--royal);letter-spacing:.6px;text-transform:uppercase}
 .act{border-left:3px solid var(--blue)}.act h2{display:flex;align-items:center;gap:10px;margin:0 0 8px}.act .bd{font-family:var(--sans);font-size:11px;font-weight:700;color:#fff;background:var(--navy);padding:1px 8px}
 .act ol{list-style:none;margin:0;padding:0}.act li{display:grid;grid-template-columns:78px 1fr auto;gap:12px;align-items:baseline;padding:8px 0;border-top:1px solid var(--line);font-size:13px}.act li:first-child{border-top:0}
 .act .tg,.act .tg.r,.act .tg.g{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.8px}
@@ -239,9 +244,134 @@ const views={};
  g.append($(`<div class="card"><h2>Employees on payroll by month</h2><p class="note">Employee count from the monthly payroll file. 2026 to September.</p>${t+'</svg>'}<div class="leg">${Object.keys(S).map(k=>`<span><i style="background:${S[k]}"></i>${k}</span>`).join('')}</div></div>`));
  v.append(g);views.ppl=v;
 })();
+// DEAL RETURNS — NPV, IRR, money multiple and payback, underwriting case vs where the deal stands
+(function(){
+ const v=document.createElement('div');v.className='wrap';
+ const A={close:30600,disc:12,tax:26,grow:4,exit:3.0,eoEnd:2027};
+ const Y0=2023,YN=2032,HOLD=YN-Y0+1;
+ const base=f=>({2023:M[f].fy23,2024:M[f].fy24,2025:M[f].fy25,2026:M[f].bud});
+ // One year of the deal. Operating earnings are revenue less the support we provide and occupancy;
+ // payments to the partners are consideration, not an operating cost, so they sit in the investment line.
+ function build(a){
+  const g=1+a.grow/100,t=a.tax/100,R=base('rev'),S=base('support'),C=base('corp'),E=base('commexp');
+  const mk=uw=>{const L=[];
+   for(let y=Y0;y<=YN;y++){
+    const n=y-2026,m=Math.max(0,y-2024),ramp=y===2023?.6:1;   // underwriting assumed a part-year 2023
+    const p=(act,uwv)=>uw?uwv*ramp*Math.pow(g,m):(y<=2026?act[y]:act[2026]*Math.pow(g,n));
+    const rev=p(R,M.rev.uw),sup=p(S,M.support.uw),occ=p(C,M.corp.uw),pay=p(E,M.commexp.uw);
+    const ebt=rev-sup-occ;
+    L.push({y,rev,sup,occ,ebt,tax:ebt*t,ocf:ebt*(1-t),pay:y>a.eoEnd?0:pay,act:!uw&&y<=2025,bud:!uw&&y===2026})}
+   const last=L[L.length-1];last.tv=last.ebt*a.exit;
+   L.forEach(r=>r.net=r.ocf-r.pay+(r.tv||0));
+   return L};
+  return{cur:mk(0),uw:mk(1)}}
+ const flows=(L,a)=>[-a.close].concat(L.map(r=>r.net));
+ const npv=(f,r)=>f.reduce((s,c,i)=>s+c/Math.pow(1+r,i),0);
+ const irr=f=>{let lo=-.9,hi=3;for(let i=0;i<300;i++){const m=(lo+hi)/2;npv(f,m)>0?lo=m:hi=m}return(lo+hi)/2};
+ function stats(L,a){const f=flows(L,a),r=a.disc/100;
+  const inv=a.close+L.reduce((s,x)=>s+x.pay,0),back=L.reduce((s,x)=>s+x.ocf+(x.tv||0),0);
+  let c=0,pb=null,d=0,dpb=null;
+  f.forEach((x,i)=>{c+=x;if(pb===null&&i>0&&c>=0)pb=i;d+=x/Math.pow(1+r,i);if(dpb===null&&i>0&&d>=0)dpb=i});
+  return{f,npv:npv(f,r),irr:irr(f),inv,moic:back/inv,pb,dpb,tv:L[L.length-1].tv}}
+ const yr=n=>n==null?'beyond '+HOLD+' yrs':'year '+n;
+ const $M=x=>(x/1000).toFixed(1);
+
+ const ctl=$(`<div class="card"><h2>Assumptions</h2><p class="note">Change any of these and the whole tab recalculates. Cash at close plus the payments to the partners is what we committed.</p><div class="ctls" id="rc"></div></div>`);
+ const CFG=[['close','Cash at close $K',500],['disc','Discount rate %',0.5],['tax','Tax rate %',1],['grow','Forecast growth %',0.5],['exit','Exit multiple ×',0.25],['eoEnd','Partner payments end',1]];
+ ctl.querySelector('#rc').innerHTML=CFG.map(([k,l,s])=>`<label>${l}<input type="number" step="${s}" data-k="${k}" value="${A[k]}"></label>`).join('');
+ v.append(ctl);
+ const body=document.createElement('div');body.className='wrap';v.append(body);
+
+ function render(){
+  const B=build(A),r=A.disc/100,t=A.tax/100,c=stats(B.cur,A),u=stats(B.uw,A);
+  body.innerHTML='';
+  // headline
+  const kp=document.createElement('div');kp.className='kpis';
+  kp.innerHTML=
+   tile('IRR, where the deal stands',(c.irr*100).toFixed(1),'%',dl(`${arrow(c.irr-u.irr)} ${Math.abs((c.irr-u.irr)*100).toFixed(1)} pts vs ${(u.irr*100).toFixed(1)}% underwritten`,c.irr>=u.irr),dl(`${c.irr>=r?'clears':'misses'} the ${A.disc}% hurdle`,c.irr>=r))+
+   tile(`NPV at ${A.disc}%`,$M(c.npv),'$M',dl(`${sgn((c.npv-u.npv)/1000,1)}M vs $${$M(u.npv)}M underwritten`,c.npv>=u.npv),`<span style="color:var(--mute)">value still created: $${$M(c.npv)}M</span>`)+
+   tile('Money multiple',c.moic.toFixed(2),'×',dl(`vs ${u.moic.toFixed(2)}× underwritten`,c.moic>=u.moic),`<span style="color:var(--mute)">$${$M(c.inv)}M committed</span>`)+
+   tile('Payback',c.pb==null?'—':String(c.pb),'years',dl(`discounted ${yr(c.dpb)}`,c.dpb!=null&&c.dpb<=HOLD),`<span style="color:var(--mute)">underwritten ${yr(u.pb)}</span>`);
+  body.append(kp);
+
+  // cash flow table
+  const row=(x,i)=>`<tr class="${x.act?'':x.bud?'':'fc'}"><td>${x.y}${x.act?'':x.bud?' budget':''}</td><td>${fmt(x.rev)}</td><td>${fmt(x.sup)}</td><td>${fmt(x.occ)}</td><td>${fmt(x.ebt)}</td><td>${fmt(x.tax)}</td><td>${fmt(x.ocf)}</td><td>${fmt(x.pay)}</td><td>${x.tv?fmt(x.tv):'—'}</td><td class="t">${fmt(x.net)}</td><td>${fmt(x.net/Math.pow(1+r,i+1))}</td></tr>`;
+  const T=B.cur,tot=k=>T.reduce((s,x)=>s+(x[k]||0),0);
+  body.append($(`<div class="card"><h2>Deal cash flow, where the deal stands</h2>
+   <p class="note">$K. 2023 to 2025 actual, 2026 at budget, then grown at ${A.grow}% a year. Operating earnings are fee revenue less the support we provide and occupancy. Payments to the partners are treated as consideration, so they are taken out below the tax line, not above it. Terminal value is ${A.exit.toFixed(2)}× operating earnings in ${YN}.</p>
+   <div class="scroll"><table><thead><tr><th>Year</th><th>Fee revenue</th><th>Support we provide</th><th>Occupancy</th><th>Operating earnings</th><th>Tax at ${A.tax}%</th><th>After-tax cash</th><th>Partner payments</th><th>Terminal value</th><th>Net cash flow</th><th>Discounted</th></tr></thead>
+   <tbody><tr class="t"><td>At close, Jan ${Y0}</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>${fmt(A.close)}</td><td>—</td><td class="t">${fmt(-A.close)}</td><td>${fmt(-A.close)}</td></tr>
+   ${T.map(row).join('')}
+   <tr class="t"><td>Total</td><td>${fmt(tot('rev'))}</td><td>${fmt(tot('sup'))}</td><td>${fmt(tot('occ'))}</td><td>${fmt(tot('ebt'))}</td><td>${fmt(tot('tax'))}</td><td>${fmt(tot('ocf'))}</td><td>${fmt(A.close+tot('pay'))}</td><td>${fmt(c.tv)}</td><td>${fmt(tot('net')-A.close)}</td><td>${fmt(c.npv)}</td></tr>
+   </tbody></table></div></div>`));
+
+  const g=document.createElement('div');g.className='grid';
+  // cumulative discounted cash
+  (function(){const W=520,H=270,pl=46,pr=16,pt=16,pb=30;
+   const cc=[],uu=[];let a1=0,a2=0;
+   c.f.forEach((x,i)=>cc.push(a1+=x/Math.pow(1+r,i)));u.f.forEach((x,i)=>uu.push(a2+=x/Math.pow(1+r,i)));
+   const all=cc.concat(uu),mx=Math.max(...all)*1.1,mn=Math.min(...all)*1.15;
+   const y=q=>pt+(mx-q)/(mx-mn)*(H-pt-pb),x=i=>pl+(W-pl-pr)*i/(cc.length-1);
+   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cumulative discounted cash flow">`;
+   for(let i=0;i<=4;i++){const q=mn+(mx-mn)*i/4;s+=`<line x1="${pl}" x2="${W-pr}" y1="${y(q)}" y2="${y(q)}" stroke="var(--line)"/><text class="m" x="${pl-6}" y="${y(q)+4}" text-anchor="end">${fmt(q/1000,0)}</text>`}
+   s+=`<line x1="${pl}" x2="${W-pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--navy)" stroke-width="1.5"/>`;
+   [[uu,'var(--warn)','Underwriting'],[cc,'var(--y26)','Where it stands']].forEach(([a,col])=>{
+    s+=`<polyline fill="none" stroke="${col}" stroke-width="2.2" points="${a.map((q,i)=>x(i)+','+y(q)).join(' ')}"/>`;
+    a.forEach((q,i)=>s+=`<circle cx="${x(i)}" cy="${y(q)}" r="2.6" fill="${col}"><title>${i===0?'At close':Y0+i-1}: ${fmt(q)}K</title></circle>`)});
+   if(c.dpb!=null)s+=`<line x1="${x(c.dpb)}" x2="${x(c.dpb)}" y1="${pt}" y2="${H-pb}" stroke="var(--blue)" stroke-dasharray="4 3"/><text class="m" x="${x(c.dpb)+4}" y="${pt+10}" style="fill:var(--blue);font-weight:700">payback ${Y0+c.dpb-1}</text>`;
+   for(let i=0;i<cc.length;i+=2)s+=`<text class="m" x="${x(i)}" y="${H-8}" text-anchor="middle" style="font-size:10px">${i===0?'Close':Y0+i-1}</text>`;
+   g.append($(`<div class="card"><h2>Cumulative discounted cash flow</h2><p class="note">$M at ${A.disc}%. The line crosses zero at discounted payback; where it ends is NPV.</p>${s+'</svg>'}<div class="leg"><span><i style="background:var(--warn)"></i>Underwriting</span><span><i style="background:var(--y26)"></i>Where it stands</span></div></div>`))})();
+
+  // NPV bridge
+  (function(){const d=(q,i)=>q/Math.pow(1+r,i+1);let rv=0,sp=0,oc=0,pay=0;
+   B.uw.forEach((w,i)=>{const z=B.cur[i];rv+=d((z.rev-w.rev)*(1-t),i);sp+=d(-(z.sup-w.sup)*(1-t),i);oc+=d(-(z.occ-w.occ)*(1-t),i);pay+=d(-(z.pay-w.pay),i)});
+   const tv=d(c.tv-u.tv,HOLD-1);
+   const st=[['Fee revenue',rv],['Support we provide',sp],['Occupancy',oc],['Payments to partners',pay],['Terminal value',tv]];
+   const W=520,H=290,pl=10,pr=10,pt=24,pb=56,n=st.length+2,gw=(W-pl-pr)/n,bw=gw*.58;
+   const pts=[u.npv,c.npv];let run=u.npv;st.forEach(x=>{run+=x[1];pts.push(run)});
+   const mx=Math.max(...pts,0)*1.12,mn=Math.min(...pts,0)*1.1,y=q=>pt+(mx-q)/(mx-mn)*(H-pt-pb);
+   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="NPV bridge"><line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" stroke="var(--mute)"/>`;
+   const bar=(i,a,b,col,txt,lab)=>{const x=pl+i*gw+(gw-bw)/2,y0=y(Math.max(a,b)),h=Math.max(2,Math.abs(y(a)-y(b)));
+    const w=lab.split(' '),half=Math.ceil(w.length/2);
+    s+=`<rect x="${x}" y="${y0}" width="${bw}" height="${h}" fill="${col}"/><text x="${x+bw/2}" y="${y0-6}" text-anchor="middle" style="font-weight:700;font-size:11px">${txt}</text>`+
+       `<text class="m" x="${x+bw/2}" y="${H-32}" text-anchor="middle" style="font-size:10px">${w.slice(0,half).join(' ')}</text><text class="m" x="${x+bw/2}" y="${H-20}" text-anchor="middle" style="font-size:10px">${w.slice(half).join(' ')}</text>`};
+   bar(0,0,u.npv,'var(--warn)',$M(u.npv),'Underwriting NPV');
+   let cur2=u.npv;st.forEach(([l,q],i)=>{bar(i+1,cur2,cur2+q,q>=0?'var(--good)':'var(--bad)',sgn(q/1000,1),l);cur2+=q});
+   bar(n-1,0,c.npv,'var(--y26)',$M(c.npv),'NPV today');
+   g.append($(`<div class="card"><h2>What happened to the NPV</h2><p class="note">$M at ${A.disc}%, underwriting case to where the deal stands. The five bars add to the whole difference.</p>${s+'</svg>'}</div>`))})();
+  body.append(g);
+
+  // sensitivity
+  (function(){const GR=[2,3,4,5,6],EX=[2,2.5,3,3.5,4];
+   const rows=GR.map(gv=>{const cells=EX.map(ev=>{const a=Object.assign({},A,{grow:gv,exit:ev});const s=stats(build(a).cur,a);
+     const on=gv===A.grow&&Math.abs(ev-A.exit)<.01;
+     return `<td class="${on?'hl':''}" style="color:${s.npv<0?'var(--bad)':'var(--ink)'}">${$M(s.npv)}</td>`}).join('');
+    return `<tr><td>${gv}%</td>${cells}</tr>`}).join('');
+   const irows=GR.map(gv=>{const cells=EX.map(ev=>{const a=Object.assign({},A,{grow:gv,exit:ev});const s=stats(build(a).cur,a);
+     const on=gv===A.grow&&Math.abs(ev-A.exit)<.01;
+     return `<td class="${on?'hl':''}" style="color:${s.irr<A.disc/100?'var(--bad)':'var(--ink)'}">${(s.irr*100).toFixed(1)}%</td>`}).join('');
+    return `<tr><td>${gv}%</td>${cells}</tr>`}).join('');
+   const hdr=`<tr><th>Growth \\ exit</th>${EX.map(e=>`<th>${e.toFixed(2)}×</th>`).join('')}</tr>`;
+   const g2=document.createElement('div');g2.className='grid';
+   g2.append($(`<div class="card"><h2>NPV sensitivity</h2><p class="note">$M at ${A.disc}%, forecast growth against the exit multiple. Red is value destroyed; the shaded cell is the case above.</p><div class="scroll"><table><thead>${hdr}</thead><tbody>${rows}</tbody></table></div></div>`));
+   g2.append($(`<div class="card"><h2>IRR sensitivity</h2><p class="note">Same grid. Red is below the ${A.disc}% hurdle.</p><div class="scroll"><table><thead>${hdr}</thead><tbody>${irows}</tbody></table></div></div>`));
+   body.append(g2)})();
+
+  body.append($(`<div class="card"><h2>How this is built</h2><p class="note" style="margin:0">
+   Cash at close is paid on 1 January ${Y0}; every other flow falls at the end of its year. Operating earnings are fee revenue less the support we provide and the firm's occupancy, taxed at ${A.tax}%, with no separate working capital or capital expenditure for a business of this kind.
+   Payments to the partners run to ${A.eoEnd} and are treated as consideration rather than an operating cost, so the committed total is $${$M(c.inv)}M, or ${(c.inv/(M.rev.uw-M.support.uw-M.corp.uw)).toFixed(2)}× underwritten operating earnings; the exit multiple is set to the same ${A.exit.toFixed(2)}×, so nothing in the return comes from assuming the multiple expands.
+   Moving those payments between operating cost and consideration does not change the IRR, because it is the same cash on the same dates; it changes the money multiple and what we say we paid, which is why the committed total is shown next to it.
+   The underwriting case is the approved column from the P&amp;L tab, with ${Y0} at 60% for a part year, grown at the same ${A.grow}%.</p></div>`));
+ }
+ ctl.addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;
+  const n=+e.target.value;if(!isFinite(n))return;
+  A[k]=k==='eoEnd'?Math.min(YN,Math.max(Y0,Math.round(n))):Math.max(k==='close'?0:0,n);
+  e.target.value=A[k];render()});
+ render();views.ret=v;
+})();
 // tabs
-const names=[['overview','Overview'],['pl','P&amp;L vs underwriting'],['overheads','Overheads &amp; cap'],['people','People &amp; productivity']];
-const vmap={overview:views.overview,pl:views.pl,overheads:views.oh,people:views.ppl};
+const names=[['overview','Overview'],['pl','P&amp;L vs underwriting'],['returns','Deal returns'],['overheads','Overheads &amp; cap'],['people','People &amp; productivity']];
+const vmap={overview:views.overview,pl:views.pl,returns:views.ret,overheads:views.oh,people:views.ppl};
 const bar=$(`<div class="ptabs" role="tablist">${names.map(n=>`<button role="tab" data-v="${n[0]}">${n[1]}</button>`).join('')}</div>`);
 app.append(bar);Object.values(vmap).forEach(x=>app.append(x));
 function show(w){if(!vmap[w])w='overview';Object.entries(vmap).forEach(([k,x])=>x.hidden=k!==w);bar.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===w));
