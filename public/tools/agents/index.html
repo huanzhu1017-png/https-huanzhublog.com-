@@ -234,10 +234,11 @@ tr.exp.open td.t:before{content:"▾ "}
   <div class="detail" id="detail" aria-live="polite"></div>
 
   <h2 class="sec">Rules every agent follows</h2>
-  <div class="rules">
+  <div class="rules" style="grid-template-columns:repeat(2,minmax(0,1fr))">
     <div><b>A person always signs off</b>Agents only write drafts. Every email is reviewed before it is sent.</div>
     <div><b>Nothing moves until it ties out</b>The Controller checks every number against its source. Small gaps are allowed in the first cycles; after that, everything must tie.</div>
     <div><b>Every issue is written down</b>Accounting questions go into one log with an owner and a status, so the record outlives any single cycle.</div>
+    <div><b>One set of numbers</b>Every tool reads the same underlying data, so a change in one agent's tool flows straight through the others. Nothing is re-keyed.</div>
   </div>
 
   <footer>
