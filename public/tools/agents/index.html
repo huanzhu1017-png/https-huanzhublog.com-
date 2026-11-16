@@ -225,11 +225,11 @@ tr.exp.open td.t:before{content:"▾ "}
 <div class="wrap">
   <div class="head"><div>
     <h1>My FP&amp;A Agent Team</h1>
-    <p>Six AI agents, a team lead and a PMO run the forecast, budget and month-end cycles. Each agent owns one tool on this site; together they close the loop from collecting data to sending the message.</p>
+    <p>Seven AI agents, a team lead and a PMO run the forecast, budget and month-end cycles. Each agent owns one tool on this site; together they close the loop from collecting data to sending the message.</p>
   </div></div>
   <p class="fict"><b>What this shows:</b> the operating system I designed for a brokerage FP&amp;A team: who does what, who checks whom, and where a human signs off. The tools are static demos with made-up data; click any agent to see what it owns.</p>
 
-  <div class="scroll" style="margin-top:16px"><svg id="chart" viewBox="0 0 1260 660" style="min-width:900px;width:100%;display:block" role="img" aria-label="Flowchart of the FP&amp;A agent team: the PMO feeds three build agents, the Controller checks their work, Reporting and Admin turn it into drafts, and Huan reviews and sends"></svg></div>
+  <div class="scroll" style="margin-top:16px"><svg id="chart" viewBox="0 0 1260 660" style="min-width:900px;width:100%;display:block" role="img" aria-label="Flowchart of the FP&amp;A agent team: the PMO feeds the build agents; Revenue feeds Broker contracts, the Controller checks their work, Reporting and Admin turn it into drafts, and Huan reviews and sends"></svg></div>
   <p class="note">Click a box to see what the agent takes in, produces and hands off. Solid arrows pass work on; the dashed arrow sends work back when it doesn't tie out.</p>
   <div class="detail" id="detail" aria-live="polite"></div>
 
@@ -252,14 +252,15 @@ tr.exp.open td.t:before{content:"▾ "}
 const A=[
  {s:0,id:'pmo',short:'keeps every cycle on time',no:'PMO',n:'Cycle tracker',d:'Keeps every cycle on schedule',in:'Calendar of forecast, budget and month-end dates; list of markets expected to submit',out:'Who has submitted and who has not; reminder drafts; status of each step',to:'Agents 1–9',tool:['Forecast cycle tracker','../cycle-tracker/index.html']},
  {s:1,id:'a1',short:'forecast and budget',no:'Agent 1',n:'Revenue',d:'Forecast and budget, market by market',in:'Market forecast submissions, deal pipeline, booked revenue',out:'Quarterly forecast; next year\'s budget built broker by broker',to:'Agent 4 Controller',tool:['Revenue forecast and budget','../revenue-forecast/index.html']},
+ {s:1,id:'a6',short:'revenue into commission',no:'Agent 6',n:'Broker contracts',d:'Turns each broker\'s revenue into commission under their contract terms',in:'Broker production from Agent 1; contract terms: commission grid, fixed splits, guarantees, sign-on loans',out:'Commission by broker; decisions on contracts ending next year; what is left for corporate comp and non-comp',to:'Agent 4 Controller',tool:['Broker contracts','../broker-contracts/index.html']},
  {s:1,id:'a2',short:'every non-salary cost',no:'Agent 2',n:'Non-comp',d:'Every non-salary cost, with an owner per cost type',in:'Actuals by account; inputs from each cost owner; vendor contracts',out:'Non-comp budget with contracts, offices, travel, fees, events, fixed costs and shared services',to:'Agent 4 Controller',tool:['Non-comp budget','../noncomp-budget/index.html']},
- {s:1,id:'a3',short:'headcount and comp',no:'Agent 3',n:'Headcount',d:'Headcount and compensation plan',in:'HR roster, open roles, hiring plan',out:'Headcount and comp plan by team',to:'Agent 4 Controller',tool:['Headcount and comp plan','../headcount-plan/index.html'],rel:['A headcount model I built earlier (case study)','../../headcount/index.html']},
- {s:2,id:'a4',short:'ties out every number',no:'Agent 4',n:'Controller',d:'Ties out every number before it moves',in:'Outputs from agents 1, 2 and 3; the ledger',out:'Pass or hold for each output; accounting issue log; month-end calendar',to:'Agent 5 Reporting',tool:['Tie-out and issue log','../controller/index.html']},
+ {s:1,id:'a3',short:'headcount and comp',no:'Agent 3',n:'Headcount',d:'Headcount and compensation plan',in:'HR roster, open roles, hiring plan',out:'Headcount and comp plan by team',to:'Agent 4 Controller',tool:['Headcount and comp plan','../headcount-plan/index.html']},
+ {s:2,id:'a4',short:'ties out every number',no:'Agent 4',n:'Controller',d:'Ties out every number before it moves',in:'Outputs from agents 1, 2, 3 and 6; the ledger',out:'Pass or hold for each output; accounting issue log; month-end calendar',to:'Agent 5 Reporting',tool:['Tie-out and issue log','../controller/index.html']},
  {s:3,id:'a5',short:'one set of numbers',no:'Agent 5',n:'Reporting',d:'One version of the numbers',in:'Checked outputs from the Controller',out:'Monthly packages and forecast reports',to:'Agent 7 Admin',tool:['Real-time reporting','../../variance/index.html']},
  {s:4,id:'a7',short:'drafts for each audience',no:'Agent 7',n:'Admin',d:'Writes for each audience',in:'Reports from Agent 5',out:'Email drafts written in each stakeholder\'s style, waiting for review',to:'Huan (review and send)',tool:['Reader drafts','../stakeholder-drafts/index.html']}
 ];
 const $=q=>document.querySelector(q);
-const BX={pmo:[20,236,150,100],a1:[240,90,210,92],a2:[240,240,210,92],a3:[240,390,210,92],
+const BX={pmo:[20,236,150,100],a1:[240,50,210,92],a6:[240,170,210,92],a2:[240,300,210,92],a3:[240,420,210,92],
  a4:[540,231,170,110],a5:[790,236,150,100],a7:[1010,236,130,100],me:[1180,236,70,100]};
 const STG=[['1 · Collect',20,170],['2 · Build',240,450],['3 · Check',540,710],['4 · Report',790,940],['5 · Communicate',1010,1250]];
 const mid=k=>{const[x,y,w,h]=BX[k];return{l:[x,y+h/2],r:[x+w,y+h/2],t:[x+w/2,y],b:[x+w/2,y+h]}};
@@ -279,10 +280,11 @@ function draw(){
   STG.forEach(([t,x1,x2],i)=>{g+=`<text x="${x1}" y="18" style="font-size:11px;letter-spacing:.18em;font-weight:700;fill:var(--ink)">${t.toUpperCase()}</text><line x1="${x1}" x2="${x2}" y1="26" y2="26" stroke="#1A1A1A" stroke-width="2"/>`});
   // PMO fans out to the five build agents
   ['a1','a2','a3'].forEach(k=>g+=arrow(m('pmo').r,m(k).l));
+  g+=arrow([BX.a1[0]+40,BX.a1[1]+BX.a1[3]],[BX.a6[0]+40,BX.a6[1]]);g+=`<text x="${BX.a1[0]+50}" y="${BX.a1[1]+BX.a1[3]+18}" style="font-size:11px;font-style:italic;fill:var(--ink2)">broker production</text>`;
   g+=`<text x="95" y="224" text-anchor="middle" style="font-size:11px;font-style:italic;fill:var(--ink2)">data, dates</text>`;
   // feeders inside Build
   // build -> controller
-  ['a1','a2','a3'].forEach(k=>g+=arrow(m(k).r,[BX.a4[0],m('a4').l[1]+(k==='a1'?-25:k==='a3'?25:0)]));
+  [['a1',-36],['a6',-12],['a2',12],['a3',36]].forEach(([k,o])=>g+=arrow(m(k).r,[BX.a4[0],m('a4').l[1]+o]));
   g+=`<text x="500" y="455" text-anchor="middle" style="font-size:11px;font-style:italic;fill:var(--ink2)">numbers to check</text>`;
   // hold loop
   g+=`<path d="M${BX.a4[0]+BX.a4[2]/2},${BX.a4[1]+BX.a4[3]} C${BX.a4[0]+BX.a4[2]/2},620 ${BX.a3[0]+BX.a3[2]/2},640 ${BX.a3[0]+BX.a3[2]/2},${BX.a3[1]+BX.a3[3]+2}" fill="none" stroke="#9A3B2A" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah2)"/><text x="560" y="625" text-anchor="middle" style="font-size:11px;font-style:italic;fill:#9A3B2A">doesn't tie out → back to the agent</text>`;
