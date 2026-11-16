@@ -203,7 +203,7 @@ tr.exp.open td.t:before{content:"▾ "}
   </div></div>
   <p class="fict"><b>What this shows:</b> how the same report reaches different readers: a short style note per stakeholder, and drafts that wait for a person to review and send. <b>All names and figures are made up.</b></p>
   <div class="ctlbar" style="grid-template-columns:1fr 1fr">
-    <label>Report<select class="st" id="rep"><option value="fc">Q4 forecast update, 10/19 cycle</option><option value="me">October month-end package</option></select></label>
+    <label>Report<select class="st" id="rep"><option value="fc">Q4 forecast update, October cycle</option><option value="me">October month-end package</option></select></label>
     <label>Audience<select class="st" id="aud"></select></label>
   </div>
   <div class="grid2" style="grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)">
@@ -236,23 +236,23 @@ const OCT=(P.Q[2026][3].reduce((a,b)=>a+b,0)/3/1e6).toFixed(1);  // October, fro
 const NCM=((B.noncompTotal(2026)+B.allocTotal(2026)-B.alloc(2026)['Corporate comp'])/12/1e3).toFixed(1);
 const HEADS=HD.heads26(),OPEN=HD.openRoles();
 const AUD={cfo:['CFO','Numbers first, then the one thing to worry about. Five lines at most.'],ceo:['CEO','Three bullets, plain words, no tables. Ends with what it means for the year.'],reg:['Regional heads','Their own market first, then the total. A table they can forward.'],acct:['Accounting','What needs fixing, with IDs from the issue log and due dates.']};
-const D={fc:{cfo:`Subject: Q4 forecast 10/19: $146M, +$13.4M vs 9/28
+const D={fc:{cfo:`Subject: October Q4 forecast: $146M, +$13.4M vs September
 
-Q4 forecast is $146M base, +$13.4M vs the 9/28 cycle and +8% vs Q4 2025.
+Q4 forecast is $146M base, +$13.4M vs the September cycle and +8% vs Q4 2025.
 Range: $138M downside to $170M upside.
 76% of the number is discounted pipeline; $12.5M (9%) has no named deals behind it yet.
 To watch: that $12.5M is the first place to push the markets for deal support.
 Full report attached; happy to walk through it.`,
 ceo:`Subject: Q4 outlook in three lines
 
-• Q4 should land around $146M, about $13M better than three weeks ago.
+• Q4 should land around $146M, about $13M better than the September forecast.
 • The lift comes mostly from the East and Capital Markets, plus a finance adjustment.
 • That puts Q4 about 8% ahead of last year.`,
-reg:`Subject: Q4 forecast by region, 10/19 cycle
+reg:`Subject: Q4 forecast by region, October cycle
 
 Hi all, here is where each region landed this cycle ($M). Your own region is first in your copy; the total is at the bottom.
 
-Region               9/28   10/19   Change
+Region               Sept     Oct   Change
 East                   61      66      +5
 West                   64      66      +2
 International           8       8       0
@@ -260,7 +260,7 @@ Corporate & Admin       0       7      new
 Total                 133     146     +13
 
 Please flag anything that has moved since you submitted.`,
-acct:`Subject: Forecast cycle 10/19: items for Accounting
+acct:`Subject: October forecast cycle: items for Accounting
 
 Two items from this cycle's tie-out, both in the issue log:
 • AI-014: fee booked to the wrong market in October. Due Nov 20.

@@ -199,12 +199,12 @@ tr.exp.open td.t:before{content:"▾ "}
   <div class="head"><div>
     <h1>Forecast Cycle Tracker</h1>
     <span class="badge draft">Demo</span> <span class="saved" id="savedmsg"></span>
-    <p>Q4 forecast, 11/16 cycle. Who has submitted, what happens next, and the dates everyone works to.</p>
+    <p>Q4 forecast, November cycle. Who has submitted, what happens next, and the dates everyone works to.</p>
   </div></div>
   <p class="fict"><b>What this shows:</b> how the PMO agent keeps a forecast cycle on time: a checklist of every market, reminders drafted for whoever is missing, and the steps each agent takes after the deadline. <b>All names and figures are made up.</b></p>
   <div class="grid4" id="kpi" style="margin-top:14px"></div>
   <h2 class="sec">This cycle, step by step</h2>
-  <p class="sub">Q4 forecast, 11/16 cycle. Each step starts when the one before it is done.</p>
+  <p class="sub">Q4 forecast, November cycle. Each step starts when the one before it is done.</p>
   <div class="scroll"><table id="steps"></table></div>
   <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">Who has submitted</h2>
     <label>Show<select class="st" id="f"><option value="">All markets</option><option value="Missing">Missing</option><option value="Late">Late</option><option value="Revised">Revised</option><option value="Received">Received</option></select></label></div>
@@ -250,7 +250,7 @@ function render(){
 const STEPS=[['PMO','Collect market submissions','In progress','21 of 24 in; due Mon 5 PM'],['Agent 1 Revenue','Build the forecast','Waiting','starts when all markets are in'],['Agent 4 Controller','Tie out to booked revenue and pipeline','Waiting',''],['Agent 5 Reporting','Forecast report and dashboard','Waiting',''],['Agent 7 Admin','Drafts for each stakeholder','Waiting',''],['Huan','Review and send','Waiting','target Wed Nov 18']];
 const sc={'Done':'ok','In progress':'warn','Waiting':'mut'};
 $('#steps').innerHTML=`<tr><th class="t">#</th><th class="t">Who</th><th class="t">Step</th><th class="t">Status</th><th class="t">Note</th></tr>`+STEPS.map((x,i)=>`<tr><td class="t">${i+1}</td><td class="t"><b>${x[0]}</b></td><td class="t">${x[1]}</td><td class="t"><span class="chip ${sc[x[2]]}">${x[2]}</span></td><td class="t">${x[3]}</td></tr>`).join('');
-const CAL=[['Oct 19','Q4 forecast cycle 1','Done'],['Nov 2–11','October month-end close (WD1–WD8)','Done'],['Nov 16','Q4 forecast cycle 2','Now'],['Nov 20','2027 budget: first draft from each agent','Next'],['Dec 1–10','November month-end close (WD1–WD8)','Planned'],['Dec 14','Q4 forecast cycle 3','Planned'],['Dec 18','2027 budget: final review','Planned'],['Dec 28','Q4 forecast cycle 4, final','Planned']];
+const CAL=[['Oct 19','Q4 forecast, October cycle','Done'],['Nov 2–11','October month-end close (WD1–WD8)','Done'],['Nov 16','Q4 forecast, November cycle','Now'],['Nov 20','2027 budget: first draft from each agent','Next'],['Dec 1–10','November month-end close (WD1–WD8)','Planned'],['Dec 14','Q4 forecast, December cycle','Planned'],['Dec 18','2027 budget: final review','Planned'],['Dec 28','Q4 forecast, final December cycle','Planned']];
 const cc={Done:'ok',Now:'on',Next:'warn',Planned:'mut'};
 $('#cal').innerHTML=`<tr><th class="t">Date</th><th class="t">Milestone</th><th class="t">Status</th></tr>`+CAL.map(x=>`<tr><td class="t"><b>${x[0]}</b></td><td class="t">${x[1]}</td><td class="t"><span class="chip ${cc[x[2]]}">${x[2]}</span></td></tr>`).join('');
 $('#f').addEventListener('change',render);

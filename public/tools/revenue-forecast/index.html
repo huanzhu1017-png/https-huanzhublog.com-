@@ -164,7 +164,7 @@ body{font-size:13px}
     <div class="findings"><h3>Key findings</h3><ul id="s-find"></ul></div>
     <div class="grid2">
       <div class="card"><h3>YoY and vs. prior cycle ($M)</h3><div class="scroll"><table id="s-yoy"></table></div>
-        <p class="note">CM = Sales + Debt. Prior column is the 9/28 Q4 FYF. Year-ago is Q4 2025 actual.</p></div>
+        <p class="note">CM = Sales + Debt. Prior column is the September Q4 forecast. Year-ago is Q4 2025 actual.</p></div>
       <div class="card"><h3 id="s-regh"></h3><div class="scroll"><table id="s-reg"></table></div>
         <p class="note">Change by region since the last cycle.</p></div>
     </div>
@@ -206,7 +206,7 @@ body{font-size:13px}
     <h2 class="lead">Revenue history</h2>
     <div class="grid4" id="h-kpi"></div>
     <div class="card" style="margin-top:16px"><h3>Quarterly revenue by line, 2020 – Q4 2026 forecast</h3>
-      <p class="note" style="margin:0 0 8px">Actual revenue by quarter, $M labelled on each bar. Q4 2026 is the 10/19 forecast (lighter bar). Hover a bar for the split.</p>
+      <p class="note" style="margin:0 0 8px">Actual revenue by quarter, $M labelled on each bar. Q4 2026 is the October forecast (lighter bar). Hover a bar for the split.</p>
       <div class="legend"><span><i style="background:var(--lease)"></i>Lease</span><span><i style="background:var(--sales)"></i>Sales</span><span><i style="background:var(--debt)"></i>Debt</span><span><i style="background:var(--bad);height:2px;vertical-align:3px"></i>Fed funds target, upper bound (right axis)</span></div>
       <div class="scroll"><svg id="h-chart" viewBox="0 0 1100 400" style="min-width:760px" role="img" aria-label="Stacked quarterly revenue by line from 2020 to 2026 with the fed funds rate"></svg></div>
       <p class="note">Rate line is the published federal funds target. Everything else is generated for this demo.</p>
@@ -366,12 +366,12 @@ const sc=ytdTarget/CLOSED.reduce((a,d)=>a+d.rev,0);CLOSED.forEach(d=>d.rev=Math.
 
 /* =================== SUMMARY =================== */
 const chg=base-prior;
-$('#headline').innerHTML=`The 10/19 Q4 2026 forecast is <b>${M(base)}</b>, <b>${sgn(chg,M)}</b> vs. 9/28. ${Math.round(pipe/base*100)}% comes from discounted deal pipeline and ${Math.round((mtop+ftop)/base*100)}% from topside adjustments.`;
-$('#s-lead').textContent=`10/19 Q4 forecast is ${M(base)}, ${chg>=0?'up':'down'} ${M(Math.abs(chg))} vs. the 9/28 forecast and ${pct((base-ly)/ly).replace('+','')} ${base>=ly?'above':'below'} Q4 2025 actual`;
+$('#headline').innerHTML=`The October Q4 2026 forecast is <b>${M(base)}</b>, <b>${sgn(chg,M)}</b> vs. the September forecast. ${Math.round(pipe/base*100)}% comes from discounted deal pipeline and ${Math.round((mtop+ftop)/base*100)}% from topside adjustments.`;
+$('#s-lead').textContent=`The October Q4 forecast is ${M(base)}, ${chg>=0?'up':'down'} ${M(Math.abs(chg))} vs. the September forecast and ${pct((base-ly)/ly).replace('+','')} ${base>=ly?'above':'below'} Q4 2025 actual`;
 $('#s-hero').innerHTML=`
- <div><div class="big">${M(base)} Base</div><div class="dn">Downside ${M(downside)}</div><div class="up">Upside ${M(upside)}</div><div class="l">Q4 FYF</div><div class="s">${Math.round(pipe/base*100)}% pipeline · ${Math.round((mtop+ftop)/base*100)}% topside · ${M(booked)} booked</div></div>
+ <div><div class="big">${M(base)} Base</div><div class="dn">Downside ${M(downside)}</div><div class="up">Upside ${M(upside)}</div><div class="l">Q4 forecast</div><div class="s">${Math.round(pipe/base*100)}% pipeline · ${Math.round((mtop+ftop)/base*100)}% topside · ${M(booked)} booked</div></div>
  <div><div class="big">${sgn(base-ly,M)}</div><div class="l">vs. Q4 2025 actual</div><div class="s"><span class="${base>=ly?'g':'r'}">${pct((base-ly)/ly)}</span> vs. ${M(ly)}</div></div>
- <div><div class="big">${sgn(chg,M)}</div><div class="l">vs. 9/28 Q4 FYF</div><div class="s"><span class="${chg>=0?'g':'r'}">${pct(chg/prior)}</span> vs. ${M(prior)}</div></div>
+ <div><div class="big">${sgn(chg,M)}</div><div class="l">vs. September Q4 forecast</div><div class="s"><span class="${chg>=0?'g':'r'}">${pct(chg/prior)}</span> vs. ${M(prior)}</div></div>
  <div><div class="big">${M(nodet)}</div><div class="l">Forecast with no named deals behind it</div><div class="s">${Math.round(nodet/base*100)}% of base · the first place to push for deal support</div></div>`;
 
 const dCC=CC.map(c=>({c,d:tot(c.fc)-tot(c.prior),y:tot(c.fc)-tot(c.ly)}));
@@ -380,8 +380,8 @@ const yUp=dCC.slice().sort((a,b)=>b.y-a.y).slice(0,3), yDn=dCC.slice().sort((a,b
 const topDeals=c=>DEALS.filter(d=>d.cc===c&&!d.up).sort((a,b)=>b.disc-a.disc).slice(0,2).map(d=>`${esc(d.client)} ${M(d.disc)}`).join(', ');
 const subChg=chg-ftop;
 $('#s-find').innerHTML=[
- `<b>Biggest increases vs. 9/28:</b> ${up3.map(x=>`${esc(x.c.name)} ${sgn(x.d,M)} (${topDeals(x.c)})`).join('; ')}.`,
- `<b>Biggest decreases vs. 9/28:</b> ${dn3.map(x=>`${esc(x.c.name)} ${sgn(x.d,M)}`).join('; ')}.`,
+ `<b>Biggest increases vs. September:</b> ${up3.map(x=>`${esc(x.c.name)} ${sgn(x.d,M)} (${topDeals(x.c)})`).join('; ')}.`,
+ `<b>Biggest decreases vs. September:</b> ${dn3.map(x=>`${esc(x.c.name)} ${sgn(x.d,M)}`).join('; ')}.`,
  `<b>Cost centers driving the change vs. Q4 2025:</b> Up: ${yUp.map(x=>`${esc(x.c.name)} ${sgn(x.y,M)}`).join('; ')}. Down: ${yDn.map(x=>`${esc(x.c.name)} ${sgn(x.y,M)}`).join('; ')}.`
 ].map(x=>'<li>'+x+'</li>').join('');
 
@@ -390,11 +390,11 @@ const L3=a=>[a[0],a[1]+a[2],tot(a)];
 const fF=L3(F),fL=L3(LY),fP=L3(P);
 const n0=v=>v<0?'('+M0(-v)+')':M0(v), pc=v=>(v<0?'−':'')+Math.abs(v*100).toFixed(0)+'%';
 $('#s-yoy').innerHTML=`<tr><th class="t"></th><th>Lease</th><th>CM</th><th class="tc">Total</th></tr>`+
- row('<b>10/19 Q4 FYF</b>',fF,M0)+row('Q4 2025',fL,M0)+row('9/28 Q4 FYF',fP,M0)+
- row('vs. Q4 2025',fF.map((v,i)=>v-fL[i]),n0,1)+row('vs. 9/28 Q4 FYF',fF.map((v,i)=>v-fP[i]),n0,1)+
- row('vs. Q4 2025 %',fF.map((v,i)=>(v-fL[i])/fL[i]),pc,1)+row('vs. 9/28 Q4 FYF %',fF.map((v,i)=>(v-fP[i])/fP[i]),pc,1);
+ row('<b>October Q4 forecast</b>',fF,M0)+row('Q4 2025',fL,M0)+row('September Q4 forecast',fP,M0)+
+ row('vs. Q4 2025',fF.map((v,i)=>v-fL[i]),n0,1)+row('vs. September forecast',fF.map((v,i)=>v-fP[i]),n0,1)+
+ row('vs. Q4 2025 %',fF.map((v,i)=>(v-fL[i])/fL[i]),pc,1)+row('vs. September forecast %',fF.map((v,i)=>(v-fP[i])/fP[i]),pc,1);
 $('#s-regh').textContent=`Change since prior cycle: ${sgn(chg,M)} to ${M(base)}`;
-$('#s-reg').innerHTML=`<tr><th class="t">Region</th><th>9/28</th><th>10/19</th><th>Change</th><th class="tc">%</th></tr>`+
+$('#s-reg').innerHTML=`<tr><th class="t">Region</th><th>September</th><th>October</th><th>Change</th><th class="tc">%</th></tr>`+
  REG.map(r=>{const a=ALL.filter(c=>c.region===r),p=a.reduce((s,c)=>s+tot(c.prior),0),f=a.reduce((s,c)=>s+tot(c.fc),0),d=f-p;
   return `<tr><td class="t">${r}</td><td>${M0(p)}</td><td>${M0(f)}</td><td class="${cls(d)}">${n0(d)}</td><td class="tc ${cls(d)}"><b>${p?((d/p*100).toFixed(1)+'%'):'new'}</b></td></tr>`}).join('')+
  `<tr class="total"><td class="t">Total</td><td>${M0(prior)}</td><td>${M0(base)}</td><td>${n0(chg)}</td><td>${(chg/prior*100).toFixed(1)}%</td></tr>`;
@@ -433,7 +433,7 @@ $('#s-reg').innerHTML=`<tr><th class="t">Region</th><th>9/28</th><th>10/19</th><
   });
   svg.innerHTML=g;
   const avg=err.reduce((a,b)=>a+b,0)/err.length;
-  $('#s-fvanote').textContent=`Badge = how far the actual landed from the last forecast. The miss fell from ${(err[0]*100).toFixed(0)}% in Q1 2025 to ${(err[err.length-1]*100).toFixed(0)}% in Q3 2026 as forecasting moved from emailed submissions to one system with deal-level data. Q4 2026 shows the 9/28 forecast and the current forecast.`;
+  $('#s-fvanote').textContent=`Badge = how far the actual landed from the last forecast. The miss fell from ${(err[0]*100).toFixed(0)}% in Q1 2025 to ${(err[err.length-1]*100).toFixed(0)}% in Q3 2026 as forecasting moved from emailed submissions to one system with deal-level data. Q4 2026 shows the September forecast and the current one.`;
 })();
 
 /* lookup */
@@ -441,7 +441,7 @@ function look(){
   const q=$('#s-q').value.trim().toLowerCase();
   let list=ALL.filter(c=>!q||(c.name+' '+c.market+' '+c.region+' '+c.code).toLowerCase().includes(q)).sort((a,b)=>tot(b.fc)-tot(a.fc));
   if(!q)list=list.slice(0,5);else list=list.slice(0,40);
-  $('#s-look').innerHTML=`<tr><th class="t">Cost center</th><th class="t">Market</th><th class="t">Region</th><th>Booked</th><th>Pipeline</th><th>Topside</th><th>Forecast</th><th>vs. 9/28</th><th>vs. Q4 2025</th></tr>`+
+  $('#s-look').innerHTML=`<tr><th class="t">Cost center</th><th class="t">Market</th><th class="t">Region</th><th>Booked</th><th>Pipeline</th><th>Topside</th><th>Forecast</th><th>vs. September</th><th>vs. Q4 2025</th></tr>`+
    (list.length?list.map(c=>{const d=tot(c.fc)-tot(c.prior),y=tot(c.fc)-tot(c.ly);
     return `<tr><td class="t">${esc(c.name)}</td><td class="t">${esc(c.market)}</td><td class="t">${c.region}</td><td>${M(tot(c.booked))}</td><td>${M(tot(c.pipe)+tot(c.nodet))}</td><td>${M(tot(c.mtop)+tot(c.ftop))}</td><td><b>${M(tot(c.fc))}</b></td><td class="${cls(d)}">${d?sgn(d,M):'–'}</td><td class="${cls(y)}">${y?sgn(y,M):'–'}</td></tr>`}).join(''):`<tr><td class="t" colspan="9">No cost center matches “${esc(q)}”. Try a city or region.</td></tr>`);
 }
