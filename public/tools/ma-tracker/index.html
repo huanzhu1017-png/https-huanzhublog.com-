@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>M&amp;A Performance Tracker · Huan Zhu</title>
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta name="description" content="A demo of an M&amp;A performance tracker Huan Zhu built: an acquisition measured against its underwriting case. All figures are made up.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Old+Standard+TT:wght@400;700&display=swap">
+<style>
+:root{--bg:#EEE8DA;--card:#F6F1E4;--ink:#1A1A1A;--mute:#4A4A4A;--line:#D8CFBC;--y25:#A9A190;--y26:#1A1A1A;--warn:#C7A25A;--good:#7E9C8A;--bad:#9A3B2A;--tint:#E8E0CC;--blue:#2F5E46;--royal:#4A4A4A;--navy:#1A1A1A;--sky:#C7A25A;
+--sans:'Libre Baskerville',Georgia,-apple-system,'Segoe UI',Arial,sans-serif;--serif:'Old Standard TT','Times New Roman',Times,serif;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;box-shadow:none;text-shadow:none}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.wrap .wrap{width:100%;max-width:none}
+header{background:var(--navy);color:#fff;padding:24px 28px 26px;display:flex;flex-direction:column;gap:0}
+.hrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.logo{display:block;width:144px;height:23.6px}.logo path,.logo polygon,.logo rect{fill:#fff}
+.eyebrow{font-weight:700;text-transform:uppercase;letter-spacing:.8px;font-size:12px;color:var(--sky)}
+.kl{height:0;border:0;border-top:1px solid var(--sky);margin:8px 0 14px}
+h1{font-family:var(--serif);font-weight:400;font-size:38px;line-height:1.15;margin:0;color:#fff}
+.hsub{color:#fff;font-size:13px;margin-top:10px}
+.tie{font-size:12px;color:#fff;border:1px solid #fff;padding:4px 10px;cursor:default}
+.tie.bad{color:var(--sky);border-color:var(--sky)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--blue);padding:16px;min-width:0}
+.kpi .l{font-weight:700;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--blue)}
+.kpi .v{font-family:var(--serif);font-size:36px;font-weight:400;color:var(--navy);font-variant-numeric:tabular-nums;margin:6px 0 8px;line-height:1.1}
+.kpi .v small{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--royal);margin-left:4px}
+.d{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;font-variant-numeric:tabular-nums}
+.up{color:var(--blue)}.dn{color:var(--navy);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);padding:18px;min-width:0}
+.card h2{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--navy);margin:0 0 4px}
+.card .note{font-size:12px;color:var(--royal);margin:0 0 12px}
+.tabs{display:flex;gap:4px;margin:0 0 10px;flex-wrap:wrap}
+.tabs button{font:inherit;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--navy);background:#fff;border:1px solid var(--navy);border-radius:0;padding:4px 12px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.ptabs{display:flex;gap:4px;border-bottom:1px solid var(--navy);flex-wrap:wrap}
+.ptabs button{font:inherit;font-size:13px;font-weight:700;color:var(--royal);background:transparent;border:0;border-bottom:3px solid transparent;border-radius:0;padding:10px 16px;cursor:pointer;margin-bottom:-1px}
+.ptabs button[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--blue)}
+button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{fill:var(--ink);font-family:var(--sans);font-size:11px}
+svg .m{fill:var(--royal)}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--royal);margin-top:8px}
+.leg i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:12.5px}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;background:#fff}
+tbody tr:nth-child(even) td{background:var(--bg)}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:700;color:var(--navy);font-size:11px;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--navy)}
+tr.t td{font-weight:700;color:var(--navy)}tr.sub td:first-child{padding-left:22px;color:var(--royal)}
+.scroll{overflow-x:auto}
+.act{border-left:3px solid var(--blue)}.act h2{display:flex;align-items:center;gap:10px;margin:0 0 8px}.act .bd{font-family:var(--sans);font-size:11px;font-weight:700;color:#fff;background:var(--navy);padding:1px 8px}
+.act ol{list-style:none;margin:0;padding:0}.act li{display:grid;grid-template-columns:78px 1fr auto;gap:12px;align-items:baseline;padding:8px 0;border-top:1px solid var(--line);font-size:13px}.act li:first-child{border-top:0}
+.act .tg,.act .tg.r,.act .tg.g{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.8px}
+.act .im{font-size:12px;font-weight:700;color:var(--navy);text-align:right;font-variant-numeric:tabular-nums}
+@media(max-width:640px){.act li{grid-template-columns:1fr}.act .im{text-align:left}h1{font-size:30px}}
+footer{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;color:var(--royal);font-size:12px;border-top:1px solid var(--navy);padding-top:12px}
+footer .nm{font-size:8pt;color:var(--navy);letter-spacing:.8px;white-space:nowrap}
+</style></head><body>
+<div class="wrap" id="app"></div>
+<script>
+const D={"M": {"rev": {"fy23": 8420, "fy24": 13960, "fy25": 14380, "ytd": 11050, "bud": 14900, "uw": 15200}, "earnout": {"fy23": 920, "fy24": 1540, "fy25": 1580, "ytd": 1215, "bud": 1640, "uw": 1670}, "former": {"fy23": 0, "fy24": 0, "fy25": 0, "ytd": 0, "bud": 0, "uw": 300}, "commexp": {"fy23": 920, "fy24": 1540, "fy25": 1580, "ytd": 1215, "bud": 1640, "uw": 1970}, "profshare": {"fy23": 920, "fy24": 1540, "fy25": 1580, "ytd": 1215, "bud": 1640, "uw": 1670}, "sal": {"fy23": 760, "fy24": 910, "fy25": 980, "ytd": 760, "bud": 1000, "uw": 600}, "tax": {"fy23": 250, "fy24": 280, "fy25": 360, "ytd": 300, "bud": 380, "uw": 180}, "bonus": {"fy23": 560, "fy24": 600, "fy25": 790, "ytd": 560, "bud": 760, "uw": 430}, "comp": {"fy23": 1570, "fy24": 1790, "fy25": 2130, "ytd": 1620, "bud": 2140, "uw": 1210}, "noncomp": {"fy23": 1010, "fy24": 1190, "fy25": 1260, "ytd": 950, "bud": 1250, "uw": 960}, "support": {"fy23": 2580, "fy24": 2980, "fy25": 3390, "ytd": 2570, "bud": 3390, "uw": 2170}, "occ": {"fy23": 450, "fy24": 480, "fy25": 500, "ytd": 390, "bud": 520, "uw": 340}, "corp": {"fy23": 450, "fy24": 480, "fy25": 500, "ytd": 390, "bud": 520, "uw": 340}, "earn": {"fy23": 4470, "fy24": 8960, "fy25": 8910, "ytd": 6875, "bud": 9350, "uw": 10720}, "oh_sal": {"fy23": 760, "fy24": 910, "fy25": 980, "ytd": 760, "bud": 1000, "uw": 600}, "oh_tax": {"fy23": 250, "fy24": 280, "fy25": 360, "ytd": 300, "bud": 380, "uw": 180}, "oh_bonus": {"fy23": 560, "fy24": 600, "fy25": 790, "ytd": 560, "bud": 760, "uw": 430}, "oh_nc": {"fy23": 1010, "fy24": 1190, "fy25": 1260, "ytd": 950, "bud": 1250, "uw": 960}, "oh_occ": {"fy23": 450, "fy24": 480, "fy25": 500, "ytd": 390, "bud": 520, "uw": 340}, "oh_sys": {"fy23": 3030, "fy24": 3460, "fy25": 3890, "ytd": 2960, "bud": 3910, "uw": 2510}, "oh_bh2": {"fy23": 2970, "fy24": 3420, "fy25": 3860, "ytd": 2890, "bud": 3910, "uw": 0}, "cap": {"fy23": -3300, "fy24": -3300, "fy25": -3300, "ytd": -2475.0, "bud": -3300, "uw": 0}, "over": {"fy23": -330, "fy24": 120, "fy25": 560, "ytd": 415.0, "bud": 610, "uw": 0}, "partners": {"fy23": 4, "fy24": 4, "fy25": 4, "ytd": 4, "bud": 4, "uw": 4}, "former_hc": {"fy23": 0, "fy24": 0, "fy25": 0, "ytd": 0, "bud": 0, "uw": 2}, "nonpartner": {"fy23": 4, "fy24": 6, "fy25": 7, "ytd": 7, "bud": 7, "uw": 3}, "prod_hc": {"fy23": 8, "fy24": 10, "fy25": 11, "ytd": 11, "bud": 11, "uw": 9}, "supp_hc": {"fy23": 4, "fy24": 4, "fy25": 4, "ytd": 4, "bud": 4, "uw": 4}, "tot_hc": {"fy23": 12, "fy24": 14, "fy25": 15, "ytd": 15, "bud": 15, "uw": 13}, "rev_prod": {"fy23": 1052.5, "fy24": 1396.0, "fy25": 1307.2727272727273, "ytd": 1004.5454545454545, "bud": 1354.5454545454545, "uw": 1688.888888888889}, "rev_hc": {"fy23": 701.6666666666666, "fy24": 997.1428571428571, "fy25": 958.6666666666666, "ytd": 736.6666666666666, "bud": 993.3333333333334, "uw": 1169.2307692307693}}, "monthly": {"2024": [1103.9, 1234.7, 1678.3, 1120.1, 1171.4, 1268.3, 778.1, 1176.4, 1320.0, 1518.5, 667.9, 922.6], "2025": [708.4, 1642.6, 1491.6, 645.0, 1866.8, 1844.2, 1440.3, 1390.4, 795.3, 610.1, 1277.2, 668.0], "2026": [895.1, 967.0, 672.8, 1275.1, 1242.7, 1800.6, 1351.8, 1520.0, 1324.9]}, "hcm": {"2023": [6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 10], "2024": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10], "2025": [10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11], "2026": [11, 11, 11, 10, 10, 11, 12, 12, 11]}, "lines": [["Salaries", 1320], ["Rent", 350], ["General insurance", 210], ["Payroll taxes", 190], ["Client entertainment", 170], ["Travel", 160], ["Other expenses", 70], ["Pension", 55], ["Website and software", 48], ["Accounting and tax fees", 45]], "ties": [["2026 YTD fee revenue: firm P&L vs summary", 11050, 11050, true], ["2025 fee revenue: firm P&L vs summary", 14380, 14380, true], ["2024 fee revenue: firm P&L vs summary", 13960, 13960, true], ["2023 fee revenue: firm P&L vs summary", 8420, 8420, true], ["2026 YTD overheads: firm P&L vs overhead schedule", 2890, 2890, true], ["2025 overheads: firm P&L vs overhead schedule", 3860, 3860, true], ["2024 overheads: firm P&L vs overhead schedule", 3420, 3420, true], ["2023 overheads: firm P&L vs overhead schedule", 2970, 2970, true], ["2026 YTD salaries: payroll file vs summary", 760, 760, true], ["2026 YTD bonus accrual: payroll file vs summary", 560, 560, true], ["Earnings rebuild fy23", 4470, 4470, true], ["Earnings rebuild fy24", 8960, 8960, true], ["Earnings rebuild fy25", 8910, 8910, true], ["Earnings rebuild ytd", 6875, 6875, true], ["Earnings rebuild bud", 9350, 9350, true], ["Earnings rebuild uw", 10720, 10720, true], ["Headcount: producers + support = total fy23", 12, 12, true], ["Headcount: producers + support = total fy24", 14, 14, true], ["Headcount: producers + support = total fy25", 15, 15, true], ["Headcount: producers + support = total ytd", 15, 15, true], ["Headcount: producers + support = total bud", 15, 15, true]], "asof": "Sep 2026 YTD (Jan to Sep 2026)", "filedate": "Oct 2026"};
+const M=D.M;
+const $=h=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild};
+const fmt=(x,d=0)=>{const v=Math.abs(x).toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g,',');return x<0?`(${v})`:v};
+const sgn=(x,d=0)=>(x>=0?'+':'−')+Math.abs(x).toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+const pc=(x,d=1)=>(x*100).toFixed(d)+'%';
+const cls=x=>x>=0?'up':'dn';
+const arrow=x=>x>=0?'▲':'▼';
+const app=document.getElementById('app');
+const keys=['fy23','fy24','fy25','ytd','bud','uw'];
+const lab={fy23:'2023',fy24:'2024',fy25:'2025',ytd:'2026 YTD',bud:'2026 Budget',uw:'U/W avg'};
+const labF={fy23:'2023',fy24:'2024',fy25:'2025',ytd:'2026 YTD (Jan to Sep)',bud:'2026 Budget',uw:'Underwriting average'};
+const col={fy23:'var(--y25)',fy24:'var(--y25)',fy25:'var(--y25)',ytd:'var(--y26)',bud:'none',uw:'var(--warn)'};
+const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const py9=D.monthly['2025'].slice(0,9).reduce((a,b)=>a+b,0);
+const q4need=M.rev.bud-M.rev.ytd, q4ly=D.monthly['2025'].slice(9).reduce((a,b)=>a+b,0);
+const eff=k=>M.earn[k]/M.rev[k];
+const overCum3=M.over.fy23+M.over.fy24+M.over.fy25;
+const ytdCap=-(-M.cap.ytd);
+const nbad=D.ties.filter(t=>!t[3]).length;
+// header
+app.append($(`<header><div class="hrow"><span class="eyebrow" style="color:#EEE8DA">MERIDIAN · DEMO</span><div class="tie ${nbad?'bad':''}" title="Firm P&amp;Ls, payroll file and summary">Source tie-out: ${D.ties.length-nbad}/${D.ties.length} pass</div></div><div class="eyebrow">M&amp;A performance tracker</div><hr class="kl"><h1>Acquisition performance vs underwriting</h1><div class="hsub">Acquired advisory firm (fictional) · ${D.asof} · $ thousands unless noted</div></header>`));
+// KPIs
+const tile=(l,v,u,a,b)=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}<small>${u}</small></div><div class="d">${a}${b||''}</div></div>`;
+const dl=(t,good)=>`<span class="${good?'up':'dn'}">${t}</span>`;
+const kp=document.createElement('div');kp.className='kpis';
+const revPy=M.rev.ytd/py9-1, bp=M.rev.ytd/M.rev.bud;
+const annRP=M.rev_prod.ytd*12/9;
+kp.innerHTML=
+ tile('Fee revenue, 2026 YTD',(M.rev.ytd/1000).toFixed(2),'$M',dl(`${arrow(revPy)} ${Math.abs(revPy*100).toFixed(1)}% vs same period 2025`,revPy>=0),dl(`${(bp*100).toFixed(0)}% of FY budget (75% of year)`,bp>=.75))+
+ tile('Earnings, 2026 YTD',(M.earn.ytd/1000).toFixed(2),'$M',dl(`${pc(eff('ytd'))} margin`,true),dl(`${((eff('ytd')-eff('uw'))*100).toFixed(1)} pts vs U/W ${pc(eff('uw'))}`,eff('ytd')>=eff('uw')))+
+ tile('Overheads vs $3.3M cap, YTD',sgn(M.over.ytd),'$K',dl(`${fmt(M.oh_bh2.ytd)} vs prorated cap ${fmt(-M.cap.ytd)}`,M.over.ytd<=0),dl(`Cumulative over cap since 2023: ${sgn(overCum3+M.over.ytd)}K`,overCum3+M.over.ytd<=0))+
+ tile('Revenue per producer, annualized',fmt(annRP),'$K',dl(`${arrow(annRP-M.rev_prod.uw)} ${fmt(Math.abs(annRP-M.rev_prod.uw))}K vs U/W ${fmt(M.rev_prod.uw)}K`,annRP>=M.rev_prod.uw),`<span style="color:var(--mute)">${M.prod_hc.ytd} producers</span>`);
+app.append(kp);
+// ---- chart helpers ----
+function bars(title,note,vals,fmtv,opt={}){ // vals: [{k,v}]
+  const W=520,H=230,pl=10,pr=10,pt=20,pb=34;const mx=Math.max(...vals.map(x=>x.v),opt.line||0)*1.08,mn=Math.min(0,...vals.map(x=>x.v))*1.7;const sp=mx-mn;
+  const y=v=>pt+(mx-v)/sp*(H-pt-pb);const gw=(W-pl-pr)/vals.length,bw=Math.min(46,gw*.62);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${title}"><line x1="${pl}" x2="${W-pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--mute)"/>`;
+  vals.forEach((o,i)=>{const x=pl+gw*i+(gw-bw)/2,y1=y(o.v),y0=y(0);const bud=o.k==='bud';
+    s+=`<rect x="${x}" y="${Math.min(y0,y1)}" width="${bw}" height="${Math.max(1,Math.abs(y0-y1))}" rx="0" fill="${bud?'var(--tint)':(o.c||col[o.k])}" ${bud?'stroke="var(--blue)" stroke-width="1.6"':''}/>`;
+    s+=`<text x="${x+bw/2}" y="${o.v>=0?y1-5:y1+12}" text-anchor="middle" style="font-size:11px;font-weight:600">${fmtv(o.v)}</text>`;
+    const w=o.lab.split(' ');const h=Math.ceil(w.length/2);
+    s+=`<text class="m" x="${x+bw/2}" y="${H-20}" text-anchor="middle" style="font-size:10px">${w.slice(0,h).join(' ')}</text><text class="m" x="${x+bw/2}" y="${H-8}" text-anchor="middle" style="font-size:10px">${w.slice(h).join(' ')}</text>`});
+  if(opt.line!=null){s+=`<line x1="${pl}" x2="${W-pr}" y1="${y(opt.line)}" y2="${y(opt.line)}" stroke="var(--bad)" stroke-width="1.5"/><text x="${W-pr}" y="${y(opt.line)-4}" text-anchor="end" style="fill:var(--bad);font-size:11px;font-weight:600">${opt.lineLab}</text>`}
+  return $(`<div class="card"><h2>${title}</h2><p class="note">${note}</p>${s+'</svg>'}${opt.leg||''}</div>`);
+}
+const STD='<div class="leg"><span><i style="background:var(--y25)"></i>Full year actual</span><span><i style="background:var(--y26)"></i>2026 YTD (9 months)</span><span><i style="background:var(--tint);border:1.6px solid var(--blue)"></i>2026 budget</span><span><i style="background:var(--warn)"></i>Underwriting</span></div>';
+const series=(m,f)=>keys.map(k=>({k,v:f?f(k):M[m][k],lab:lab[k]}));
+// ---- views ----
+const views={};
+// OVERVIEW
+(function(){
+ const v=document.createElement('div');v.className='wrap';v.style.gap='16px';
+ const flags=[
+  ['r','Over cap',`Overheads against the $3,300K cap: 2023 ${sgn(M.over.fy23)}K, 2024 ${sgn(M.over.fy24)}K, 2025 ${sgn(M.over.fy25)}K and 2026 YTD ${sgn(M.over.ytd)}K vs the prorated cap. 2026 budget is ${sgn(M.over.bud)}K.`,sgn(overCum3+M.over.ytd)+'K cum.'],
+  ['g','On pace',`YTD revenue is ${(bp*100).toFixed(0)}% of FY budget at 75% of the year. Q4 (Oct to Dec) needs ${fmt(q4need)}K; Oct to Dec 2025 delivered ${fmt(q4ly)}K.`,fmt(q4need)+'K needed'],
+  ['','Margin',`Earnings margin ${pc(eff('ytd'))} YTD vs ${pc(eff('uw'))} underwritten. Support we provide is ${pc(M.support.ytd/M.rev.ytd)} of revenue vs ${pc(M.support.uw/M.rev.uw)} in underwriting.`,((eff('ytd')-eff('uw'))*100).toFixed(1)+' pts'],
+  ['','Confirm',`Overheads in our ledger exceed the acquired firm's books by ${fmt(M.oh_sys.ytd-M.oh_bh2.ytd)}K YTD (2025 ${fmt(M.oh_sys.fy25-M.oh_bh2.fy25)}K, 2024 ${fmt(M.oh_sys.fy24-M.oh_bh2.fy24)}K, 2023 ${fmt(M.oh_sys.fy23-M.oh_bh2.fy23)}K). Reconciling with the firm's controller.`,fmt(M.oh_sys.ytd-M.oh_bh2.ytd)+'K YTD'],
+ ];
+ v.append($(`<div class="card act"><h2>What to watch <span class="bd">${flags.length}</span></h2><ol>${flags.map(f=>`<li><span class="tg ${f[0]}">${f[1]}</span><span>${f[2]}</span><span class="im">${f[3]}</span></li>`).join('')}</ol></div>`));
+ const g=document.createElement('div');g.className='grid';
+ g.append(bars('Fee revenue','$K · net of third-party commission',series('rev'),x=>fmt(x),{leg:STD}));
+ g.append(bars('Earnings','$K · fee revenue less earn-outs, support we provide and overhead',series('earn'),x=>fmt(x),{leg:STD}));
+ v.append(g);
+ // monthly
+ const mc=$(`<div class="card"><h2>Monthly fee revenue by fiscal year</h2><p class="note" id="mn"></p><div class="tabs"><button id="m1" aria-pressed="true">Monthly</button><button id="m2" aria-pressed="false">Cumulative</button></div><div id="mw"></div><div class="leg"><span><i style="background:var(--warn)"></i>2024</span><span><i style="background:var(--y25)"></i>2025</span><span><i style="background:var(--y26)"></i>2026</span><span id="bl" hidden><i style="background:var(--blue)"></i>2026 budget, straight-line</span></div></div>`);
+ function draw(cum){
+  const W=1000,H=300,pl=44,pr=14,pt=14,pb=26;
+  const S={'2024':'var(--warn)','2025':'var(--y25)','2026':'var(--y26)'};
+  const ser={};Object.keys(D.monthly).forEach(k=>{let a=D.monthly[k],r=0;ser[k]=cum?a.map(x=>r+=x):a});
+  const bud=cum?mo.map((_,i)=>M.rev.bud*(i+1)/12):null;
+  const all=Object.values(ser).flat().concat(bud||[]);const mx=Math.max(...all)*1.06;
+  const y=v=>pt+(mx-v)/mx*(H-pt-pb),x=i=>pl+(W-pl-pr)*i/11;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly fee revenue">`;
+  for(let i=0;i<=5;i++){const v=mx*i/5;s+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text class="m" x="${pl-6}" y="${y(v)+4}" text-anchor="end">${fmt(v)}</text>`}
+  mo.forEach((m,i)=>s+=`<text class="m" x="${x(i)}" y="${H-6}" text-anchor="middle">${m}</text>`);
+  if(bud)s+=`<polyline fill="none" stroke="var(--blue)" stroke-width="1.5" points="${bud.map((v,i)=>x(i)+','+y(v)).join(' ')}"/>`;
+  Object.keys(ser).forEach(k=>{const a=ser[k];s+=`<polyline fill="none" stroke="${S[k]}" stroke-width="2.2" points="${a.map((v,i)=>x(i)+','+y(v)).join(' ')}"/>`;
+   a.forEach((v,i)=>s+=`<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="${S[k]}"><title>${k} ${mo[i]}: ${fmt(v)}K</title></circle>`);
+   const li=a.length-1;s+=`<text x="${x(li)+6}" y="${y(a[li])+4}" style="font-weight:600;fill:${S[k]}">${fmt(a[li])}</text>`});
+  mc.querySelector('#mw').innerHTML=s+'</svg>';
+  mc.querySelector('#m1').setAttribute('aria-pressed',!cum);mc.querySelector('#m2').setAttribute('aria-pressed',cum);mc.querySelector('#bl').hidden=!cum;
+  mc.querySelector('#mn').textContent=cum?`Cumulative $K. 2026 runs to September; budget is spread evenly.`:`$K per month. 2026 shows January to September.`;
+ }
+ mc.querySelector('#m1').onclick=()=>draw(false);mc.querySelector('#m2').onclick=()=>draw(true);draw(false);
+ v.append(mc);
+ views.overview=v;
+})();
+// P&L
+(function(){
+ const v=document.createElement('div');v.className='wrap';
+ // stacked share
+ const segs=[['commexp','Earn-outs to partners','var(--y25)','#fff'],['comp','Compensation','var(--navy)','#fff'],['noncomp','Non-comp','var(--royal)','#fff'],['corp','Occupancy','var(--warn)','var(--navy)'],['earn','Earnings','var(--good)','var(--navy)']];
+ const W=1000,rh=34,pl=130,H=keys.length*rh+10;let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Where each $1 of revenue goes">`;
+ keys.forEach((k,i)=>{const y=i*rh+4;let x=pl;const tot=M.rev[k];
+  s+=`<text x="${pl-10}" y="${y+17}" text-anchor="end">${lab[k]}</text>`;
+  segs.forEach(([f,n,c,tc])=>{const w=(f==='commexp'?M.commexp[k]:M[f][k])/tot*(W-pl-10);const vv=(f==='commexp'?M.commexp[k]:M[f][k])/tot;
+   s+=`<rect x="${x}" y="${y}" width="${w}" height="24" fill="${c}"><title>${lab[k]} ${n}: ${pc(vv)}</title></rect>`;
+   if(w>34)s+=`<text x="${x+w/2}" y="${y+16}" text-anchor="middle" style="fill:${tc};font-size:11px;font-weight:700">${(vv*100).toFixed(0)}%</text>`;x+=w})});
+ s+='</svg>';
+ v.append($(`<div class="card"><h2>Where each $1 of fee revenue goes</h2><p class="note">% of fee revenue. Underwriting assumed a higher margin than any year since; support costs are most of the gap.</p>${s}<div class="leg">${segs.map(g=>`<span><i style="background:${g[2]}"></i>${g[1]}</span>`).join('')}</div></div>`));
+ // table
+ const rows=[['Fee revenue','rev',0,'t'],['Earn-outs to partners','earnout',1,'sub'],['Commissions to former partners','former',1,'sub'],['Commission-based expenses','commexp',1,'t'],
+  ['Salaries','sal',1,'sub'],['Taxes and benefits','tax',1,'sub'],['Bonus','bonus',1,'sub'],['Compensation','comp',1,'t'],['Non-compensation','noncomp',1,''],['Support we provide','support',1,'t'],
+  ['Occupancy (corporate and overhead)','corp',1,''],['Earnings','earn',0,'t']];
+ const card=$(`<div class="card"><h2>P&amp;L vs underwriting</h2><p class="note">Costs shown as positive amounts. Variance: green is favorable, bold is unfavorable. 2025 is compared to underwriting.</p><div class="tabs"><button id="p1" aria-pressed="true">$K</button><button id="p2" aria-pressed="false">% of revenue</button></div><div class="scroll" id="pt"></div></div>`);
+ function tbl(pct){
+  const hdr=`<tr><th></th>${keys.map(k=>`<th>${lab[k]}</th>`).join('')}<th>2025 vs U/W</th><th>%</th></tr>`;
+  const b=rows.map(([n,f,cost,c])=>{const cells=keys.map(k=>pct&&f!=='rev'?pc(M[f][k]/M.rev[k]):fmt(M[f][k])).map(x=>`<td>${x}</td>`).join('');
+   const dv=cost?M[f].uw-M[f].fy25:M[f].fy25-M[f].uw;const dp=M[f].uw?dv/Math.abs(M[f].uw):0;
+   const z=Math.abs(dv)<.5;return `<tr class="${c}"><td>${n}</td>${cells}<td class="${z?'':cls(dv)}">${z?' to ':sgn(dv)}</td><td class="${z?'':cls(dv)}">${z?'':sgn(dp*100)+'%'}</td></tr>`}).join('');
+  const em=`<tr><td>Earnings %</td>${keys.map(k=>`<td>${pc(eff(k))}</td>`).join('')}<td class="${cls(eff('fy25')-eff('uw'))}">${sgn((eff('fy25')-eff('uw'))*100,1)} pts</td><td></td></tr>`;
+  card.querySelector('#pt').innerHTML=`<table><thead>${hdr}</thead><tbody>${b}${em}</tbody></table>`;
+  card.querySelector('#p1').setAttribute('aria-pressed',!pct);card.querySelector('#p2').setAttribute('aria-pressed',pct)}
+ card.querySelector('#p1').onclick=()=>tbl(false);card.querySelector('#p2').onclick=()=>tbl(true);tbl(false);
+ v.append(card);
+ const g=document.createElement('div');g.className='grid';
+ g.append(bars('Earnings margin','Earnings as % of fee revenue',keys.map(k=>({k,v:eff(k)*100,lab:lab[k]})),x=>x.toFixed(0)+'%',{leg:STD}));
+ g.append(bars('Compensation','$K · salaries, taxes and benefits, accrued bonus',series('comp'),x=>fmt(x),{leg:STD}));
+ v.append(g);
+ views.pl=v;
+})();
+// OVERHEADS
+(function(){
+ const v=document.createElement('div');v.className='wrap';
+ const ks=['fy23','fy24','fy25','ytd','bud'];
+ const vals=ks.map(k=>({k,v:M.oh_bh2[k],lab:lab[k]}));
+ const g=document.createElement('div');g.className='grid';
+ // cap bars with per-bar cap
+ const W=520,H=250,pl=10,pr=10,pt=22,pb=34;const mx=Math.max(...ks.map(k=>M.oh_bh2[k]),3300)*1.1;const y=q=>pt+(mx-q)/mx*(H-pt-pb);const gw=(W-pl-pr)/ks.length,bw=Math.min(52,gw*.62);
+ let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Overheads vs cap"><line x1="${pl}" x2="${W-pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--mute)"/>`;
+ ks.forEach((k,i)=>{const x=pl+gw*i+(gw-bw)/2,o=M.oh_bh2[k],cap=-M.cap[k];const over=o>cap;
+  s+=`<rect x="${x}" y="${y(o)}" width="${bw}" height="${y(0)-y(o)}" rx="0" fill="${over?'var(--bad)':'var(--navy)'}" opacity="${k==='bud'?.55:1}"/>`;
+  s+=`<line x1="${x-8}" x2="${x+bw+8}" y1="${y(cap)}" y2="${y(cap)}" stroke="var(--ink)" stroke-width="2"/>`;
+  s+=`<text x="${x+bw/2}" y="${y(Math.max(o,cap))-6}" text-anchor="middle" style="font-weight:600">${fmt(o)}</text>`;
+  s+=`<text class="m" x="${x+bw/2}" y="${H-20}" text-anchor="middle" style="font-size:10px">${lab[k].split(' ')[0]}</text><text class="m" x="${x+bw/2}" y="${H-8}" text-anchor="middle" style="font-size:10px">${lab[k].split(' ').slice(1).join(' ')}</text>`});
+ s+='</svg>';
+ g.append($(`<div class="card"><h2>Acquired firm overheads vs cap</h2><p class="note">$K. Black tick is the cap: $3,300K per year, $2,475K for nine months.</p>${s}<div class="leg"><span><i style="background:var(--navy)"></i>Under cap</span><span><i style="background:var(--bad)"></i>Over cap</span></div></div>`));
+ // cumulative overage
+ let r=0;const cum=['fy23','fy24','fy25','ytd'].map(k=>({k,v:(r+=M.over[k]),lab:lab[k],c:r>0?'var(--bad)':'var(--good)',d:M.over[k]}));
+ g.append(bars('Cumulative overage vs cap','$K. Positive = overheads above cap, added up from 2023',cum,x=>sgn(x),{}));
+ v.append(g);
+ // top lines
+ const mxl=Math.max(...D.lines.map(l=>l[1]));const rh=26,pl2=210;let t=`<svg viewBox="0 0 700 ${D.lines.length*rh+6}" role="img" aria-label="Top overhead lines">`;
+ D.lines.forEach((l,i)=>{const y=i*rh+3,w=l[1]/mxl*(700-pl2-70);t+=`<text x="${pl2-8}" y="${y+15}" text-anchor="end">${l[0].replace(' - Operating Exp','').replace('Pension/Superannuation','Pension')}</text><rect x="${pl2}" y="${y+3}" width="${w}" height="16" rx="0" fill="var(--y26)"/><text x="${pl2+w+6}" y="${y+15}">${fmt(l[1])} · ${pc(l[1]/M.oh_bh2.ytd,0)}</text>`});
+ v.append($(`<div class="card"><h2>Largest overhead lines, 2026 YTD</h2><p class="note">$K, from the acquired firm's P&amp;L for January to September 2026. Total ${fmt(M.oh_bh2.ytd)}K. Salaries include accrued bonus.</p>${t}</svg></div>`));
+ // recon
+ const rr=['fy23','fy24','fy25','ytd'].map(k=>`<tr><td>${lab[k]}</td><td>${fmt(M.oh_sys[k])}</td><td>${fmt(M.oh_bh2[k])}</td><td class="dn">${fmt(M.oh_sys[k]-M.oh_bh2[k])}</td></tr>`).join('');
+ v.append($(`<div class="card"><h2>Our ledger vs the firm's books</h2><p class="note">$K. Being reconciled with the firm's controller.</p><table><thead><tr><th></th><th>Our ledger</th><th>Firm's books</th><th>Difference</th></tr></thead><tbody>${rr}</tbody></table></div>`));
+ views.oh=v;
+})();
+// PEOPLE
+(function(){
+ const v=document.createElement('div');v.className='wrap';
+ const ks=['fy23','fy24','fy25','ytd','bud','uw'];
+ const W=520,H=240,pl=10,pr=10,pt=20,pb=34;const mx=16;const y=q=>pt+(mx-q)/mx*(H-pt-pb);const gw=(W-pl-pr)/ks.length,bw=Math.min(46,gw*.62);
+ const sg=[['partners','Partners','var(--navy)'],['nonpartner','Non-partner producers','var(--royal)'],['supp_hc','Support','var(--y25)']];
+ let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Headcount"><line x1="${pl}" x2="${W-pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--mute)"/>`;
+ ks.forEach((k,i)=>{const x=pl+gw*i+(gw-bw)/2;let b=0;
+  sg.forEach(([f,n,c])=>{const vv=M[f][k]+(f==='partners'?M.former_hc[k]:0);s+=`<rect x="${x}" y="${y(b+vv)}" width="${bw}" height="${y(b)-y(b+vv)}" fill="${c}"><title>${lab[k]} ${n}: ${vv.toFixed(1)}</title></rect>`;if(y(b)-y(b+vv)>14)s+=`<text x="${x+bw/2}" y="${y(b+vv/2)+4}" text-anchor="middle" style="fill:#fff;font-weight:600">${vv%1?vv.toFixed(1):vv}</text>`;b+=vv});
+  s+=`<text x="${x+bw/2}" y="${y(b)-5}" text-anchor="middle" style="font-weight:600">${b%1?b.toFixed(1):b}</text><text class="m" x="${x+bw/2}" y="${H-20}" text-anchor="middle" style="font-size:10px">${lab[k].split(' ')[0]}</text><text class="m" x="${x+bw/2}" y="${H-8}" text-anchor="middle" style="font-size:10px">${lab[k].split(' ').slice(1).join(' ')}</text>`});
+ const g=document.createElement('div');g.className='grid';
+ g.append($(`<div class="card"><h2>Headcount mix</h2><p class="note">Average heads. Underwriting partners include two former partners.</p>${s+'</svg>'}<div class="leg">${sg.map(x=>`<span><i style="background:${x[2]}"></i>${x[1]}</span>`).join('')}</div></div>`));
+ const ann=k=>k==='ytd'?M.rev.ytd*12/9:M.rev[k];
+ g.append(bars('Revenue per producer','$K per year. 2026 YTD annualized (×12/9), not seasonally adjusted',ks.map(k=>({k,v:k==='ytd'?annRP:M.rev_prod[k],lab:lab[k]})),x=>fmt(x),{leg:STD}));
+ g.append(bars('Revenue per total head','$K per year. 2026 YTD annualized (×12/9)',ks.map(k=>({k,v:k==='ytd'?M.rev_hc.ytd*12/9:M.rev_hc[k],lab:lab[k]})),x=>fmt(x),{leg:STD}));
+ // payroll hc lines
+ const S={'2023':'var(--y25)','2024':'var(--warn)','2025':'var(--blue)','2026':'var(--y26)'};const W2=520,H2=230,p2=30;const y2=q=>14+(13-q)/13*(H2-40),x2=i=>p2+(W2-p2-30)*i/11;
+ let t=`<svg viewBox="0 0 ${W2} ${H2}" role="img" aria-label="Payroll headcount by month">`;
+ [0,4,8,12].forEach(q=>t+=`<line x1="${p2}" x2="${W2-10}" y1="${y2(q)}" y2="${y2(q)}" stroke="var(--line)"/><text class="m" x="${p2-6}" y="${y2(q)+4}" text-anchor="end">${q}</text>`);
+ mo.forEach((m,i)=>t+=`<text class="m" x="${x2(i)}" y="${H2-8}" text-anchor="middle" style="font-size:10px">${m}</text>`);
+ Object.keys(D.hcm).forEach(k=>{const a=D.hcm[k];t+=`<polyline fill="none" stroke="${S[k]}" stroke-width="2" points="${a.map((q,i)=>x2(i)+','+y2(q)).join(' ')}"/>`;a.forEach((q,i)=>t+=`<circle cx="${x2(i)}" cy="${y2(q)}" r="2.5" fill="${S[k]}"><title>${k} ${mo[i]}: ${q}</title></circle>`)});
+ g.append($(`<div class="card"><h2>Employees on payroll by month</h2><p class="note">Employee count from the monthly payroll file. 2026 to September.</p>${t+'</svg>'}<div class="leg">${Object.keys(S).map(k=>`<span><i style="background:${S[k]}"></i>${k}</span>`).join('')}</div></div>`));
+ v.append(g);views.ppl=v;
+})();
+// tabs
+const names=[['overview','Overview'],['pl','P&amp;L vs underwriting'],['overheads','Overheads &amp; cap'],['people','People &amp; productivity']];
+const vmap={overview:views.overview,pl:views.pl,overheads:views.oh,people:views.ppl};
+const bar=$(`<div class="ptabs" role="tablist">${names.map(n=>`<button role="tab" data-v="${n[0]}">${n[1]}</button>`).join('')}</div>`);
+app.append(bar);Object.values(vmap).forEach(x=>app.append(x));
+function show(w){if(!vmap[w])w='overview';Object.entries(vmap).forEach(([k,x])=>x.hidden=k!==w);bar.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===w));
+ try{history.replaceState(null,'',w==='overview'?location.pathname+location.search:'#'+w)}catch(e){}}
+bar.onclick=e=>{const b=e.target.closest('button');if(b)show(b.dataset.v)};
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+show(location.hash.slice(1));
+app.append($(`<footer><div>Demo with made-up data for a fictional acquisition. Fee revenue is net of third-party commission. U/W = the deal's underwriting case. Per-person pay is not shown.<br><b>Independent project built on my own time with fictional data. Not affiliated with or endorsed by any employer.</b> · <a href="../../work/index.html" style="color:inherit">← Huan's work</a></div><div class="nm">DEMO</div></footer>`));
+</script></body></html>
