@@ -3,14 +3,14 @@
 (function(){
   let seed=31337;const R=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
   const rnd=(a,b)=>a+R()*(b-a);
-  const LOB=['East','West','Central','South','International'];
+  const LOB=['East','West','International']; // same three regions as brokers-data.js
   const CN='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(x=>'Vendor '+x);
   const GL=['Software','Data','Subscriptions','Marketing','Hiring'];
   const TODAY=new Date('2026-11-13');
   let amt=3600;
   const CONS=CN.map((n,i)=>{const ttm=Math.round(amt);amt*=rnd(.76,.93);
     const r=R(),exp=r<.15?null:new Date(2025,8+Math.floor(R()*40),1+Math.floor(R()*27));
-    const k=1+Math.floor(R()*4),paid=[LOB[0]].concat(LOB.slice(1).sort(()=>R()-.5).slice(0,k-1));
+    const k=1+Math.floor(R()*3),paid=[LOB[0]].concat(LOB.slice(1).sort(()=>R()-.5).slice(0,k-1));
     const gl=[GL[i%3]].concat(R()<.4?[GL[(i+1)%3]]:[]).concat(i===9?[GL[3]]:i===12?[GL[4]]:[]);
     return{i,n,ttm:Math.max(40,ttm),exp,paid:[...new Set(paid)],gl:[...new Set(gl)],v27:null,dec:'',note:''}});
   CONS.forEach(c=>{const d=c.exp?(c.exp-TODAY)/864e5/30.4:null;c.st=d==null?'none':d<0?'exp':d<=6?'r6':d<=12?'r12':'act'});

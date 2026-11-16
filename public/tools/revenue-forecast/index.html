@@ -279,15 +279,15 @@ const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const MK=[['New York','East',3.0],['Boston','East',1.0],['DC','East',.9],['Atlanta','East',.8],['Miami','East',.7],
  ['Chicago','West',1.1],['Dallas','West',1.0],['Houston','West',.8],['Denver','West',.6],['LA','West',1.3],['San Francisco','West',1.1],['Seattle','West',.6],
  ['London','International',.8],['Toronto','International',.4]];
-const REG=['East','West','Capital Markets','International','Corporate & Admin'];
+const REG=['East','West','International','Corporate & Admin']; // same three regions as every other tool, plus unallocated
 const SECT=['Tech company','Law firm','Biotech','Bank','Retailer','Logistics co.','Media co.','Healthcare group','Asset manager','Family office','REIT','Insurer','University','Hotel owner','Developer','Manufacturer'];
 const seq={};const client=()=>{const k=pick(SECT);seq[k]=(seq[k]||0)+1;return k+' '+String.fromCharCode(64+((seq[k]-1)%26)+1)};
 const CC=[];let code=100;
 MK.forEach(([m,r,w])=>{
-  CC.push({code:code++,name:m+' Leasing',market:m,region:r,wt:w,mix:[.92,.08,0]});
-  if(w>=.8&&r!=='International')CC.push({code:code++,name:m+' Capital Markets',market:m,region:'Capital Markets',wt:w*.55,mix:[0,.7,.3]});
+  CC.push({code:code++,name:m+' Leasing',market:m,region:r,line:'Leasing',wt:w,mix:[.92,.08,0]});
+  if(w>=.8&&r!=='International')CC.push({code:code++,name:m+' Capital Markets',market:m,region:r,line:'Capital Markets',wt:w*.55,mix:[0,.7,.3]});
 });
-const FIN={code:999,name:'Finance topside (unallocated)',market:'Corporate',region:'Corporate & Admin',wt:0,mix:[.5,.35,.15]};
+const FIN={code:999,name:'Finance topside (unallocated)',market:'Corporate',region:'Corporate & Admin',line:'Corporate',wt:0,mix:[.5,.35,.15]};
 
 /* ---------- deals (Q4 pipeline) ---------- */
 const PROBS=[.25,.4,.5,.5,.6,.75,.75,.85,.9];
@@ -296,7 +296,7 @@ CC.forEach(c=>{
   const n=Math.round(c.wt*rnd(12,18));
   for(let i=0;i<n;i++){
     const type=R()<c.mix[0]?'Lease':R()<c.mix[1]/(c.mix[1]+c.mix[2]+1e-9)?'Sale':'Financing';
-    const gross=Math.round(logn(c.region==='Capital Markets'?700e3:420e3,.85)/1e4)*1e4;
+    const gross=Math.round(logn(c.line==='Capital Markets'?700e3:420e3,.85)/1e4)*1e4;
     const prob=pick(PROBS);
     DEALS.push({client:client(),market:c.market,cc:c,type,close:'Q4',prob,gross,disc:prob>=.5?gross*prob:0,up:prob<.5});
   }
@@ -359,7 +359,7 @@ const CLOSED=[];const wsum=CC.reduce((a,x)=>a+x.wt,0);
 for(let i=0;i<320;i++){
   let r=R()*wsum,c=CC[0];for(const x of CC){r-=x.wt;if(r<=0){c=x;break}}
   const mo=Math.min(10,Math.floor(Math.pow(R(),.85)*11));
-  const t=c.region==='Capital Markets'?(R()<.6?'Sale':'Financing'):'Lease';
+  const t=c.line==='Capital Markets'?(R()<.6?'Sale':'Financing'):'Lease';
   CLOSED.push({name:client(),type:t,cc:c,market:c.market,mo,rev:logn(t==='Lease'?600e3:900e3,1.0)});
 }
 const sc=ytdTarget/CLOSED.reduce((a,d)=>a+d.rev,0);CLOSED.forEach(d=>d.rev=Math.round(d.rev*sc/1e4)*1e4);

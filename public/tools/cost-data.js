@@ -15,13 +15,15 @@ const num=(attr,v,lab,w,step)=>`<input class="num" type="number" step="${step||1
 const sel=(attr,v,opts,lab)=>`<select class="st" ${attr} aria-label="${esc(lab)}">${opts.map(o=>`<option${o===v?' selected':''}>${o}</option>`).join('')}</select>`;
 
 /* ---------------- OFFICES: lease schedule ---------------- */
-const OFF=[['New York','East',120,'2031-04',14000],['Boston','East',35,'2027-06',3600],['Philadelphia','East',22,'2027-03',1900],
- ['Chicago','Central',60,'2029-09',5200],['Minneapolis','Central',14,'2028-06',1100],['Dallas','South',48,'2028-01',3800],['Houston','South',30,'2027-01',2300],
- ['Atlanta','South',28,'2030-05',2100],['Denver','West',20,'2027-08',1500],['Los Angeles','West',55,'2032-02',5600],['San Francisco','West',40,'2026-12',4500],
- ['Seattle','West',18,'2028-11',1600],['London','International',45,'2030-01',6100],['Toronto','International',16,'2027-05',1300]]
+// one office per market, same 14 markets and 3 regions as the brokers in brokers-data.js
+const OFF=[['New York','East',120,'2031-04',14000],['Boston','East',35,'2027-06',3600],['DC','East',28,'2027-03',2600],
+ ['Atlanta','East',24,'2030-05',1800],['Miami','East',22,'2029-02',1900],['Chicago','West',45,'2029-09',4200],
+ ['Dallas','West',40,'2028-01',3100],['Houston','West',30,'2027-01',2300],['Denver','West',20,'2027-08',1500],
+ ['LA','West',50,'2032-02',5200],['San Francisco','West',38,'2026-12',4500],['Seattle','West',18,'2028-11',1600],
+ ['London','International',40,'2030-01',5600],['Toronto','International',14,'2027-05',1200]]
  .map(([n,r,sf,end,c],i)=>({i,n,r,sf,end,c}));
 fit(OFF,'c',36500);
-const ESC=[3,3,3,3,2.5,3,3,3,3,3.5,3,3,2,2]; // default rent increase % per office
+const ESC=[3,3,3,2.5,3,3,3,3,3,3.5,3.5,3,2,2]; // default rent increase % per office
 const offS=load('occ2',{e:{},r:{},dec:{10:'Exit',13:'Exit',2:'Downsize'}});
 const oE=o=>offS.e[o.i]??ESC[o.i];
 function offRow(o,S){const d=S.dec[o.i]||(o.end.startsWith('2027')?'Renew':'Keep'),y=+o.end.slice(0,4),m=+o.end.slice(5,7),e=1+oE(o)/100;
@@ -32,11 +34,12 @@ function offRow(o,S){const d=S.dec[o.i]||(o.end.startsWith('2027')?'Renew':'Keep
   return{d,v}}
 
 /* ---------------- TRAVEL AND STAFF: cost per head x headcount ---------------- */
-const REG=['East','West','Central','South','International'],HC=[420,380,260,300,190],MULT=[1.1,1.05,.9,.95,1];
+// heads = the brokers in each region (brokers-data) plus corporate staff spread by broker share
+const REG=['East','West','International'],HC=[311,311,57],MULT=[1.1,1.0,1.15];
 const TCAT=[['Airfare',5.2],['Hotels',3.9],['Meals and entertainment',3.6],['Ground transport',1.4]];
 const RATE=REG.map((_,r)=>TCAT.map(([,v])=>v*MULT[r]));
 {const t=sum(REG.map((_,r)=>HC[r]*sum(RATE[r])));RATE.forEach(a=>a.forEach((v,j)=>a[j]=v*15200/t))}
-const tsS=load('te',{hc:[430,385,255,310,195],chg:[0,0,-5,-10]});
+const tsS=load('te2',{hc:[318,316,60],chg:[0,0,-5,-10]});
 
 /* ---------------- FEES: zero-based by engagement ---------------- */
 const FEE=[['Outside counsel, contracts','Legal','General counsel',6200,6000,'Keep','Rate card agreed'],['Outside counsel, disputes','Legal','General counsel',5100,4600,'Reduce','Two matters close in Q1'],
@@ -100,8 +103,8 @@ window.HZ_PAGE=function(k){
           <td>${num(`data-h="${r}"`,tsS.hc[r],'2027 headcount '+g,70)}</td><td>${sum(per(r)).toFixed(1)}</td><td><b>${fK(b)}</b></td><td class="${b<a?'pos':b>a?'neg':''}">${sK(b-a)}</td></tr>`}).join('')+
         `<tr class="total"><td class="t">Total</td><td>${sum(HC)}</td><td></td><td>${fK(15200)}</td><td>${sum(tsS.hc)}</td><td></td><td>${fK(nx)}</td><td>${sK(nx-15200)}</td></tr>`;
       bars(TCAT.map(([n],j)=>({n,a:sum(REG.map((_,r)=>HC[r]*RATE[r][j])),b:sum(REG.map((_,r)=>tsS.hc[r]*RATE[r][j]*(1+tsS.chg[j]/100)))})))};
-    ctl.addEventListener('change',e=>{const j=e.target.dataset.c;if(j==null)return;tsS.chg[j]=+e.target.value||0;store('te',tsS)&&saved();draw()});
-    tb.addEventListener('change',e=>{const r=e.target.dataset.h;if(r==null)return;tsS.hc[r]=Math.max(0,+e.target.value||0);store('te',tsS)&&saved();draw();tb.querySelector(`[data-h="${r}"]`).focus()});
+    ctl.addEventListener('change',e=>{const j=e.target.dataset.c;if(j==null)return;tsS.chg[j]=+e.target.value||0;store('te2',tsS)&&saved();draw()});
+    tb.addEventListener('change',e=>{const r=e.target.dataset.h;if(r==null)return;tsS.hc[r]=Math.max(0,+e.target.value||0);store('te2',tsS)&&saved();draw();tb.querySelector(`[data-h="${r}"]`).focus()});
   }
   if(k==='dis'){
     ctl.innerHTML=`<span class="note" style="margin:0">Each owner lists the outside help they need next year. Stop sets the line to zero.</span>`;

@@ -5,16 +5,18 @@
   // quarterly revenue by line (Lease, Sales, Debt), from the revenue forecast demo
   const Q={2025:[[50053510,30588256,12049919],[54106433,33065042,13025623],[58129698,35523704,13994187],[71109184,51722835,13308805]],
            2026:[[54841403,35181277,13451665],[58325634,37416445,14306288],[63076553,40464204,15471607],[75569644,55386888,15464387]]};
-  const FYL=y=>[0,1,2].map(i=>Q[y].reduce((a,q)=>a+q[i],0)),YTDL=y=>[0,1,2].map(i=>Q[y].slice(0,3).reduce((a,q)=>a+q[i],0));
+  const YTDM=10;  // the site's "today" is mid-November 2026, so year to date means January to October
+  const FYL=y=>[0,1,2].map(i=>Q[y].reduce((a,q)=>a+q[i],0));
+  const YTDL=y=>[0,1,2].map(i=>Q[y].slice(0,Math.floor(YTDM/3)).reduce((a,q)=>a+q[i],0)+Q[y][Math.floor(YTDM/3)][i]*(YTDM%3)/3);
   const SH={2025:YTDL(2025).map((v,i)=>v/FYL(2025)[i]),2026:YTDL(2026).map((v,i)=>v/FYL(2026)[i])};
   // each broker's 2025 production: brokers hired in 2026 had none; the rest scaled to 95% of 2025 revenue by line
   let s=4242;const R=()=>{s=(s*16807)%2147483647;return s/2147483647};
   BK.forEach(b=>{b.isNew=b.lv===2&&R()<.45;const g=-.35+R()*.95;b.p25=b.isNew?0:b.p26/(1+g)});
   const F25=FYL(2025);[0,1,2].forEach(i=>{const t=BK.filter(b=>b.ln===i).reduce((a,b)=>a+b.p25,0);BK.forEach(b=>{if(b.ln===i)b.p25=b.p25*F25[i]*.95/t})});
   // costs, $K
-  const NC={2026:{'Contracts':23790,'Offices':36500,'Travel and entertainment':15200,'Professional and consulting fees':26000,'Events':5699},
-            2027:{'Contracts':21250,'Offices':33491,'Travel and entertainment':15103,'Professional and consulting fees':24421,'Events':4913}};
-  const AL={2026:{'Corporate comp':48112,'Shared services':40300,'Fixed costs':8600},2027:{'Corporate comp':54035,'Shared services':40491,'Fixed costs':8773}};
+  // costs, $K, straight from the shared budget roll-up so the P&L can never drift from the budget pages
+  const B=window.HZ_BUDGET;
+  const NC={2026:B.noncomp(2026),2027:B.noncomp(2027)},AL={2026:B.alloc(2026),2027:B.alloc(2027)};
   const k25=.925;NC[2025]={};AL[2025]={};Object.entries(NC[2026]).forEach(([k,v])=>NC[2025][k]=Math.round(v*k25));Object.entries(AL[2026]).forEach(([k,v])=>AL[2025][k]=Math.round(v*k25));
   const NB={2025:(F25[0]+F25[1]+F25[2])*.05};
   function pnl(yr){
@@ -29,8 +31,8 @@
       r.dT=Object.values(r.direct).reduce((a,b)=>a+b,0);r.aT=Object.values(r.alloc).reduce((a,b)=>a+b,0);r.contrib=r.revT-r.com-r.loan;r.op=r.contrib-r.dT-r.aT});
     return L}
   // Jan–Sep view of a year: revenue by each line's Jan–Sep share, commission with it, costs at 9/12
-  function ytd(yr){const L=pnl(yr),sh=SH[yr];return L.map(r=>{const rev=r.rev.map((v,i)=>v*sh[i]),o=r.other*.7,revT=rev[0]+rev[1]+rev[2]+o,f=r.revT?revT/r.revT:0;
-    const x={m:r.m,rg:r.rg,rev,other:o,nh:0,revT,com:r.com*f,loan:r.loan*.75,n:r.n,dT:r.dT*.75,aT:r.aT*.75};x.contrib=x.revT-x.com-x.loan;x.op=x.contrib-x.dT-x.aT;return x})}
+  function ytd(yr){const L=pnl(yr),sh=SH[yr];return L.map(r=>{const rev=r.rev.map((v,i)=>v*sh[i]),o=r.other*YTDM/12,revT=rev[0]+rev[1]+rev[2]+o,f=r.revT?revT/r.revT:0;
+    const x={m:r.m,rg:r.rg,rev,other:o,nh:0,revT,com:r.com*f,loan:r.loan*YTDM/12,n:r.n,dT:r.dT*YTDM/12,aT:r.aT*YTDM/12};x.contrib=x.revT-x.com-x.loan;x.op=x.contrib-x.dT-x.aT;return x})}
   function sum(L){const o={revT:0,com:0,loan:0,contrib:0,dT:0,aT:0,op:0,rev:[0,0,0]};L.forEach(r=>{['revT','com','loan','contrib','dT','aT','op'].forEach(k=>o[k]+=r[k]);r.rev.forEach((v,i)=>o.rev[i]+=v)});return o}
-  window.HZ_PL={pnl,ytd,sum,Q,FYL,YTDL,SH,NC,AL};
+  window.HZ_PL={pnl,ytd,sum,Q,FYL,YTDL,SH,NC,AL,YTDM};
 })();

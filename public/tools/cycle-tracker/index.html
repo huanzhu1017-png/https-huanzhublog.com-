@@ -230,11 +230,11 @@ const sK=v=>{const r=Math.round(v);return(r>0?'+':r<0?'−':'')+Math.abs(r).toLo
 const sum=a=>a.reduce((x,y)=>x+y,0);
 
 const NOW=new Date('2026-11-15T19:00:00'),DUE=new Date('2026-11-16T17:00:00');
-const MK=['New York','Boston','Philadelphia','Washington DC','Atlanta','Miami','Charlotte','Chicago','Detroit','Minneapolis','Dallas','Houston','Austin','Denver','Phoenix','Los Angeles','San Francisco','Seattle','Portland','Las Vegas','London','Toronto','Capital Markets East','Capital Markets West'];
+const MK=['New York','Boston','DC','Atlanta','Miami','Chicago','Dallas','Houston','Denver','LA','San Francisco','Seattle','London','Toronto']; // the same 14 markets as every other tool
 let s=7;const R=()=>{s=(s*16807)%2147483647;return s/2147483647};
-const ST=['Received','Received','Received','Received','Revised','Received','Missing','Received','Late','Received','Received','Revised','Received','Missing','Received','Received','Received','Received','Missing','Received','Received','Late','Received','Received'];
+const ST=['Received','Received','Received','Revised','Received','Received','Missing','Received','Late','Received','Received','Missing','Received','Received'];
 const SUB=MK.map((m,i)=>{const st=ST[i],d=st==='Missing'?null:new Date(2026,10,13+Math.floor(R()*3),8+Math.floor(R()*10),Math.floor(R()*60));
-  return{m,owner:i>=22?'Capital Markets lead':i>=20?'International lead':'Market lead',ch:[0,9,15].includes(i)?'Shared folder':'Email',st,d,v:st==='Revised'?2:st==='Missing'?0:1}});
+  return{m,owner:i>=12?'International lead':'Market lead',ch:[0,9,13].includes(i)?'Shared folder':'Email',st,d,v:st==='Revised'?2:st==='Missing'?0:1}});
 const f=d=>d?d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'–';
 const chip={Received:'ok',Revised:'ok',Late:'warn',Missing:'bad'};
 function render(){

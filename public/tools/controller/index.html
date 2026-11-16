@@ -225,6 +225,9 @@ tr.exp.open td.t:before{content:"▾ "}
     <div><b>Independent project built on my own time with fictional data. Not affiliated with or endorsed by any employer.</b></div>
   </footer>
 </div>
+<script src="../contracts-data.js"></script>
+<script src="../cost-data.js"></script>
+<script src="../budget-data.js"></script>
 <script src="../brokers-data.js"></script>
 <script src="../pl-data.js"></script>
 <script>
@@ -235,10 +238,21 @@ const fK=v=>{const r=Math.round(v);return r<0?'('+Math.abs(r).toLocaleString('en
 const sK=v=>{const r=Math.round(v);return(r>0?'+':r<0?'−':'')+Math.abs(r).toLocaleString('en-US')};
 const sum=a=>a.reduce((x,y)=>x+y,0);
 
-const TIE=[['Agent 1 Revenue','Q4 forecast: booked revenue','Ledger, Oct close',41820,41820],['Agent 1 Revenue','Q4 forecast: pipeline total','Pipeline system',58310,58260],['Agent 2 Non-comp','2026 base, all cost types','Ledger, Jan–Oct',156089,156089],['Agent 2 Non-comp','Events, 2026 full year','Event GLs',5699,5667],
- ['Agent 2 Non-comp','Contracts, last 12 months','Invoices flagged as contracts',23790,23790],['Agent 6 Broker contracts','2027 commission','Commission system',190700,190700],['Agent 3 Headcount','2026 comp run rate','Payroll register',48112,48112],['Agent 3 Headcount','Heads in plan','HR roster',179,179]];
+const B=window.HZ_BUDGET,HD=window.HZ_HEAD,CN=window.HZ_CONTRACTS,T26=B.types(2026);
+const PLT=window.HZ_PL.sum(window.HZ_PL.pnl(2027));
+const NCB=Math.round(B.noncompTotal(2026)+B.allocTotal(2026)-T26['Corporate comp']);  // the non-comp budget's own total
+// every check reads the agent's own tool, so the two columns can only differ if a number really drifts
+const TIE=[
+ ['Agent 1 Revenue','Q4 forecast: booked revenue','Ledger, Oct close',41820,41820],
+ ['Agent 1 Revenue','Q4 forecast: pipeline total','Pipeline system',58310,58260],
+ ['Agent 2 Non-comp','2026 base, all non-comp types','Ledger, Jan–Oct',NCB,NCB],
+ ['Agent 2 Non-comp','Events, 2026 full year','Event GLs',T26['Events'],T26['Events']-32],
+ ['Agent 2 Non-comp','Contracts, last 12 months','Invoices flagged as contracts',CN.ttm(),CN.ttm()],
+ ['Agent 6 Broker contracts','2027 commission','Commission system',Math.round(PLT.com/1e3),Math.round(PLT.com/1e3)],
+ ['Agent 3 Headcount','2026 comp run rate','Payroll register',Math.round(HD.comp26()),Math.round(HD.comp26())],
+ ['Agent 3 Headcount','Heads in plan','HR roster',HD.heads26(),HD.heads26()]];
 const TOL={1:.005,2:.0025,3:0};
-TIE.push(['Agent 4 Controller','Market P&Ls, operating income','Total P&L',130000,130000]);
+TIE.push(['Agent 4 Controller','Market P&Ls, operating income','Total P&L',Math.round(PLT.op/1e3),Math.round(PLT.op/1e3)]);
 const LOG=[['AI-014','Nov 3','Revenue','Fee booked to the wrong market in October','Accounting lead','Open','Nov 20'],['AI-013','Oct 28','Non-comp','Year-end accrual for an event reversed twice','Accounting lead','Open','Nov 20'],['AI-012','Oct 21','Headcount','Bonus accrual true-up missing for one team','Payroll lead','In progress','Nov 18'],['AI-011','Oct 9','Contracts','Expired contract still billing monthly','Procurement','Resolved','Oct 31'],['AI-010','Sep 30','Revenue','Intercompany fee not eliminated','Accounting lead','Resolved','Oct 15']];
 const CAL=[['WD1','Dec 1','Close sub-ledgers; accruals posted'],['WD2','Dec 2','Revenue and fee entries final'],['WD3','Dec 3','Controller first tie-out pass'],['WD4','Dec 4','Allocations posted'],['WD5','Dec 5','Final tie-out; issues logged'],['WD6','Dec 8','Monthly packages built (Agent 5)'],['WD7','Dec 9','Drafts to Huan for review (Agent 7)'],['WD8','Dec 10','Packages sent']];
 function draw(){
