@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Forecast Cycle Tracker · Huan Zhu</title>
+<meta name="description" content="A demo of the cycle tracker run by the PMO in Huan Zhu's FP&amp;A agent team: who has submitted, what is next, and the calendar. All figures are made up.">
+<meta property="og:title" content="Forecast Cycle Tracker · Huan Zhu">
+<meta property="og:description" content="A demo of the cycle tracker run by the PMO in Huan Zhu's FP&amp;A agent team: who has submitted, what is next, and the calendar. All figures are made up.">
+<meta property="og:url" content="https://huanzhublog.com/tools/cycle-tracker/">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Light, research-note look: navy top bar, coloured tab rails, navy hero band. Single theme on purpose. */
+:root{
+  color-scheme:light;
+  --bg:#F3F3F0; --surface:#fff; --panel:#EFEFEB; --ink:#0a0b0d; --ink2:#51565f; --muted:#8a8f98; --line:#e2e4e8; --grid:#eceef1;
+  --navy:#1E3B32; --blue:#2B6A4C; --title:#2B6A4C;
+  --lease:#1E5C45; --sales:#4E9A6F; --debt:#A9CC8C; --booked:#1E5C45; --pipe:#4E9A6F; --nodet:#2C8C88; --mtop:#A9CC8C; --ftop:#7A8C3A;
+  --good:#17874f; --bad:#c0302a; --warn:#a86500;
+  --tot:#fff3cf; --tot-line:#e0b93c; --hl:#fff6dc;
+  --t1:#1E3B32; --t2:#a5650f; --t3:#d4561f; --t4:#c0302a;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --sans:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.5 var(--sans);font-feature-settings:"tnum" 1}
+a{color:var(--blue)}
+button,select,input{font:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.topbar{background:var(--navy);color:#D3E0D9;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.wm{color:#fff;font-weight:700;letter-spacing:.32em;font-size:13px}
+.tb-r{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.tb-r .sep{width:1px;height:12px;background:#4C6D60}
+.tb-r .demo{color:#ffc65c;font-weight:600}
+.tb-r a{color:#A8DCC2;text-decoration:none}
+.wrap{max-width:1480px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 50px max(16px,env(safe-area-inset-left,0px))}
+.head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;background:#E7E7E2;padding:12px 14px}
+.head h1{font:400 26px/1.15 var(--serif);color:var(--title);margin:0}
+.head p{margin:4px 0 0;max-width:820px;font-size:13px}
+.cyc{display:inline-flex;border:1px solid var(--line);background:#fff}
+.cyc span{padding:8px 14px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.cyc .on{background:var(--navy);color:#fff;font-weight:600}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;background:#E7E7E2;padding:4px 10px 10px;margin-top:10px}
+.tabs button{border:0;border-top:4px solid var(--c);background:#fff;padding:12px 14px 10px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.tabs button[aria-selected="true"]{background:var(--c);color:#fff;transform:translateY(-3px);box-shadow:0 4px 10px rgba(0,0,0,.18)}
+.eyebrow{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin:22px 0 4px}
+h2.lead{font:400 21px/1.25 var(--serif);color:var(--title);margin:0 0 12px;text-wrap:balance}
+.hero{background:var(--navy);color:#fff;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.hero > div{padding:16px 22px;border-left:1px solid #3A5A4E;min-width:0}
+.hero > div:first-child{border-left:0}
+.hero .big{font:400 30px/1.1 var(--serif)}
+.hero .dn{font:400 19px/1.15 var(--serif);color:#ff7468}
+.hero .up{font:400 19px/1.15 var(--serif);color:#4fd59a}
+.hero .l{font-size:12.5px;color:#dfe6ee;margin-top:4px}
+.hero .s{font-size:11.5px;color:#A9C2B6;margin-top:3px}
+.hero .g{color:#4fd59a}.hero .r{color:#ff7468}
+.findings{margin:14px 0 6px}
+.findings h3{font-size:14px;margin:0 0 6px}
+.findings ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);padding:14px 16px;min-width:0}
+.card h3{margin:0 0 10px;font-size:15px;font-weight:600}
+.kpi{background:#fff;border:1px solid var(--line);padding:12px 14px;min-width:0}
+.kpi .l{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.kpi .n{font-size:24px;font-weight:600;margin-top:4px}
+.kpi .s{font-size:12px;color:var(--ink2)}
+.note{font-size:12px;color:var(--ink2);margin:8px 0 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--grid);white-space:nowrap}
+th.t,td.t{text-align:left}
+td.t{white-space:normal}
+tr.total td{font-weight:700;background:var(--tot);border-top:1px solid var(--tot-line)}
+td.tc,th.tc{background:var(--tot)}
+.pos{color:var(--good)}.neg{color:var(--bad)}
+.code{font-size:10.5px;color:var(--muted);background:#f0f1f3;padding:1px 5px;border-radius:3px;margin-left:4px}
+.pill{font-size:10.5px;padding:1px 6px;border-radius:3px;border:1px solid}
+.pill.in{color:#1c4e8f;border-color:#9cc3ef;background:#eaf3fd}
+.pill.up{color:#9c3d12;border-color:#f3b896;background:#fff1e8}
+.legend{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-bottom:8px}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+svg{display:block;width:100%;height:auto;max-width:100%}
+svg text{font-family:var(--sans);font-size:11px;fill:var(--ink2)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters select,.filters input{border:1px solid #cfd3d9;background:#fff;padding:6px 8px;min-width:0;max-width:220px}
+.filters input{min-width:180px}
+.filters .cnt{font-size:11.5px;color:var(--muted);align-self:center}
+.more{background:none;border:0;color:var(--blue);cursor:pointer;padding:8px 0;font-size:12.5px}
+.barcell{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.barcell i{display:block;height:3px;background:var(--blue);border-radius:2px}
+tr.top5 td{background:var(--hl)}
+tr.top5 td:first-child{box-shadow:inset 3px 0 0 var(--ftop)}
+.lookup input{width:100%;max-width:420px;border:1px solid #cfd3d9;padding:9px 10px;background:#fff}
+footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--ink2);display:flex;flex-direction:column;gap:6px}
+.fict{background:#fff8e1;border:1px solid #f0d27a;padding:8px 12px;font-size:12.5px;margin-top:12px}
+[role=tabpanel][hidden]{display:none!important}
+@media (max-width:1000px){.hero{grid-template-columns:repeat(2,minmax(0,1fr))}.hero > div:nth-child(3){border-left:0}.grid2{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.hero,.grid3,.grid4{grid-template-columns:1fr}.hero > div{border-left:0;border-top:1px solid #3A5A4E}.head h1{font-size:22px}}
+@media (prefers-reduced-motion:reduce){.tabs button{transform:none!important}}
+
+/* ---- Old financial newspaper theme: newsprint, black ink, double rules ---- */
+:root{
+  --bg:#EEE8DA; --panel:#F3EEE2; --line:#1A1A1A; --grid:#CFC7B5; --ink:#141414; --ink2:#3D3A33; --muted:#6E685C;
+  --navy:#1A1A1A; --title:#1A1A1A; --blue:#2F5E46;
+  --t1:#1A1A1A; --t2:#1A1A1A; --t3:#1A1A1A; --t4:#1A1A1A;
+  --tot:#E2DAC6; --tot-line:#1A1A1A; --hl:#E8E0CC;
+  --lease:#2B2B2B; --booked:#2B2B2B; --sales:#2F5E46; --pipe:#2F5E46; --debt:#A9A190; --ftop:#A9A190;
+  --serif:"Old Standard TT",Georgia,"Times New Roman",serif;
+  --sans:"Libre Baskerville",Georgia,"Times New Roman",serif;
+}
+body{font-size:13px}
+.topbar{color:#DDD6C6}
+.tb-r .sep{background:#5A564E}
+.head,.tabs{background:transparent;border-top:3px double #1A1A1A;border-bottom:1px solid #1A1A1A}
+.head h1{font-size:40px;font-weight:700;color:#141414;letter-spacing:-.01em}
+.kpi,.card{background:transparent;border:0;border-top:1px solid #1A1A1A;box-shadow:none}
+.tabs button{background:transparent;box-shadow:none;border-top:0;color:#1A1A1A}
+.tabs button[aria-selected="true"]{background:#1A1A1A;color:#EEE8DA;transform:none;box-shadow:none}
+.fict{background:transparent;border:1px solid #1A1A1A}
+.hero > div{border-left-color:#3A3A3A}
+.hero .s{color:#B9B2A2}
+.lookup input,.filters select,.filters input{background:#F6F1E6;border-color:#8C8576}
+.code{background:#E2DAC6}
+</style>
+<style>
+/* ---- shared budget-tool pieces ---- */
+.badge{display:inline-block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border:1px solid #1A1A1A;margin-top:8px}
+.badge.final{background:#2F5E46;color:#EEE8DA;border-color:#2F5E46}
+.badge.draft{background:#1A1A1A;color:#EEE8DA}
+.grid5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-top:14px}
+.kpi .n{font-family:var(--serif);font-weight:400;font-size:26px}
+.sub{font-size:12px;color:var(--ink2);margin:2px 0 10px}
+h2.sec{font:400 21px/1.25 var(--serif);margin:26px 0 4px}
+input.num,input.txt,select.st{border:1px solid #8C8576;background:#F6F1E6;padding:5px 7px;font:inherit;font-size:12.5px}
+input.num{width:84px;text-align:right}
+input.txt{width:100%;min-width:150px}
+td input,td select{margin:-3px 0}
+.chip{display:inline-block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border:1px solid currentColor;white-space:nowrap}
+.chip.ok{color:#2F5E46}.chip.warn{color:#9A6B12}.chip.bad{color:#9A3B2A}.chip.mut{color:#6E685C}.chip.on{background:#2F5E46;color:#EEE8DA;border-color:#2F5E46}
+tr.grp td{background:#E2DAC6;font-weight:700}
+tr.sub2 td.t{padding-left:22px}
+tr.sub3 td.t{padding-left:40px;color:var(--ink2)}
+tr.exp{cursor:pointer}
+tr.exp td.t:before{content:"▸ ";color:var(--muted)}
+tr.exp.open td.t:before{content:"▾ "}
+.mix{display:flex;height:14px;min-width:160px;border:1px solid #8C8576}
+.mix i{display:block;height:100%}
+.howto p{margin:0 0 9px;font-size:12.5px}
+.howto b{color:var(--ink)}
+.side{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;margin-top:10px}
+.ctlbar{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#E8E0CC;padding:12px 16px;margin:18px 0 10px}
+.ctlbar h4{margin:0 0 8px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase}
+.ctlbar .row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.ctlbar label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--ink2)}
+.ctlbar label.chk{flex-direction:row;align-items:center;gap:6px}
+.linkbtn{background:none;border:0;padding:0;color:var(--blue);text-decoration:underline;cursor:pointer;font:inherit}
+.nav2{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.nav2 a{border:1px solid #1A1A1A;padding:5px 11px;font-size:12px;text-decoration:none;color:#1A1A1A}
+.cal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:14px}
+.mon{border:1px solid #1A1A1A;min-width:0}
+.mon h4{margin:0;background:#1A1A1A;color:#EEE8DA;padding:8px 10px;font-size:12.5px;display:flex;justify-content:space-between}
+.ev{display:grid;grid-template-columns:74px 12px minmax(0,1fr) auto;gap:4px;padding:8px 10px;border-top:1px solid #CFC7B5;font-size:12px}
+.ev:first-of-type{border-top:0}
+.ev .d{color:var(--ink2)}.ev .d.ph{color:#9A6B12}
+.ev .dot{width:8px;height:8px;border-radius:50%;margin-top:4px;background:#A9A190}
+.ev .dot.own{background:#1A1A1A}
+.ev b{font-weight:700}.ev small{display:block;color:var(--ink2)}
+.qbox{background:#E8E0CC;padding:10px 14px;font-size:12.5px;margin-top:12px}
+.hbar{display:grid;grid-template-columns:240px minmax(0,1fr) 70px 44px;gap:10px;align-items:center;font-size:12.5px;padding:3px 0}
+.hbar i{display:block;height:12px}
+.inv{display:flex;justify-content:space-between;gap:12px;background:#E8E0CC;padding:10px 14px;margin-top:8px;font-size:12.5px}
+.pop{position:fixed;inset:0;background:rgba(20,20,20,.35);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.pop[hidden]{display:none}
+.pop .box{background:#F3EEE2;border:1px solid #1A1A1A;max-width:560px;width:100%;padding:16px 18px;max-height:80vh;overflow:auto}
+.pop .box h3{margin:0 0 4px;font:400 20px var(--serif)}
+.pop .x{float:right;background:none;border:1px solid #1A1A1A;cursor:pointer;padding:2px 8px}
+.saved{font-size:11.5px;color:var(--muted);margin-left:8px}
+@media (max-width:1000px){.grid5{grid-template-columns:repeat(2,minmax(0,1fr))}.side,.ctlbar{grid-template-columns:1fr}.cal{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.grid5,.cal{grid-template-columns:1fr}.hbar{grid-template-columns:120px minmax(0,1fr) 60px}.hbar span:last-child{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="wm">MERIDIAN</div>
+  <div class="tb-r"><span>FP&amp;A</span><span class="sep"></span><span>Agent tools</span><span class="sep"></span><span class="demo">Demo · fictional company &amp; data</span><span class="sep"></span><a href="../../work/index.html">← Huan's work</a></div>
+</div>
+<div class="wrap">
+  <div class="agentbar" style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;border:1px solid #1A1A1A;padding:7px 12px;margin:0 0 12px;font-size:12.5px"><b style="letter-spacing:.08em;text-transform:uppercase;font-size:11px">Run by PMO</b><span>keeps every cycle on schedule</span><span style="color:var(--ink2)">→ hands off to Agents 1–7</span><a href="../agents/index.html" style="margin-left:auto">See the agent team ↗</a></div>
+  <div class="head"><div>
+    <h1>Forecast Cycle Tracker</h1>
+    <span class="badge draft">Demo</span> <span class="saved" id="savedmsg"></span>
+    <p>Q4 forecast, 11/16 cycle. Who has submitted, what happens next, and the dates everyone works to.</p>
+  </div></div>
+  <p class="fict"><b>What this shows:</b> how the PMO agent keeps a forecast cycle on time: a checklist of every market, reminders drafted for whoever is missing, and the steps each agent takes after the deadline. <b>All names and figures are made up.</b></p>
+  <div class="grid4" id="kpi" style="margin-top:14px"></div>
+  <h2 class="sec">This cycle, step by step</h2>
+  <p class="sub">Q4 forecast, 11/16 cycle. Each step starts when the one before it is done.</p>
+  <div class="scroll"><table id="steps"></table></div>
+  <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">Who has submitted</h2>
+    <label>Show<select class="st" id="f"><option value="">All markets</option><option value="Missing">Missing</option><option value="Late">Late</option><option value="Revised">Revised</option><option value="Received">Received</option></select></label></div>
+  <div class="scroll"><table id="subs"></table></div>
+  <p><button type="button" class="reset" id="draft" style="border:1px solid #1A1A1A;background:transparent;padding:7px 14px;cursor:pointer">Draft reminders for missing markets</button></p>
+  <div id="drafts"></div>
+  <h2 class="sec">Calendar</h2>
+  <p class="sub">The dates every agent works to.</p>
+  <div class="scroll"><table id="cal"></table></div>
+
+  <footer>
+    <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../agents/index.html">the agent team</a></div>
+    <div>Demo with generated data. Meridian is not a real company; every name and figure on this page is made up.</div>
+    <div><b>Independent project built on my own time with fictional data. Not affiliated with or endorsed by any employer.</b></div>
+  </footer>
+</div>
+<script>
+(function(){
+const $=q=>document.querySelector(q),$$=q=>[...document.querySelectorAll(q)];
+const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fK=v=>{const r=Math.round(v);return r<0?'('+Math.abs(r).toLocaleString('en-US')+')':r.toLocaleString('en-US')};
+const sK=v=>{const r=Math.round(v);return(r>0?'+':r<0?'−':'')+Math.abs(r).toLocaleString('en-US')};
+const sum=a=>a.reduce((x,y)=>x+y,0);
+
+const NOW=new Date('2026-11-15T19:00:00'),DUE=new Date('2026-11-16T17:00:00');
+const MK=['New York','Boston','Philadelphia','Washington DC','Atlanta','Miami','Charlotte','Chicago','Detroit','Minneapolis','Dallas','Houston','Austin','Denver','Phoenix','Los Angeles','San Francisco','Seattle','Portland','Las Vegas','London','Toronto','Capital Markets East','Capital Markets West'];
+let s=7;const R=()=>{s=(s*16807)%2147483647;return s/2147483647};
+const ST=['Received','Received','Received','Received','Revised','Received','Missing','Received','Late','Received','Received','Revised','Received','Missing','Received','Received','Received','Received','Missing','Received','Received','Late','Received','Received'];
+const SUB=MK.map((m,i)=>{const st=ST[i],d=st==='Missing'?null:new Date(2026,10,13+Math.floor(R()*3),8+Math.floor(R()*10),Math.floor(R()*60));
+  return{m,owner:i>=22?'Capital Markets lead':i>=20?'International lead':'Market lead',ch:[0,9,15].includes(i)?'Shared folder':'Email',st,d,v:st==='Revised'?2:st==='Missing'?0:1}});
+const f=d=>d?d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'–';
+const chip={Received:'ok',Revised:'ok',Late:'warn',Missing:'bad'};
+function render(){
+  const rec=SUB.filter(x=>x.st!=='Missing').length,miss=SUB.filter(x=>x.st==='Missing'),hrs=Math.max(0,Math.round((DUE-NOW)/36e5));
+  $('#kpi').innerHTML=`<div class="kpi"><div class="l">Submitted</div><div class="n">${rec} of ${SUB.length}</div><div class="s">markets, this cycle</div></div>
+   <div class="kpi"><div class="l">Still missing</div><div class="n" style="color:#9A3B2A">${miss.length}</div><div class="s">${miss.map(x=>x.m).join(', ')}</div></div>
+   <div class="kpi"><div class="l">Deadline</div><div class="n">${hrs} hours</div><div class="s">Mon Nov 16, 5:00 PM</div></div>
+   <div class="kpi"><div class="l">Revised versions</div><div class="n">${SUB.filter(x=>x.v>1).length}</div><div class="s">only the latest is used; earlier ones kept</div></div>`;
+  const fl=$('#f').value,L=SUB.filter(x=>!fl||x.st===fl);
+  $('#subs').innerHTML=`<tr><th class="t">Market</th><th class="t">Contact</th><th class="t">Channel</th><th class="t">Status</th><th class="t">Received</th><th>Versions</th></tr>`+
+    L.map(x=>`<tr><td class="t"><b>${x.m}</b></td><td class="t">${x.owner}</td><td class="t">${x.ch}</td><td class="t"><span class="chip ${chip[x.st]}">${x.st}</span></td><td class="t">${f(x.d)}</td><td>${x.v||'–'}</td></tr>`).join('');
+}
+const STEPS=[['PMO','Collect market submissions','In progress','21 of 24 in; due Mon 5 PM'],['Agent 1 Revenue','Build the forecast','Waiting','starts when all markets are in'],['Agent 4 Controller','Tie out to booked revenue and pipeline','Waiting',''],['Agent 5 Reporting','Forecast report and dashboard','Waiting',''],['Agent 7 Admin','Drafts for each stakeholder','Waiting',''],['Huan','Review and send','Waiting','target Wed Nov 18']];
+const sc={'Done':'ok','In progress':'warn','Waiting':'mut'};
+$('#steps').innerHTML=`<tr><th class="t">#</th><th class="t">Who</th><th class="t">Step</th><th class="t">Status</th><th class="t">Note</th></tr>`+STEPS.map((x,i)=>`<tr><td class="t">${i+1}</td><td class="t"><b>${x[0]}</b></td><td class="t">${x[1]}</td><td class="t"><span class="chip ${sc[x[2]]}">${x[2]}</span></td><td class="t">${x[3]}</td></tr>`).join('');
+const CAL=[['Oct 19','Q4 forecast cycle 1','Done'],['Nov 2–11','October month-end close (WD1–WD8)','Done'],['Nov 16','Q4 forecast cycle 2','Now'],['Nov 20','2027 budget: first draft from each agent','Next'],['Dec 1–10','November month-end close (WD1–WD8)','Planned'],['Dec 14','Q4 forecast cycle 3','Planned'],['Dec 18','2027 budget: final review','Planned'],['Dec 28','Q4 forecast cycle 4, final','Planned']];
+const cc={Done:'ok',Now:'on',Next:'warn',Planned:'mut'};
+$('#cal').innerHTML=`<tr><th class="t">Date</th><th class="t">Milestone</th><th class="t">Status</th></tr>`+CAL.map(x=>`<tr><td class="t"><b>${x[0]}</b></td><td class="t">${x[1]}</td><td class="t"><span class="chip ${cc[x[2]]}">${x[2]}</span></td></tr>`).join('');
+$('#f').addEventListener('change',render);
+$('#draft').addEventListener('click',()=>{const miss=SUB.filter(x=>x.st==='Missing');
+  $('#drafts').innerHTML=miss.map(x=>`<div class="qbox" style="margin-top:10px"><b>Draft · not sent</b> · To: ${x.m} ${x.owner.toLowerCase()}<br><b>Subject:</b> Q4 forecast due Monday 5 PM: ${x.m}<br><br>Hi, a quick reminder that the Q4 forecast for ${x.m} is due tomorrow (Mon Nov 16) at 5 PM. Please send the usual template; if anything has moved since October, a line on what changed helps. Thank you!</div>`).join('')+`<p class="note">Drafts wait for Huan's review; nothing is sent automatically.</p>`});
+render();
+
+})();
+</script>
+</body>
+</html>
