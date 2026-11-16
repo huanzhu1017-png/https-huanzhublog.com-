@@ -228,7 +228,7 @@ const sK=v=>{const r=Math.round(v);return(r>0?'+':r<0?'−':'')+Math.abs(r).toLo
 const sum=a=>a.reduce((x,y)=>x+y,0);
 
 const TIE=[['Agent 1 Revenue','Q4 forecast: booked revenue','Ledger, Oct close',41820,41820],['Agent 1 Revenue','Q4 forecast: pipeline total','Pipeline system',58310,58260],['Agent 2 Non-comp','2026 base, all cost types','Ledger, Jan–Oct',225619,225619],['Agent 2 Non-comp','Events, 2026 full year','Event GLs',8261,8213],
- ['Agent 6 Contract','Contract spend, last 12 months','Invoices flagged as contracts',34358,34358],['Agent 3 Headcount','2026 comp run rate','Payroll register',69287,69287],['Agent 3 Headcount','Heads in plan','HR roster',259,259]];
+ ['Agent 2 Non-comp','Contracts, last 12 months','Invoices flagged as contracts',34358,34358],['Agent 3 Headcount','2026 comp run rate','Payroll register',69287,69287],['Agent 3 Headcount','Heads in plan','HR roster',259,259]];
 const TOL={1:.005,2:.0025,3:0};
 const LOG=[['AI-014','Nov 3','Revenue','Fee booked to the wrong market in October','Accounting lead','Open','Nov 20'],['AI-013','Oct 28','Non-comp','Year-end accrual for an event reversed twice','Accounting lead','Open','Nov 20'],['AI-012','Oct 21','Headcount','Bonus accrual true-up missing for one team','Payroll lead','In progress','Nov 18'],['AI-011','Oct 9','Contracts','Expired contract still billing monthly','Procurement','Resolved','Oct 31'],['AI-010','Sep 30','Revenue','Intercompany fee not eliminated','Accounting lead','Resolved','Oct 15']];
 const CAL=[['WD1','Dec 1','Close sub-ledgers; accruals posted'],['WD2','Dec 2','Revenue and fee entries final'],['WD3','Dec 3','Controller first tie-out pass'],['WD4','Dec 4','Allocations posted'],['WD5','Dec 5','Final tie-out; issues logged'],['WD6','Dec 8','Monthly packages built (Agent 5)'],['WD7','Dec 9','Drafts to Huan for review (Agent 7)'],['WD8','Dec 10','Packages sent']];
@@ -236,7 +236,7 @@ function draw(){
   const tol=TOL[$('#cyc').value];
   const R=TIE.map(([a,item,src,v,s])=>{const d=v-s,p=s?Math.abs(d)/s:0,ok=tol===0?d===0:p<=tol;return{a,item,src,v,s,d,p,ok}});
   const held=R.filter(r=>!r.ok);
-  $('#kpi').innerHTML=`<div class="kpi"><div class="l">Checks this cycle</div><div class="n">${R.length}</div><div class="s">from 4 agents</div></div>
+  $('#kpi').innerHTML=`<div class="kpi"><div class="l">Checks this cycle</div><div class="n">${R.length}</div><div class="s">from 3 agents</div></div>
    <div class="kpi"><div class="l">Passed</div><div class="n" style="color:#2F5E46">${R.length-held.length}</div><div class="s">move on to Reporting</div></div>
    <div class="kpi"><div class="l">On hold</div><div class="n" style="color:#9A3B2A">${held.length}</div><div class="s">${held.length?'back to '+[...new Set(held.map(r=>r.a.split(' ').slice(0,2).join(' ')))].join(', '):'nothing held'}</div></div>
    <div class="kpi"><div class="l">Open accounting issues</div><div class="n">${LOG.filter(l=>l[5]!=='Resolved').length}</div><div class="s">oldest opened ${LOG.filter(l=>l[5]!=='Resolved').slice(-1)[0][1]}</div></div>`;
