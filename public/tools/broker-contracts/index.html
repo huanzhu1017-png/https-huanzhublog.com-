@@ -235,7 +235,7 @@ const sK=v=>{const r=Math.round(v);return(r>0?'+':r<0?'−':'')+Math.abs(r).toLo
 const sum=a=>a.reduce((x,y)=>x+y,0);
 
 const H=window.HZ_BROKERS,S=H.settings(),BK=H.list,MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],LN=['Lease','Sales','Debt'],LV=['Top producer','Established','Ramping'];
-const NONCOMP=214.556e6,CORPCOMP=77.68e6;
+const NONCOMP=148.442e6,CORPCOMP=54.035e6;
 const C=H.terms.map(t=>Object.assign({},t,{p:H.p27(t.b,S)}));
 let ST=H.kSettings();
 const save=()=>{try{localStorage.setItem('hz-demo-brokerk',JSON.stringify(ST));$('#savedmsg').textContent='Saved in this browser.'}catch(e){}};

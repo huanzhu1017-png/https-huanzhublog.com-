@@ -205,7 +205,7 @@ tr.exp.open td.t:before{content:"▾ "}
   <div class="grid4" id="kpi" style="margin-top:14px"></div>
   <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">Full P&amp;L by market</h2>
     <label>Year<select class="st" id="yr"><option value="2027">2027 budget</option><option value="2026">2026 base</option></select></label></div>
-  <p class="sub">Revenue and commission come broker by broker from the revenue budget and the broker contracts. Office, travel, event, contract and fee costs are spread by number of brokers; corporate comp, shared services and fixed costs by share of revenue. Click a market for its full statement. $M.</p>
+  <p class="sub">Revenue and commission come broker by broker from the revenue budget and the broker contracts. Office, travel, event, contract and fee costs are spread half by number of brokers and half by revenue; corporate comp, shared services and fixed costs by share of revenue. Click a market for its full statement. $M.</p>
   <div class="scroll"><table id="pl"></table></div>
   <div class="card" style="margin-top:14px" id="stmt-card"><h3 id="stmt-h"></h3><div class="scroll"><table id="stmt"></table></div></div>
   <div class="ctlbar" style="grid-template-columns:1fr auto;align-items:center"><h2 class="sec" style="margin:0">Tie-out: does each agent's number match its source?</h2>
@@ -235,10 +235,10 @@ const fK=v=>{const r=Math.round(v);return r<0?'('+Math.abs(r).toLocaleString('en
 const sK=v=>{const r=Math.round(v);return(r>0?'+':r<0?'−':'')+Math.abs(r).toLocaleString('en-US')};
 const sum=a=>a.reduce((x,y)=>x+y,0);
 
-const TIE=[['Agent 1 Revenue','Q4 forecast: booked revenue','Ledger, Oct close',41820,41820],['Agent 1 Revenue','Q4 forecast: pipeline total','Pipeline system',58310,58260],['Agent 2 Non-comp','2026 base, all cost types','Ledger, Jan–Oct',225619,225619],['Agent 2 Non-comp','Events, 2026 full year','Event GLs',8261,8213],
- ['Agent 2 Non-comp','Contracts, last 12 months','Invoices flagged as contracts',34358,34358],['Agent 6 Broker contracts','2027 commission','Commission system',190700,190700],['Agent 3 Headcount','2026 comp run rate','Payroll register',69287,69287],['Agent 3 Headcount','Heads in plan','HR roster',259,259]];
+const TIE=[['Agent 1 Revenue','Q4 forecast: booked revenue','Ledger, Oct close',41820,41820],['Agent 1 Revenue','Q4 forecast: pipeline total','Pipeline system',58310,58260],['Agent 2 Non-comp','2026 base, all cost types','Ledger, Jan–Oct',156089,156089],['Agent 2 Non-comp','Events, 2026 full year','Event GLs',5699,5667],
+ ['Agent 2 Non-comp','Contracts, last 12 months','Invoices flagged as contracts',23790,23790],['Agent 6 Broker contracts','2027 commission','Commission system',190700,190700],['Agent 3 Headcount','2026 comp run rate','Payroll register',48112,48112],['Agent 3 Headcount','Heads in plan','HR roster',179,179]];
 const TOL={1:.005,2:.0025,3:0};
-TIE.push(['Agent 4 Controller','Market P&Ls, operating income','Total P&L',40300,40300]);
+TIE.push(['Agent 4 Controller','Market P&Ls, operating income','Total P&L',130000,130000]);
 const LOG=[['AI-014','Nov 3','Revenue','Fee booked to the wrong market in October','Accounting lead','Open','Nov 20'],['AI-013','Oct 28','Non-comp','Year-end accrual for an event reversed twice','Accounting lead','Open','Nov 20'],['AI-012','Oct 21','Headcount','Bonus accrual true-up missing for one team','Payroll lead','In progress','Nov 18'],['AI-011','Oct 9','Contracts','Expired contract still billing monthly','Procurement','Resolved','Oct 31'],['AI-010','Sep 30','Revenue','Intercompany fee not eliminated','Accounting lead','Resolved','Oct 15']];
 const CAL=[['WD1','Dec 1','Close sub-ledgers; accruals posted'],['WD2','Dec 2','Revenue and fee entries final'],['WD3','Dec 3','Controller first tie-out pass'],['WD4','Dec 4','Allocations posted'],['WD5','Dec 5','Final tie-out; issues logged'],['WD6','Dec 8','Monthly packages built (Agent 5)'],['WD7','Dec 9','Drafts to Huan for review (Agent 7)'],['WD8','Dec 10','Packages sent']];
 function draw(){

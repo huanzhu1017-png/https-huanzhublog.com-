@@ -7,7 +7,7 @@
   const CN='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(x=>'Vendor '+x);
   const GL=['Software','Data','Subscriptions','Marketing','Hiring'];
   const TODAY=new Date('2026-11-13');
-  let amt=5200;
+  let amt=3600;
   const CONS=CN.map((n,i)=>{const ttm=Math.round(amt);amt*=rnd(.76,.93);
     const r=R(),exp=r<.15?null:new Date(2025,8+Math.floor(R()*40),1+Math.floor(R()*27));
     const k=1+Math.floor(R()*4),paid=[LOB[0]].concat(LOB.slice(1).sort(()=>R()-.5).slice(0,k-1));

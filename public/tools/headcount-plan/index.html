@@ -227,7 +227,7 @@ const fK=v=>{const r=Math.round(v);return r<0?'('+Math.abs(r).toLocaleString('en
 const sK=v=>{const r=Math.round(v);return(r>0?'+':r<0?'−':'')+Math.abs(r).toLocaleString('en-US')};
 const sum=a=>a.reduce((x,y)=>x+y,0);
 
-const T=[['Finance',48,3,195,2],['HR',22,1,150,1],['Technology',64,6,210,4],['Marketing',30,2,140,1],['Research',18,1,165,1],['Operations',55,4,120,2],['Legal and compliance',14,0,240,0],['Executive office',8,0,480,0]]
+const T=[['Finance',33,2,195,1],['HR',15,1,150,1],['Technology',44,4,210,3],['Marketing',21,1,140,1],['Research',12,1,165,1],['Operations',38,3,120,1],['Legal and compliance',10,0,240,0],['Executive office',6,0,480,0]]
  .map(([n,hc,open,sal,hires],i)=>({i,n,hc,open,sal,hires,start:i%2?4:3}));
 const S={merit:3.5,bonus:15,ben:28,att:8};
 function row(t){const m=1+S.merit/100,load=1+S.ben/100,b=S.bonus/100;

@@ -12,9 +12,9 @@
   BK.forEach(b=>{b.isNew=b.lv===2&&R()<.45;const g=-.35+R()*.95;b.p25=b.isNew?0:b.p26/(1+g)});
   const F25=FYL(2025);[0,1,2].forEach(i=>{const t=BK.filter(b=>b.ln===i).reduce((a,b)=>a+b.p25,0);BK.forEach(b=>{if(b.ln===i)b.p25=b.p25*F25[i]*.95/t})});
   // costs, $K
-  const NC={2026:{'Contracts':34358,'Offices':52800,'Travel and entertainment':21900,'Professional and consulting fees':37600,'Events':8261},
-            2027:{'Contracts':30690,'Offices':48445,'Travel and entertainment':21761,'Professional and consulting fees':35314,'Events':7120}};
-  const AL={2026:{'Corporate comp':69287,'Shared services':58300,'Fixed costs':12400},2027:{'Corporate comp':77680,'Shared services':58576,'Fixed costs':12650}};
+  const NC={2026:{'Contracts':23790,'Offices':36500,'Travel and entertainment':15200,'Professional and consulting fees':26000,'Events':5699},
+            2027:{'Contracts':21250,'Offices':33491,'Travel and entertainment':15103,'Professional and consulting fees':24421,'Events':4913}};
+  const AL={2026:{'Corporate comp':48112,'Shared services':40300,'Fixed costs':8600},2027:{'Corporate comp':54035,'Shared services':40491,'Fixed costs':8773}};
   const k25=.925;NC[2025]={};AL[2025]={};Object.entries(NC[2026]).forEach(([k,v])=>NC[2025][k]=Math.round(v*k25));Object.entries(AL[2026]).forEach(([k,v])=>AL[2025][k]=Math.round(v*k25));
   const NB={2025:(F25[0]+F25[1]+F25[2])*.05};
   function pnl(yr){
@@ -25,7 +25,7 @@
     const corp={m:'Corporate (fees, finance topside)',rg:'Corporate',rev:[0,0,0],nh:0,other:NB[yr],com:0,loan:0,n:0};
     const L=Object.values(rows).concat([corp]);L.forEach(r=>r.revT=r.rev[0]+r.rev[1]+r.rev[2]+r.nh+r.other);
     const totRev=L.reduce((a,r)=>a+r.revT,0),totN=L.reduce((a,r)=>a+r.n,0);
-    L.forEach(r=>{r.direct={};Object.entries(NC[yr]).forEach(([k,v])=>r.direct[k]=v*1e3*r.n/totN);r.alloc={};Object.entries(AL[yr]).forEach(([k,v])=>r.alloc[k]=v*1e3*r.revT/totRev);
+    L.forEach(r=>{r.direct={};Object.entries(NC[yr]).forEach(([k,v])=>r.direct[k]=v*1e3*(.5*r.n/totN+.5*r.revT/totRev));r.alloc={};Object.entries(AL[yr]).forEach(([k,v])=>r.alloc[k]=v*1e3*r.revT/totRev);
       r.dT=Object.values(r.direct).reduce((a,b)=>a+b,0);r.aT=Object.values(r.alloc).reduce((a,b)=>a+b,0);r.contrib=r.revT-r.com-r.loan;r.op=r.contrib-r.dT-r.aT});
     return L}
   // Jan–Sep view of a year: revenue by each line's Jan–Sep share, commission with it, costs at 9/12
