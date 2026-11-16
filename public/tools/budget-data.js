@@ -70,18 +70,91 @@ window.HZ_EVENTS={OWN,E,XTRA,OTH,OTHT,OTH27,save:esave,fy26:evFY26,next27:ev27};
 /* ======================= CORPORATE HEADCOUNT ======================= */
 const T=[['Finance',33,2,195,1],['HR',15,1,150,1],['Technology',44,4,210,3],['Marketing',21,1,140,1],['Research',12,1,165,1],['Operations',38,3,120,1],['Legal and compliance',10,0,240,0],['Executive office',6,0,480,0]]
  .map(([n,hc,open,sal,hires],i)=>({i,n,hc,open,sal,hires,start:i%2?4:3}));
-const S={merit:3.5,bonus:15,ben:28,att:8};
-function row(t){const m=1+S.merit/100,load=1+S.ben/100,b=S.bonus/100;
-  const c26=t.hc*t.sal*(1+b)*load;
-  const newHC=t.open+t.hires,months=(12-t.start+1)/12;
-  const c27=(t.hc*t.sal*m+newHC*t.sal*m*months)*(1+b)*load;
-  return{c26,c27,end:t.hc+newHC}}
+const S={merit:3.5,bonus:15,match:6,trend:7};   // the four drivers the page can change
+
+// 2026 US employer rates and caps, in dollars. The page lists the sources.
+const RT={ss:6.2,ssBase:184500,mc:1.45,futa:.6,futaBase:7000,suta:2.8,sutaBase:12000,wc:.35,pfl:.3,pflBase:95000,
+  matchCap:360000,med:[9500,17400,23200],dv:[640,1160,1720],life:340,dis:560,hsa:[500,750,1000],oth:1600};
+
+// every employer cost component for a full-time US employee, in the order the roster shows them
+const CMP=[['base','Base salary','cash','Base'],['bonus','Bonus at target','cash','Bonus'],
+ ['ss','Social Security (OASDI), 6.2% to the wage base','tax','Soc Sec'],['mc','Medicare, 1.45%, no cap','tax','Medicare'],
+ ['futa','Federal unemployment (FUTA)','tax','FUTA'],['suta','State unemployment (SUTA)','tax','SUTA'],
+ ['wc','Workers compensation','tax','Work comp'],['pfl','State paid family leave and disability','tax','PFL/SDI'],
+ ['ret','401(k) employer match','ben','401(k)'],['med','Medical and prescription','ben','Medical'],
+ ['dv','Dental and vision','ben','Dental/vis'],['life','Life and AD&D','ben','Life'],
+ ['dis','Short and long-term disability','ben','Disability'],['hsa','HSA employer contribution','ben','HSA'],
+ ['oth','Other benefits: wellness, tuition, commuter, phone, training','ben','Other']];
+
+/* ---- the roster: one line per person, built so each team foots to its own average salary ---- */
+const ROLE={'Finance':'Analyst','HR':'Partner','Technology':'Engineer','Marketing':'Specialist','Research':'Analyst','Operations':'Specialist','Legal and compliance':'Counsel'};
+const BANDS=[[0,'Head of #T',2.60],[.12,'#T Director',1.95],[.18,'#T Manager',1.40],[.26,'Senior #R',1.05],[.26,'#R',.78],[0,'Associate',.60]];
+const EXEC=[['Chief executive',2.10],['Chief financial officer',1.55],['Chief operating officer',1.45],['General counsel',1.25],['Chief people officer',1.05],['Chief of staff',.60]];
+// corporate teams sit in the US offices, so one US employer cost stack covers the whole roster
+const LOC=[['New York',.31],['Chicago',.13],['Dallas',.10],['LA',.09],['Atlanta',.07],['Boston',.06],['DC',.06],['Houston',.05],['Miami',.04],['San Francisco',.04],['Denver',.03],['Seattle',.02]];
+const PRE=['FIN','HRS','TEC','MKT','RES','OPS','LEG','EXE'];
+let hs=90210;const RH=()=>{hs=(hs*16807)%2147483647;return hs/2147483647};
+const pick=W=>{const r=RH();let a=0;for(const[n,w]of W){a+=w;if(r<=a)return n}return W[W.length-1][0]};
+const ROSTER=[];
+T.forEach(t=>{
+  const list=[];
+  if(t.n==='Executive office')EXEC.forEach(([ti,w])=>list.push({ti,w}));
+  else{const R=ROLE[t.n];let left=t.hc;
+    BANDS.forEach(([sh,ti,w],bi)=>{
+      let n=bi===0?1:bi===BANDS.length-1?left:Math.max(1,Math.round(t.hc*sh));
+      n=Math.max(0,Math.min(n,left));left-=n;
+      for(let k=0;k<n;k++)list.push({ti:ti.replace('#T',t.n).replace('#R',R),w})});
+    for(let k=0;k<left;k++)list.push({ti:'Associate',w:.60})}
+  // spread the team's salary pool over the ladder, then put the rounding difference on the top job
+  const tgt=t.hc*t.sal*1000;
+  list.forEach(p=>p.raw=p.w*(.97+RH()*.06));
+  const sw=sum(list.map(p=>p.raw));
+  list.forEach(p=>p.base=Math.round(p.raw/sw*tgt/500)*500);
+  let mx=0;list.forEach((p,j)=>{if(p.base>list[mx].base)mx=j});
+  list[mx].base+=tgt-sum(list.map(p=>p.base));
+  list.forEach((p,j)=>{delete p.raw;p.t=t.i;p.team=t.n;p.id=PRE[t.i]+'-'+String(j+1).padStart(3,'0');
+    p.loc=pick(LOC);p.tier=pick([[0,.38],[1,.24],[2,.38]]);p.yrs=1+Math.floor(RH()*14);ROSTER.push(p)})});
+
+/* ---- one person's full employer cost, $ ---- */
+function comp(p,yr){
+  const mer=yr===2027?1+S.merit/100:1, tr=yr===2027?1+S.trend/100:1, pr=p.pr==null?1:p.pr, o={};
+  const base=p.base*mer*pr, bonus=base*S.bonus/100, pay=base+bonus;
+  o.base=base;o.bonus=bonus;
+  o.ss=Math.min(pay,RT.ssBase*pr)*RT.ss/100;
+  o.mc=pay*RT.mc/100;
+  o.futa=RT.futaBase*RT.futa/100;              // a mid-year hire still clears the full wage base
+  o.suta=RT.sutaBase*RT.suta/100;
+  o.wc=pay*RT.wc/100;
+  o.pfl=Math.min(pay,RT.pflBase*pr)*RT.pfl/100;
+  o.ret=Math.min(pay,RT.matchCap*pr)*S.match/100;
+  o.med=RT.med[p.tier]*tr*pr;o.dv=RT.dv[p.tier]*tr*pr;o.life=RT.life*tr*pr;
+  o.dis=RT.dis*tr*pr;o.hsa=RT.hsa[p.tier]*tr*pr;o.oth=RT.oth*tr*pr;
+  o.cash=o.base+o.bonus;
+  o.tax=o.ss+o.mc+o.futa+o.suta+o.wc+o.pfl;
+  o.ben=o.ret+o.med+o.dv+o.life+o.dis+o.hsa+o.oth;
+  o.tot=o.cash+o.tax+o.ben;o.load=o.cash?(o.tax+o.ben)/o.cash*100:0;
+  return o}
+const people=t=>ROSTER.filter(p=>p.t===t.i);
+// the new hires a team adds in 2027: priced at the team's average salary, from their start month
+const hire=t=>({base:t.sal*1000,tier:1,pr:(12-t.start+1)/12,ti:'Open role',id:PRE[t.i]+'-new',loc:'To be set',yrs:0,team:t.n});
+function row(t){const P=people(t),newHC=t.open+t.hires;
+  const c26=sum(P.map(p=>comp(p,2026).tot))/1000;
+  let c27=sum(P.map(p=>comp(p,2027).tot))/1000;
+  if(newHC>0)c27+=newHC*comp(hire(t),2027).tot/1000;
+  return{c26,c27,end:t.hc+newHC,n:P.length}}
 const HKEY='hz-demo-head';
-try{const sv=JSON.parse(localStorage.getItem(HKEY)||'null');if(sv){Object.assign(S,sv.S||{});(sv.T||[]).forEach((x,i)=>{if(T[i]){T[i].hires=x.hires;T[i].start=x.start}})}}catch(e){}
+try{const sv=JSON.parse(localStorage.getItem(HKEY)||'null');if(sv){['merit','bonus','match','trend'].forEach(k=>{if(sv.S&&sv.S[k]!=null)S[k]=sv.S[k]});(sv.T||[]).forEach((x,i)=>{if(T[i]){T[i].hires=x.hires;T[i].start=x.start}})}}catch(e){}
 function hsave(){try{localStorage.setItem(HKEY,JSON.stringify({S,T:T.map(t=>({hires:t.hires,start:t.start}))}));return true}catch(e){return false}}
 const heads26=()=>sum(T.map(t=>t.hc)), heads27=()=>sum(T.map(t=>row(t).end));
 const comp26=()=>sum(T.map(t=>row(t).c26)), comp27=()=>sum(T.map(t=>row(t).c27));
-window.HZ_HEAD={T,S,row,save:hsave,heads26,heads27,comp26,comp27,openRoles:()=>sum(T.map(t=>t.open))};
+// the stack added up across everyone, $K: what the component table and the implied load read
+function stack(yr){const o={};CMP.forEach(([k])=>o[k]=0);let cash=0,tax=0,ben=0,tot=0;
+  const add=(p,w)=>{const c=comp(p,yr);CMP.forEach(([k])=>o[k]+=c[k]*w);cash+=c.cash*w;tax+=c.tax*w;ben+=c.ben*w;tot+=c.tot*w};
+  ROSTER.forEach(p=>add(p,1));
+  if(yr===2027)T.forEach(t=>{const n=t.open+t.hires;if(n>0)add(hire(t),n)});
+  CMP.forEach(([k])=>o[k]/=1000);
+  return{c:o,cash:cash/1e3,tax:tax/1e3,ben:ben/1e3,tot:tot/1e3,load:(tax+ben)/cash*100}}
+window.HZ_HEAD={T,S,RT,CMP,ROSTER,comp,people,hire,row,stack,save:hsave,heads26,heads27,comp26,comp27,openRoles:()=>sum(T.map(t=>t.open))};
 
 /* ======================= ROLL-UP ======================= */
 // $K. Everything the non-comp budget, the market P&L and the reports read.
@@ -96,6 +169,11 @@ function alloc(yr){const n=yr===2027?1:0;return{
   'Corporate comp':n?comp27():comp26(),
   'Shared services':n?K.all.next():K.all.base,
   'Fixed costs':n?K.nco.next():K.nco.base}}
+// where each cost type stands with its owner. The non-comp budget page edits this; every other page reads it.
+window.HZ_STATUS={key:'hz-demo-noncomp3',
+  def:{con:'In review',occ:'In review',ppl:'In review',evt:'Agreed',dis:'Not started',nco:'Not started',all:'Not started',comp:'Agreed'},
+  get(){const o=Object.assign({},this.def);try{const sv=JSON.parse(localStorage.getItem(this.key)||'null');if(sv&&sv.st)Object.assign(o,sv.st)}catch(e){}return o},
+  chip:{'Agreed':'ok','In review':'warn','Not started':'bad'}};
 window.HZ_BUDGET={noncomp,alloc,
   noncompTotal:yr=>sum(Object.values(noncomp(yr))),
   allocTotal:yr=>sum(Object.values(alloc(yr))),

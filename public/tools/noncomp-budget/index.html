@@ -269,7 +269,7 @@ CT.forEach(c=>{c.fy=B.types(2026)[c.bn];
 });
 
 /* ---------- inputs (saved in this browser) ---------- */
-const S={cl:{},sv:{occ:-1500,ppl:-1200,dis:-2400},st:{con:'In review',occ:'In review',ppl:'In review',evt:'Agreed',dis:'Not started'},nt:{nco:'From Accounting',all:'From Corporate FP&A',occ:'Two office exits agreed',ppl:'Airfare and hotels per head held flat',dis:'Fewer outside advisers',evt:'Agreed event by event'}};
+const S={cl:{},sv:{occ:-1500,ppl:-1200,dis:-2400},st:Object.assign({},window.HZ_STATUS.def),nt:{nco:'From Accounting',all:'From Corporate FP&A',occ:'Two office exits agreed',ppl:'Airfare and hotels per head held flat',dis:'Fewer outside advisers',evt:'Agreed event by event'}};
 const KEY='hz-demo-noncomp3';
 try{const sv=JSON.parse(localStorage.getItem(KEY)||'null');if(sv)Object.assign(S,sv.S||{})}catch(x){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({S}));$('#savedmsg').textContent='Saved in this browser.'}catch(x){}}

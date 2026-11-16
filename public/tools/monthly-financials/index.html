@@ -237,7 +237,7 @@ tr.exp.open td.t:before{content:"▾ "}
   </section>
 
   <footer>
-    <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../production-report/index.html">broker production report</a> · <a href="../agents/index.html">the agent team</a></div>
+    <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../production-report/index.html">broker production report</a> · <a href="../budget-review/index.html">2027 budget review</a> · <a href="../agents/index.html">the agent team</a></div>
     <div>Demo with generated data. Meridian is not a real company; every name and figure on this page is made up.</div>
     <div><b>Independent project built on my own time with fictional data. Not affiliated with or endorsed by any employer.</b></div>
   </footer>
@@ -302,8 +302,8 @@ function drawPL(){const L=$('#pv').value==='ytd'?Y26:F26,cols=['revT','com','loa
  ['East','West','International'].forEach(rg=>{const ms=L.filter(r=>r.rg===rg);h+=tr(P.sum(ms),'grp',rg);ms.forEach(r=>h+=tr(r,'',r.m,1))});const c=L.find(r=>r.rg==='Corporate');h+=tr(c,'grp',c.m);h+=tr(P.sum(L),'total','Total');$('#pl').innerHTML=h}
 $('#pv').addEventListener('change',drawPL);drawPL();
 const BKs=H.list;$('#hb').innerHTML=`<tr><th class="t">Region</th><th>Brokers, Oct 2026</th><th>Produced in 2025 too</th><th>New in 2026</th><th>Leaving in 2027</th></tr>`+['East','West','International'].map(r=>{const L=BKs.filter(b=>b.rg===r);return`<tr><td class="t">${r}</td><td>${L.length}</td><td>${L.filter(b=>!b.isNew).length}</td><td>${L.filter(b=>b.isNew).length}</td><td>${L.filter(b=>b.leave).length}</td></tr>`}).join('')+`<tr class="total"><td class="t">Total</td><td>${BKs.length}</td><td>${BKs.filter(b=>!b.isNew).length}</td><td>${BKs.filter(b=>b.isNew).length}</td><td>${BKs.filter(b=>b.leave).length}</td></tr>`;
-const T=[['Finance',33,2],['HR',15,1],['Technology',44,4],['Marketing',21,1],['Research',12,1],['Operations',38,3],['Legal and compliance',10,0],['Executive office',6,0]];
-$('#hcp').innerHTML=`<tr><th class="t">Team</th><th>Heads</th><th>Open roles</th></tr>`+T.map(t=>`<tr><td class="t">${t[0]}</td><td>${t[1]}</td><td>${t[2]}</td></tr>`).join('')+`<tr class="total"><td class="t">Total</td><td>${sum(T.map(t=>t[1]))}</td><td>${sum(T.map(t=>t[2]))}</td></tr>`;
+const HD=window.HZ_HEAD,T=HD.T;   // straight from the headcount and comp plan, so the two can never differ
+$('#hcp').innerHTML=`<tr><th class="t">Team</th><th>Heads</th><th>Open roles</th><th>2026 comp ($K)</th></tr>`+T.map(t=>`<tr><td class="t">${esc(t.n)}</td><td>${t.hc}</td><td>${t.open}</td><td>${fK(HD.row(t).c26)}</td></tr>`).join('')+`<tr class="total"><td class="t">Total</td><td>${HD.heads26()}</td><td>${HD.openRoles()}</td><td>${fK(HD.comp26())}</td></tr>`;
 const tabs=$$('[role=tab]');tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(u=>{const on=u===t;u.setAttribute('aria-selected',on);document.getElementById(u.getAttribute('aria-controls')).hidden=!on})}));
 
 })();

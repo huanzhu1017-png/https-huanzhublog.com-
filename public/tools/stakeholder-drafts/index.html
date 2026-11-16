@@ -199,13 +199,14 @@ tr.exp.open td.t:before{content:"▾ "}
   <div class="head"><div>
     <h1>Admin: Drafts for Each Reader</h1>
     <span class="badge draft">Demo</span> <span class="saved" id="savedmsg"></span>
-    <p>One set of numbers, written four ways. Pick a report and a reader to see the draft that waits for review.</p>
+    <p>One set of numbers, written four ways. Pick one of the three reports Agent 5 produces and a reader to see the draft that waits for review.</p>
   </div></div>
   <p class="fict"><b>What this shows:</b> how the same report reaches different readers: a short style note per stakeholder, and drafts that wait for a person to review and send. <b>All names and figures are made up.</b></p>
   <div class="ctlbar" style="grid-template-columns:1fr 1fr">
-    <label>Report<select class="st" id="rep"><option value="fc">Q4 forecast update, October cycle</option><option value="me">October month-end package</option></select></label>
+    <label>Report<select class="st" id="rep"><option value="me">Monthly financials, October</option><option value="pr">Broker production report, October</option><option value="bd">2027 budget review</option></select></label>
     <label>Audience<select class="st" id="aud"></select></label>
   </div>
+  <p class="note" style="margin:0 0 8px">Every draft reads from the report itself: <span id="rlink"></span></p>
   <div class="grid2" style="grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)">
     <div class="card"><h3>Draft</h3><div id="draft" class="qbox" style="background:#F6F1E4;border:1px solid #CFC7B5;white-space:pre-wrap;font-size:13.5px;line-height:1.55"></div>
       <p class="note"><span class="chip warn">Waiting for Huan's review</span> Drafts are never sent automatically.</p></div>
@@ -231,62 +232,115 @@ const fK=v=>{const r=Math.round(v);return r<0?'('+Math.abs(r).toLocaleString('en
 const sK=v=>{const r=Math.round(v);return(r>0?'+':r<0?'−':'')+Math.abs(r).toLocaleString('en-US')};
 const sum=a=>a.reduce((x,y)=>x+y,0);
 
-const B=window.HZ_BUDGET,HD=window.HZ_HEAD,P=window.HZ_PL;
+const B=window.HZ_BUDGET,HD=window.HZ_HEAD,P=window.HZ_PL,H=window.HZ_BROKERS;
+const m=v=>(v/1e6).toFixed(1),pc=v=>(v>=0?'+':'−')+Math.abs(v*100).toFixed(1)+'%';
+// every figure in every draft is read from the reports, so the emails cannot drift from the numbers
+const Y=P.sum(P.ytd(2026)),Y5=P.sum(P.ytd(2025)),F=P.sum(P.pnl(2026)),F7=P.sum(P.pnl(2027));
 const OCT=(P.Q[2026][3].reduce((a,b)=>a+b,0)/3/1e6).toFixed(1);  // October, from the quarterly revenue
 const NCM=((B.noncompTotal(2026)+B.allocTotal(2026)-B.alloc(2026)['Corporate comp'])/12/1e3).toFixed(1);
 const HEADS=HD.heads26(),OPEN=HD.openRoles();
+const NC26=B.noncompTotal(2026)+B.allocTotal(2026)-B.alloc(2026)['Corporate comp'];
+const NC27=B.noncompTotal(2027)+B.allocTotal(2027)-B.alloc(2027)['Corporate comp'];
+const SAVE=NC26-NC27;
+const ST=window.HZ_STATUS.get(),CTK=['con','occ','ppl','dis','evt','comp','all','nco'];
+const TOTCT=CTK.length,OPENCT=CTK.filter(k=>(ST[k]||'Not started')!=='Agreed').length;
+const MGY=(Y.op/Y.revT*100).toFixed(1),MG7=(F7.op/F7.revT*100).toFixed(1),MGF=(F.op/F.revT*100).toFixed(1);
+// production: the same broker lines the production report ranks
+const BK=H.list.map(b=>({mk:b.mk,rg:b.rg,isNew:b.isNew,y26:b.p26*P.SH[2026][b.ln],y25:b.p25*P.SH[2025][b.ln]}));
+const PY=sum(BK.map(x=>x.y26)),PY5=sum(BK.map(x=>x.y25));
+const TOP10=Math.round(sum(BK.slice().sort((a,b)=>b.y26-a.y26).slice(0,10).map(x=>x.y26))/PY*100);
+const MKS=H.MK.map(([k])=>{const X=BK.filter(x=>x.mk===k);return{k,a:sum(X.map(x=>x.y26)),b:sum(X.map(x=>x.y25))}}).filter(x=>x.b>0).sort((a,b)=>(b.a/b.b)-(a.a/a.b));
+const BEST=MKS[0],WORST=MKS[MKS.length-1];
+const REGT=['East','West','International'].map(r=>{const X=BK.filter(x=>x.rg===r);return{r,a:sum(X.map(x=>x.y26)),b:sum(X.map(x=>x.y25)),n:X.length}});
+const pad=(s,n)=>String(s)+' '.repeat(Math.max(1,n-String(s).length));
+const RLINK={me:['Monthly financials','../monthly-financials/index.html'],pr:['Broker production report','../production-report/index.html'],bd:['2027 budget review','../budget-review/index.html']};
 const AUD={cfo:['CFO','Numbers first, then the one thing to worry about. Five lines at most.'],ceo:['CEO','Three bullets, plain words, no tables. Ends with what it means for the year.'],reg:['Regional heads','Their own market first, then the total. A table they can forward.'],acct:['Accounting','What needs fixing, with IDs from the issue log and due dates.']};
-const D={fc:{cfo:`Subject: October Q4 forecast: $146M, +$13.4M vs September
-
-Q4 forecast is $146M base, +$13.4M vs the September cycle and +8% vs Q4 2025.
-Range: $138M downside to $170M upside.
-76% of the number is discounted pipeline; $12.5M (9%) has no named deals behind it yet.
-To watch: that $12.5M is the first place to push the markets for deal support.
-Full report attached; happy to walk through it.`,
-ceo:`Subject: Q4 outlook in three lines
-
-• Q4 should land around $146M, about $13M better than the September forecast.
-• The lift comes mostly from the East and Capital Markets, plus a finance adjustment.
-• That puts Q4 about 8% ahead of last year.`,
-reg:`Subject: Q4 forecast by region, October cycle
-
-Hi all, here is where each region landed this cycle ($M). Your own region is first in your copy; the total is at the bottom.
-
-Region               Sept     Oct   Change
-East                   61      66      +5
-West                   64      66      +2
-International           8       8       0
-Corporate & Admin       0       7      new
-Total                 133     146     +13
-
-Please flag anything that has moved since you submitted.`,
-acct:`Subject: October forecast cycle: items for Accounting
-
-Two items from this cycle's tie-out, both in the issue log:
-• AI-014: fee booked to the wrong market in October. Due Nov 20.
-• AI-013: event accrual reversed twice. Due Nov 20.
-Pipeline total is $50K off the pipeline system; we are holding it for one more check.`},
-me:{cfo:`Subject: October close: on plan, costs 4% below budget
+const D={
+me:{cfo:`Subject: October close: $${m(Y.revT)}M revenue year to date, earnings $${m(Y.op)}M
 
 October revenue $${OCT}M, 1% above forecast.
-Non-comp $${NCM}M, 4% under budget, mostly offices and travel.
-Corporate headcount ${HEADS}, ${OPEN} open roles.
-One open accounting item (AI-012, bonus true-up) due Nov 18.
-Package attached.`,
+Year to date: revenue $${m(Y.revT)}M (${pc(Y.revT/Y5.revT-1)} vs 2025), earnings $${m(Y.op)}M, margin ${MGY}%.
+Full-year forecast earnings $${m(F.op)}M at a ${MGF}% margin; Q4 is the largest quarter.
+Non-comp $${NCM}M a month, 4% under budget, mostly offices and travel. Corporate headcount ${HEADS}, ${OPEN} open roles.
+One open accounting item (AI-012, bonus true-up) due Nov 18. Package attached.`,
 ceo:`Subject: October in three lines
 
-• Revenue came in on forecast.
-• Costs were a little under budget.
-• Nothing that changes the outlook for the year.`,
+• Revenue came in on forecast; we are ${pc(Y.revT/Y5.revT-1)} ahead of last year.
+• Costs were a little under budget, so the margin is holding at ${MGY}%.
+• Nothing here changes the full-year view of about $${m(F.op)}M.`,
 reg:`Subject: October package for your market
 
-Hi all, October packages are attached, one per market. Totals: revenue $47.2M, 1% above forecast. Your market's page is the first one in your file.`,
+Hi all, October packages are attached, one per market. Your market's page is first in your file. Totals year to date ($M):
+
+${pad('Region',16)}${pad('Revenue',10)}${pad('Earnings',10)}Margin
+${REGT.map(r=>{const a=P.sum(P.ytd(2026).filter(x=>x.rg===r.r));return pad(r.r,16)+pad(m(a.revT),10)+pad(m(a.op),10)+(a.op/a.revT*100).toFixed(0)+'%'}).join('\n')}
+${pad('Total',16)}${pad(m(Y.revT),10)}${pad(m(Y.op),10)}${(Y.op/Y.revT*100).toFixed(0)}%
+
+Please flag anything that looks wrong against your own numbers.`,
 acct:`Subject: October close: open items
 
 • AI-012: bonus accrual true-up missing for one team. Due Nov 18.
-• All other October tie-outs passed.`}};
+• AI-013: event accrual reversed twice in October. Due Nov 20.
+• All other October tie-outs passed, including the market P&L against the ledger.`},
+
+pr:{cfo:`Subject: October production: $${m(PY)}M year to date, ${pc(PY/PY5-1)} vs last year
+
+Production $${m(PY)}M year to date against $${m(PY5)}M for the same period last year, ${pc(PY/PY5-1)}.
+${BK.length} producing brokers, ${BK.filter(x=>!x.isNew).length} of whom also produced last year.
+Top 10 brokers are ${TOP10}% of production, so no single desk carries the number.
+Strongest market ${BEST.k} (${pc(BEST.a/BEST.b-1)}); weakest ${WORST.k} (${pc(WORST.a/WORST.b-1)}).
+To watch: ${WORST.k} is the one market where I would want a plan before the budget is locked.`,
+ceo:`Subject: Production in three lines
+
+• Brokers have produced $${m(PY)}M so far this year, ${pc(PY/PY5-1)} against last year.
+• The growth is broad: the top 10 brokers are only ${TOP10}% of the total.
+• ${BEST.k} is the standout; ${WORST.k} is the one that needs attention.`,
+reg:`Subject: Production by region, October year to date
+
+Hi all, here is where each region stands ($M, Jan–Oct). Your region's broker-level detail is in the attached file.
+
+${pad('Region',16)}${pad('Brokers',9)}${pad('2026',9)}${pad('2025',9)}Change
+${REGT.map(r=>pad(r.r,16)+pad(r.n,9)+pad(m(r.a),9)+pad(m(r.b),9)+pc(r.a/r.b-1)).join('\n')}
+${pad('Total',16)}${pad(BK.length,9)}${pad(m(PY),9)}${pad(m(PY5),9)}${pc(PY/PY5-1)}
+
+Please let me know if any broker is in the wrong market before the budget is locked.`,
+acct:`Subject: Production report: items for Accounting
+
+• AI-015: commission accrual for two brokers is still on last year's grid band. Due Nov 21.
+• Sign-on loan amortization for new brokers needs the revised start dates from HR.
+• Broker count and production tie to the Controller's market P&L; no other differences.`},
+
+bd:{cfo:`Subject: 2027 budget: revenue $${m(F7.revT)}M, earnings $${m(F7.op)}M, margin ${MG7}%
+
+Revenue budget $${m(F7.revT)}M, ${pc(F7.revT/F.revT-1)} against this year's forecast, built broker by broker.
+Earnings $${m(F7.op)}M at a ${MG7}% margin, against ${MGF}% this year.
+Non-comp $${m(NC26*1e3)}M base to $${m(NC27*1e3)}M, a saving of $${m(SAVE*1e3)}M, ${(SAVE/NC26*100).toFixed(1)}%.
+Corporate comp $${m(B.alloc(2026)['Corporate comp']*1e3)}M to $${m(B.alloc(2027)['Corporate comp']*1e3)}M; headcount ${HEADS} to ${HD.heads27()}.
+Still open: ${OPENCT} of ${TOTCT} cost types are not yet agreed by their owner, so the margin can still move.`,
+ceo:`Subject: The 2027 budget in three lines
+
+• Revenue is budgeted at $${m(F7.revT)}M, ${pc(F7.revT/F.revT-1)} above where this year lands.
+• Costs grow more slowly than revenue, so earnings budget at $${m(F7.op)}M and a ${MG7}% margin.
+• Two cost lines are still with their owners; neither changes the shape of the year.`,
+reg:`Subject: 2027 budget by region
+
+Hi all, here is how the budget looks by region ($M). Your own market detail is in the attached pack.
+
+${pad('Region',16)}${pad('2026',9)}${pad('2027',9)}${pad('Change',9)}Margin
+${['East','West','International'].map(r=>{const a=P.sum(P.pnl(2026).filter(x=>x.rg===r)),b=P.sum(P.pnl(2027).filter(x=>x.rg===r));
+ return pad(r,16)+pad(m(a.op),9)+pad(m(b.op),9)+pad((b.op>=a.op?'+':'−')+m(Math.abs(b.op-a.op)),9)+(b.op/b.revT*100).toFixed(0)+'%'}).join('\n')}
+${pad('Total',16)}${pad(m(F.op),9)}${pad(m(F7.op),9)}${pad((F7.op>=F.op?'+':'−')+m(Math.abs(F7.op-F.op)),9)}${(F7.op/F7.revT*100).toFixed(0)}%
+
+Please confirm your revenue number and your travel line by Friday.`,
+acct:`Subject: 2027 budget: items for Accounting
+
+• Shared services allocation is not yet agreed by Corporate FP&A; the 2027 number may still move.
+• Two fee engagements have no 2027 scope, so the accrual basis for those will change.
+• Fixed costs are taken straight from Accounting and tie to your schedule; no differences.`}};
+
 $('#aud').innerHTML=Object.entries(AUD).map(([k,[n]])=>`<option value="${k}">${n}</option>`).join('');
 function draw(){const r=$('#rep').value,a=$('#aud').value;$('#draft').textContent=D[r][a];
+  $('#rlink').innerHTML=`<a href="${RLINK[r][1]}">${RLINK[r][0]} ↗</a>`;
   $('#style').innerHTML=`<p style="margin:0 0 8px"><b>${AUD[a][0]}</b></p><p style="margin:0">${AUD[a][1]}</p><p class="note">Agent 7 keeps a short style note for each reader and writes every draft to fit it. Huan edits, then sends.</p>`}
 $('#rep').addEventListener('change',draw);$('#aud').addEventListener('change',draw);draw();
 

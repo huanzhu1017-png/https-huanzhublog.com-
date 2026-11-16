@@ -201,12 +201,22 @@ tr.exp.open td.t:before{content:"▾ "}
     <span class="badge draft">Demo</span> <span class="saved" id="savedmsg"></span>
     <p>Corporate teams, $K. Headcount today, open roles and 2027 hires roll into the comp plan, which ties out to HR and payroll before it moves on.</p>
   </div></div>
-  <p class="fict"><b>What this shows:</b> how I plan headcount and compensation: hires with a start month, merit, bonus and benefits as drivers, and three tie-outs to HR and payroll before the plan is handed on. <b>All names and figures are made up.</b></p>
-  <div class="grid4" id="kpi" style="margin-top:14px"></div>
+  <p class="fict"><b>What this shows:</b> how I plan headcount and compensation: the plan is built one person at a time, with the full employer cost of a full-time US employee behind every line, and three tie-outs to HR and payroll before it is handed on. <b>All figures are made up.</b></p>
+  <div class="grid5" id="kpi" style="margin-top:14px"></div>
   <div class="ctlbar" style="grid-template-columns:1fr"><div class="row" id="ctl"></div></div>
   <h2 class="sec">By team</h2>
-  <p class="sub">2027 comp = salary × (1 + merit) + bonus at target + benefits and payroll taxes. New hires count from their start month; leavers are replaced at the same level. $K.</p>
+  <p class="sub">Click a team to open its people. Each person carries base, bonus at target and every employer tax and benefit; the team is the sum of its lines, not an average times a load. New hires are priced at the team average from their start month. $K.</p>
   <div class="scroll"><table id="tbl"></table></div>
+  <p class="note">Rosters are shown by employee ID, job and location, the way a headcount file is shared outside HR. 179 people today, 199 at the end of the plan.</p>
+
+  <h2 class="sec">What a person costs</h2>
+  <p class="sub">The same stack sits behind every line of the roster. Percentages are of cash compensation, which is base plus bonus at target.</p>
+  <div class="side">
+    <div class="scroll"><table id="cmptbl"></table></div>
+    <div class="card"><h3>Rates and caps used</h3><div id="rates"></div>
+      <p class="note">Paid holidays, vacation and sick leave are already inside base salary for salaried staff, so they are not a separate line. The employee's own 401(k) deferral, capped at $24,500, is not an employer cost. A mid-year hire still clears the full FUTA and state unemployment wage base, so those two are not prorated.</p></div>
+  </div>
+
   <div class="grid2">
     <div class="card"><h3>Tie-out before hand-off</h3><div id="tie"></div></div>
     <div class="card"><h3>Headcount, end of year</h3><svg id="chart" viewBox="0 0 600 240" role="img" aria-label="Headcount by team, end of 2026 and end of 2027"></svg>
@@ -216,6 +226,7 @@ tr.exp.open td.t:before{content:"▾ "}
   <footer>
     <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../agents/index.html">the agent team</a></div>
     <div>Demo with generated data. Meridian is not a real company; every name and figure on this page is made up.</div>
+    <div><b>Rate sources:</b> 2026 payroll taxes and wage bases, <a href="https://anderscpa.com/learn/blog/2026-annual-payroll-taxes-and-withholdings-update/">Anders CPA 2026 update</a> · 2026 401(a)(17) compensation limit, <a href="https://plantemoran.com/explore-our-thinking/insight/2025/11/2026-retirement-plans-limitations-summary">Plante Moran</a> · benefits as a share of compensation, <a href="https://www.bls.gov/news.release/ecec.nr0.htm">BLS Employer Costs for Employee Compensation</a>.</div>
     <div><b>Independent project built on my own time with fictional data. Not affiliated with or endorsed by any employer.</b></div>
   </footer>
 </div>
@@ -230,28 +241,82 @@ const fK=v=>{const r=Math.round(v);return r<0?'('+Math.abs(r).toLocaleString('en
 const sK=v=>{const r=Math.round(v);return(r>0?'+':r<0?'−':'')+Math.abs(r).toLocaleString('en-US')};
 const sum=a=>a.reduce((x,y)=>x+y,0);
 
-const HD=window.HZ_HEAD,{T,S,row}=HD;  // shared with the non-comp budget and the P&L
+const HD=window.HZ_HEAD,{T,S,RT,CMP,row,comp,people,hire,stack}=HD;  // shared with the non-comp budget and the P&L
+const TIER=['Single','Employee +1','Family'],MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fD=v=>Math.round(v).toLocaleString('en-US');
+const N=HD.ROSTER.length;
+let YR=2026;const openT=new Set();
+
+// one person's line in a team roster: every component, then the total and the load on cash pay
+function pline(p,cls){const c=comp(p,YR);
+  return `<tr class="${cls||''}"><td class="t"><span class="code">${esc(p.id)}</span> ${esc(p.ti)}</td><td class="t">${esc(p.loc)}</td><td class="t">${p.tier==null?'—':TIER[p.tier]}</td><td>${p.yrs||'—'}</td>`+
+    CMP.map(([k])=>`<td>${fD(c[k])}</td>`).join('')+`<td class="tc"><b>${fD(c.tot)}</b></td><td>${c.load.toFixed(0)}%</td></tr>`}
+function roster(t){const P=people(t),n=t.open+t.hires,
+  h=Array.from({length:n},(x,j)=>Object.assign(hire(t),{id:hire(t).id+(j+1),ti:j<t.open?'Open role, approved':'New role, 2027 plan'}));
+  const tot=k=>sum(P.map(p=>comp(p,YR)[k]))+(YR===2027?n*comp(hire(t),2027)[k]:0);
+  return `<tr class="rost"><td colspan="11" style="padding:0 0 14px">
+    <div class="qbox" style="margin:0 0 8px">${P.length} people in ${esc(t.n)} today${n>0?`, plus ${n} open or planned ${n===1?'role':'roles'} from ${MON[t.start-1]} 2027`:''}. Dollars per person, per year, ${YR===2026?'at the 2026 run rate':'at the 2027 plan'}.</div>
+    <div class="scroll"><table><tr><th class="t">Employee and job</th><th class="t">Location</th><th class="t">Medical coverage</th><th>Yrs</th>${CMP.map(([,l,,s])=>`<th title="${esc(l)}">${esc(s)}</th>`).join('')}<th class="tc">Total</th><th>Load</th></tr>
+    ${P.map(p=>pline(p)).join('')}
+    ${YR===2027?h.map(p=>pline(p,'sub2')).join(''):''}
+    <tr class="total"><td class="t">${esc(t.n)} total</td><td class="t"></td><td class="t"></td><td>${P.length+(YR===2027?n:0)}</td>${CMP.map(([k])=>`<td>${fD(tot(k))}</td>`).join('')}<td class="tc">${fD(tot('tot'))}</td><td>${(tot('tax')+tot('ben'))/tot('cash')*100>0?((tot('tax')+tot('ben'))/tot('cash')*100).toFixed(0):0}%</td></tr>
+    </table></div></td></tr>`}
+
 function draw(){
-  const R=T.map(row),h26=sum(T.map(t=>t.hc)),h27=sum(R.map(r=>r.end)),c26=sum(R.map(r=>r.c26)),c27=sum(R.map(r=>r.c27));
+  const R=T.map(row),h26=sum(T.map(t=>t.hc)),h27=sum(R.map(r=>r.end)),c26=sum(R.map(r=>r.c26)),c27=sum(R.map(r=>r.c27)),op=sum(T.map(t=>t.open));
+  const s26=stack(2026),s27=stack(2027),s=YR===2026?s26:s27;
   $('#kpi').innerHTML=`<div class="kpi"><div class="l">Headcount</div><div class="n">${h26} → ${h27}</div><div class="s">end 2026 → end 2027</div></div>
-   <div class="kpi"><div class="l">Open roles</div><div class="n">${sum(T.map(t=>t.open))}</div><div class="s">approved, not yet filled</div></div>
-   <div class="kpi"><div class="l">2026 comp, run rate</div><div class="n">$${(c26/1000).toFixed(1)}M</div><div class="s">salary, bonus, benefits</div></div>
-   <div class="kpi"><div class="l">2027 comp plan</div><div class="n">$${(c27/1000).toFixed(1)}M</div><div class="s">${sK(c27-c26)}K · ${((c27/c26-1)*100).toFixed(1)}%</div></div>`;
+   <div class="kpi"><div class="l">Open roles</div><div class="n">${op}</div><div class="s">approved, not yet filled</div></div>
+   <div class="kpi"><div class="l">2026 comp, run rate</div><div class="n">$${(c26/1000).toFixed(1)}M</div><div class="s">cash, taxes and benefits</div></div>
+   <div class="kpi"><div class="l">2027 comp plan</div><div class="n">$${(c27/1000).toFixed(1)}M</div><div class="s">${sK(c27-c26)}K · ${((c27/c26-1)*100).toFixed(1)}%</div></div>
+   <div class="kpi"><div class="l">Employer load</div><div class="n">${s26.load.toFixed(1)}%</div><div class="s">taxes and benefits on cash pay</div></div>`;
+
   $('#tbl').innerHTML=`<tr><th class="t">Team</th><th>Heads now</th><th>Open roles</th><th>Avg salary</th><th>New hires 2027</th><th>Start month</th><th>End 2027</th><th>2026 comp</th><th>2027 comp</th><th>Change</th></tr>`+
-    T.map((t,i)=>{const r=R[i];return`<tr><td class="t"><b>${t.n}</b></td><td>${t.hc}</td><td>${t.open}</td><td>${t.sal}</td>
-    <td><input class="num" type="number" min="0" step="1" data-h="${i}" value="${t.hires}" style="width:60px" aria-label="New hires for ${t.n}"></td>
-    <td><select class="st" data-s="${i}" aria-label="Start month for ${t.n}">${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((m,j)=>`<option value="${j+1}"${j+1===t.start?' selected':''}>${m}</option>`).join('')}</select></td>
-    <td><b>${r.end}</b></td><td>${fK(r.c26)}</td><td><b>${fK(r.c27)}</b></td><td class="${r.c27>r.c26?'neg':'pos'}">${sK(r.c27-r.c26)}</td></tr>`}).join('')+
-    `<tr class="total"><td class="t">Total</td><td>${h26}</td><td>${sum(T.map(t=>t.open))}</td><td></td><td>${sum(T.map(t=>t.hires))}</td><td></td><td>${h27}</td><td>${fK(c26)}</td><td>${fK(c27)}</td><td>${sK(c27-c26)}</td></tr>`;
-  const roster=h26,payroll=c26;
-  $('#tie').innerHTML=[['Heads in plan vs HR roster',`${h26} vs ${roster}`,true],['2026 comp vs payroll run rate',`${fK(c26)} vs ${fK(payroll)} (${((c26/payroll-1)*100).toFixed(1)}%)`,Math.abs(c26/payroll-1)<.005],['Open roles vs approved requisitions',`${sum(T.map(t=>t.open))} vs ${sum(T.map(t=>t.open))}`,true]]
-   .map(([a,b,ok])=>`<div class="inv"><span>${a}<br><span class="note" style="margin:0">${b}</span></span><span class="chip ${ok?'ok':'bad'}">${ok?'Ties out':'Check'}</span></div>`).join('')+`<p class="note">Passes to Agent 4 Controller only when all three tie out.</p>`;
+    T.map((t,i)=>{const r=R[i],o=openT.has(i);return`<tr class="exp${o?' open':''}" data-e="${i}"><td class="t" tabindex="0" role="button" aria-expanded="${o}"><b>${esc(t.n)}</b></td><td>${t.hc}</td><td>${t.open}</td><td>${t.sal}</td>
+    <td><input class="num" type="number" min="0" step="1" data-h="${i}" value="${t.hires}" style="width:60px" aria-label="New hires for ${esc(t.n)}"></td>
+    <td><select class="st" data-s="${i}" aria-label="Start month for ${esc(t.n)}">${MON.map((m,j)=>`<option value="${j+1}"${j+1===t.start?' selected':''}>${m}</option>`).join('')}</select></td>
+    <td><b>${r.end}</b></td><td>${fK(r.c26)}</td><td><b>${fK(r.c27)}</b></td><td class="${r.c27>r.c26?'neg':'pos'}">${sK(r.c27-r.c26)}</td></tr>`+(o?roster(t):'')}).join('')+
+    `<tr class="total"><td class="t">Total</td><td>${h26}</td><td>${op}</td><td></td><td>${sum(T.map(t=>t.hires))}</td><td></td><td>${h27}</td><td>${fK(c26)}</td><td>${fK(c27)}</td><td>${sK(c27-c26)}</td></tr>`;
+
+  const GRP={cash:'Cash compensation',tax:'Employer taxes and insurance',ben:'Benefits'};
+  let rows='';['cash','tax','ben'].forEach(g=>{
+    const list=CMP.filter(c=>c[2]===g);
+    rows+=`<tr class="grp"><td class="t">${GRP[g]}</td><td>${fD(sum(list.map(([k])=>s26.c[k]))/N*1000)}</td><td>${fK(sum(list.map(([k])=>s26.c[k])))}</td><td>${(sum(list.map(([k])=>s26.c[k]))/s26.cash*100).toFixed(1)}%</td><td>${fK(sum(list.map(([k])=>s27.c[k])))}</td><td>${(sum(list.map(([k])=>s27.c[k]))/s27.cash*100).toFixed(1)}%</td></tr>`;
+    rows+=list.map(([k,l])=>`<tr class="sub2"><td class="t">${esc(l)}</td><td>${fD(s26.c[k]/N*1000)}</td><td>${fK(s26.c[k])}</td><td>${(s26.c[k]/s26.cash*100).toFixed(1)}%</td><td>${fK(s27.c[k])}</td><td>${(s27.c[k]/s27.cash*100).toFixed(1)}%</td></tr>`).join('')});
+  $('#cmptbl').innerHTML=`<tr><th class="t">Component</th><th>Per person 2026 ($)</th><th>2026 total ($K)</th><th>% of cash</th><th>2027 total ($K)</th><th>% of cash</th></tr>${rows}
+    <tr class="total"><td class="t">Total employer cost</td><td>${fD(s26.tot/N*1000)}</td><td>${fK(s26.tot)}</td><td>${(s26.tot/s26.cash*100).toFixed(1)}%</td><td>${fK(s27.tot)}</td><td>${(s27.tot/s27.cash*100).toFixed(1)}%</td></tr>
+    <tr><td class="t">Load on cash compensation</td><td></td><td></td><td>${s26.load.toFixed(1)}%</td><td></td><td>${s27.load.toFixed(1)}%</td></tr>`;
+
+  $('#rates').innerHTML=[['Social Security (OASDI)',`${RT.ss}% to a $${RT.ssBase.toLocaleString('en-US')} wage base`],
+    ['Medicare',`${RT.mc}%, no cap (the extra 0.9% is the employee's)`],
+    ['Federal unemployment',`${RT.futa}% on the first $${RT.futaBase.toLocaleString('en-US')}, after the state credit`],
+    ['State unemployment',`${RT.suta}% blended, on the first $${RT.sutaBase.toLocaleString('en-US')}`],
+    ['Workers compensation',`${RT.wc}% of cash pay`],['Paid family leave and state disability',`${RT.pfl}% to $${RT.pflBase.toLocaleString('en-US')}`],
+    ['401(k) match',`${S.match}% of pay, pay capped at $${RT.matchCap.toLocaleString('en-US')}`],
+    ['Medical and prescription',`$${RT.med[0].toLocaleString('en-US')} single · $${RT.med[1].toLocaleString('en-US')} +1 · $${RT.med[2].toLocaleString('en-US')} family`],
+    ['Benefit cost trend',`${S.trend}% into 2027`]]
+   .map(([a,b])=>`<div class="inv"><span>${a}</span><span style="text-align:right">${b}</span></div>`).join('');
+
+  const roster26=h26,payroll=c26,taxchk=s26.tax;
+  const indep=sum(HD.ROSTER.map(p=>{const c=comp(p,2026);return Math.min(c.cash,RT.ssBase)*RT.ss/100+c.cash*RT.mc/100+RT.futaBase*RT.futa/100+RT.sutaBase*RT.suta/100+c.cash*RT.wc/100+Math.min(c.cash,RT.pflBase)*RT.pfl/100}))/1000;
+  $('#tie').innerHTML=[['Heads in plan vs HR roster',`${h26} vs ${roster26}`,true],
+    ['Sum of the rosters vs team totals',`${fK(s26.tot)} vs ${fK(c26)}`,Math.abs(s26.tot-c26)<1],
+    ['2026 comp vs payroll run rate',`${fK(c26)} vs ${fK(payroll)} (${((c26/payroll-1)*100).toFixed(1)}%)`,Math.abs(c26/payroll-1)<.005],
+    ['Employer taxes recomputed from the rate table',`${fK(taxchk)} vs ${fK(indep)}`,Math.abs(taxchk-indep)<1],
+    ['Open roles vs approved requisitions',`${op} vs ${op}`,true]]
+   .map(([a,b,ok])=>`<div class="inv"><span>${a}<br><span class="note" style="margin:0">${b}</span></span><span class="chip ${ok?'ok':'bad'}">${ok?'Ties out':'Check'}</span></div>`).join('')+`<p class="note">Passes to Agent 4 Controller only when all five tie out.</p>`;
+
   const mx=Math.max(...R.map(r=>r.end)),rh=28;$('#chart').setAttribute('viewBox',`0 0 600 ${T.length*rh+10}`);
-  $('#chart').innerHTML=T.map((t,i)=>`<text x="150" y="${i*rh+16}" text-anchor="end" style="font-size:11.5px;fill:var(--ink)">${t.n}</text><rect x="160" y="${i*rh+4}" width="${t.hc/mx*360}" height="9" fill="#A9A190"/><rect x="160" y="${i*rh+14}" width="${R[i].end/mx*360}" height="9" fill="#1A1A1A"/><text x="${166+R[i].end/mx*360}" y="${i*rh+22}" style="font-size:10.5px;fill:var(--ink)">${t.hc} → ${R[i].end}</text>`).join('');
+  $('#chart').innerHTML=T.map((t,i)=>`<text x="150" y="${i*rh+16}" text-anchor="end" style="font-size:11.5px;fill:var(--ink)">${esc(t.n)}</text><rect x="160" y="${i*rh+4}" width="${t.hc/mx*360}" height="9" fill="#A9A190"/><rect x="160" y="${i*rh+14}" width="${R[i].end/mx*360}" height="9" fill="#1A1A1A"/><text x="${166+R[i].end/mx*360}" y="${i*rh+22}" style="font-size:10.5px;fill:var(--ink)">${t.hc} → ${R[i].end}</text>`).join('');
 }
-$('#ctl').innerHTML=[['merit','Merit increase %'],['bonus','Bonus target %'],['ben','Benefits and taxes %']].map(([k,l])=>`<label>${l}<input class="num" type="number" step="0.5" data-k="${k}" value="${S[k]}" style="width:80px"></label>`).join('');
-$('#ctl').addEventListener('change',e=>{const k=e.target.dataset.k;if(k){S[k]=+e.target.value||0;if(HD.save())$('#savedmsg').textContent='Saved in this browser.';draw()}});
-$('#tbl').addEventListener('change',e=>{const d=e.target.dataset;let f;if(d.h!=null){T[d.h].hires=Math.max(0,+e.target.value||0);f=`[data-h="${d.h}"]`}else if(d.s!=null){T[d.s].start=+e.target.value;f=`[data-s="${d.s}"]`}else return;if(HD.save())$('#savedmsg').textContent='Saved in this browser.';draw();$('#tbl '+f).focus()});
+$('#ctl').innerHTML=[['merit','Merit increase %',0.5],['bonus','Bonus target %',0.5],['match','401(k) match %',0.5],['trend','Benefit cost trend %',0.5]].map(([k,l,st])=>`<label>${l}<input class="num" type="number" step="${st}" data-k="${k}" value="${S[k]}" style="width:80px"></label>`).join('')+
+  `<label>Roster year<select class="st" id="yr"><option value="2026">2026 run rate</option><option value="2027">2027 plan</option></select></label>`;
+$('#ctl').addEventListener('change',e=>{if(e.target.id==='yr'){YR=+e.target.value;draw();$('#yr').value=YR;return}
+  const k=e.target.dataset.k;if(k){S[k]=+e.target.value||0;if(HD.save())$('#savedmsg').textContent='Saved in this browser.';draw();$('#yr').value=YR}});
+$('#tbl').addEventListener('change',e=>{const d=e.target.dataset;let f;if(d.h!=null){T[d.h].hires=Math.max(0,+e.target.value||0);f=`[data-h="${d.h}"]`}else if(d.s!=null){T[d.s].start=+e.target.value;f=`[data-s="${d.s}"]`}else return;if(HD.save())$('#savedmsg').textContent='Saved in this browser.';draw();$('#yr').value=YR;const el=$('#tbl '+f);if(el)el.focus()});
+function toggle(el){const tr=el.closest('tr[data-e]');if(!tr)return;const i=+tr.dataset.e;openT.has(i)?openT.delete(i):openT.add(i);draw();$('#yr').value=YR;const t=$(`#tbl tr[data-e="${i}"] td.t`);if(t)t.focus()}
+$('#tbl').addEventListener('click',e=>{const td=e.target.closest('td.t[role=button]');if(td)toggle(td)});
+$('#tbl').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const td=e.target.closest&&e.target.closest('td.t[role=button]');if(td){e.preventDefault();toggle(td)}});
 draw();
 
 })();
