@@ -42,12 +42,13 @@ const RATE=REG.map((_,r)=>TCAT.map(([,v])=>v*MULT[r]));
 const tsS=load('te2',{hc:[318,316,60],chg:[0,0,-5,-10]});
 
 /* ---------------- FEES: zero-based by engagement ---------------- */
-const FEE=[['Outside counsel, contracts','Legal','General counsel',6200,6000,'Keep','Rate card agreed'],['Outside counsel, disputes','Legal','General counsel',5100,4600,'Reduce','Two matters close in Q1'],
- ['Employment law advice','Legal','HR lead',1900,1900,'Keep',''],['Annual audit','Audit and tax','Controller',5400,5600,'Keep','Fee letter +4%'],['Tax advisory','Audit and tax','Tax lead',3500,3500,'Keep',''],
- ['Systems upgrade consultants','Consulting','IT lead',4800,3600,'Reduce','Phase 2 done in-house'],['Pricing study','Consulting','Business heads',2600,1300,'Reduce','Smaller scope'],
- ['Process review','Consulting','COO office',1700,1700,'Keep',''],['Market research','Other advisory','Business heads',2100,2100,'Keep',''],['Valuation opinions','Other advisory','Finance',1600,1600,'Keep',''],
- ['Search firm fees','Consulting','HR lead',1300,1300,'Keep',''],['Data strategy review','Consulting','IT lead',0,800,'New','New for 2027']]
- .map(([n,t,o,a,b,d,note],i)=>({i,n,t,o,a,b,d,note}));
+// several engagements can sit with one firm, so the budget is reviewed by engagement and by vendor
+const FEE=[['Outside counsel, contracts','Legal','General counsel','Law firm A',6200,6000,'Keep','Rate card agreed'],['Outside counsel, disputes','Legal','General counsel','Law firm A',5100,4600,'Reduce','Two matters close in Q1'],
+ ['Employment law advice','Legal','HR lead','Law firm B',1900,1900,'Keep',''],['Annual audit','Audit and tax','Controller','Audit firm A',5400,5600,'Keep','Fee letter +4%'],['Tax advisory','Audit and tax','Tax lead','Audit firm A',3500,3500,'Keep',''],
+ ['Systems upgrade consultants','Consulting','IT lead','Consultancy A',4800,3600,'Reduce','Phase 2 done in-house'],['Pricing study','Consulting','Business heads','Consultancy B',2600,1300,'Reduce','Smaller scope'],
+ ['Process review','Consulting','COO office','Consultancy A',1700,1700,'Keep',''],['Market research','Other advisory','Business heads','Research firm A',2100,2100,'Keep',''],['Valuation opinions','Other advisory','Finance','Valuation firm A',1600,1600,'Keep',''],
+ ['Search firm fees','Consulting','HR lead','Search firm A',1300,1300,'Keep',''],['Data strategy review','Consulting','IT lead','Consultancy C',0,800,'New','New for 2027']]
+ .map(([n,t,o,v,a,b,d,note],i)=>({i,n,t,o,v,a,b,d,note}));
 {const t=sum(FEE.map(f=>f.a)),k=26000/t;FEE.forEach(f=>{f.a=Math.round(f.a*k);f.b=Math.round(f.b*k)})}
 const feeS=load('dis',{v:{},d:{},n:{}});
 
@@ -109,12 +110,22 @@ window.HZ_PAGE=function(k){
   if(k==='dis'){
     ctl.innerHTML=`<span class="note" style="margin:0">Each owner lists the outside help they need next year. Stop sets the line to zero.</span>`;
     draw=()=>{const nx=T.dis.next();head(26000,nx,['Engagements',FEE.length,`${FEE.filter(f=>(feeS.d[f.i]??f.d)==='Stop').length} stopped`]);
-      tb.innerHTML=`<tr><th class="t">Engagement</th><th class="t">Type</th><th class="t">Owner</th><th>2026</th><th>2027</th><th class="t">Decision</th><th>Change</th><th class="t">Notes</th></tr>`+
-        FEE.map(f=>{const d=feeS.d[f.i]??f.d,v=feeV(f);return`<tr><td class="t"><b>${esc(f.n)}</b></td><td class="t">${f.t}</td><td class="t">${f.o}</td><td>${fK(f.a)}</td>
+      tb.innerHTML=`<tr><th class="t">Engagement</th><th class="t">Vendor</th><th class="t">Type</th><th class="t">Owner</th><th>2026</th><th>2027</th><th class="t">Decision</th><th>Change</th><th class="t">Notes</th></tr>`+
+        FEE.map(f=>{const d=feeS.d[f.i]??f.d,v=feeV(f);return`<tr><td class="t"><b>${esc(f.n)}</b></td><td class="t">${esc(f.v)}</td><td class="t">${f.t}</td><td class="t">${f.o}</td><td>${fK(f.a)}</td>
           <td>${num(`data-v="${f.i}"`,v,'2027 for '+f.n,80,10)}</td><td class="t">${sel(`data-d="${f.i}"`,d,['Keep','Reduce','Stop','New'],'Decision for '+f.n)}</td>
           <td class="${v<f.a?'pos':v>f.a?'neg':''}">${sK(v-f.a)}</td><td class="t"><input class="txt" data-n="${f.i}" value="${esc(feeS.n[f.i]??f.note)}" aria-label="Notes for ${esc(f.n)}"></td></tr>`}).join('')+
-        `<tr class="total"><td class="t" colspan="3">Total</td><td>${fK(26000)}</td><td>${fK(nx)}</td><td></td><td>${sK(nx-26000)}</td><td></td></tr>`;
+        `<tr class="total"><td class="t" colspan="4">Total</td><td>${fK(26000)}</td><td>${fK(nx)}</td><td></td><td>${sK(nx-26000)}</td><td></td></tr>`;
+      vendors();
       bars(['Legal','Audit and tax','Consulting','Other advisory'].map(t=>({n:t,a:sum(FEE.filter(f=>f.t===t).map(f=>f.a)),b:sum(FEE.filter(f=>f.t===t).map(f=>feeV(f)))})))};
+    var vendors=()=>{const vt=$('#vtbl');if(!vt)return;
+      const V=[...new Set(FEE.map(f=>f.v))].map(v=>{const L=FEE.filter(f=>f.v===v);
+        return{v,n:L.length,t:[...new Set(L.map(f=>f.t))].join(', '),own:[...new Set(L.map(f=>f.o))].join(', '),a:sum(L.map(f=>f.a)),b:sum(L.map(f=>feeV(f))),
+               dec:[...new Set(L.map(f=>feeS.d[f.i]??f.d))].join(', ')}}).sort((x,y)=>y.b-x.b);
+      const TA=sum(V.map(x=>x.a)),TB=sum(V.map(x=>x.b));
+      vt.innerHTML=`<tr><th class="t">Vendor</th><th>Engagements</th><th class="t">Type</th><th class="t">Owners</th><th>2026</th><th>2027</th><th>Change</th><th>% of 2027</th><th class="t">Decisions</th></tr>`+
+        V.map(x=>`<tr><td class="t"><b>${esc(x.v)}</b>${x.n>1?' <span class="chip warn">'+x.n+' engagements</span>':''}</td><td>${x.n}</td><td class="t">${x.t}</td><td class="t">${esc(x.own)}</td><td>${fK(x.a)}</td><td><b>${fK(x.b)}</b></td><td class="${x.b<x.a?'pos':x.b>x.a?'neg':''}">${x.b===x.a?'–':sK(x.b-x.a)}</td><td>${TB?Math.round(x.b/TB*100):0}%</td><td class="t">${x.dec}</td></tr>`).join('')+
+        `<tr class="total"><td class="t">Total, ${V.length} vendors</td><td>${FEE.length}</td><td colspan="2"></td><td>${fK(TA)}</td><td>${fK(TB)}</td><td>${sK(TB-TA)}</td><td>100%</td><td></td></tr>`;
+      const vn=$('#vnote');if(vn){const top=V.slice(0,3);vn.textContent=`The three largest firms are ${Math.round(sum(top.map(x=>x.b))/TB*100)}% of 2027 fees. ${V.filter(x=>x.n>1).length} firms hold more than one engagement, so those are negotiated firm by firm, not line by line.`}};
     tb.addEventListener('change',e=>{const d=e.target.dataset;let f=null;
       if(d.v!=null){feeS.v[d.v]=Math.max(0,+e.target.value||0);f=`[data-v="${d.v}"]`}else if(d.d!=null){feeS.d[d.d]=e.target.value;if(e.target.value==='Stop')feeS.v[d.d]=0;f=`[data-d="${d.d}"]`}else if(d.n!=null){feeS.n[d.n]=e.target.value;store('dis',feeS)&&saved();return}else return;
       store('dis',feeS)&&saved();draw();tb.querySelector(f).focus()});
