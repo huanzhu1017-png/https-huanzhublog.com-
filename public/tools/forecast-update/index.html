@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Forecast Update · Huan Zhu</title>
+<meta name="description" content="A demo of the forecast update cards from Agent 5 in Huan Zhu's FP&amp;A agent team. All figures are made up.">
+<meta property="og:title" content="Forecast Update · Huan Zhu">
+<meta property="og:description" content="A demo of the forecast update cards from Agent 5 in Huan Zhu's FP&amp;A agent team. All figures are made up.">
+<meta property="og:url" content="https://huanzhublog.com/tools/forecast-update/">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Light, research-note look: navy top bar, coloured tab rails, navy hero band. Single theme on purpose. */
+:root{
+  color-scheme:light;
+  --bg:#F3F3F0; --surface:#fff; --panel:#EFEFEB; --ink:#0a0b0d; --ink2:#51565f; --muted:#8a8f98; --line:#e2e4e8; --grid:#eceef1;
+  --navy:#1E3B32; --blue:#2B6A4C; --title:#2B6A4C;
+  --lease:#1E5C45; --sales:#4E9A6F; --debt:#A9CC8C; --booked:#1E5C45; --pipe:#4E9A6F; --nodet:#2C8C88; --mtop:#A9CC8C; --ftop:#7A8C3A;
+  --good:#17874f; --bad:#c0302a; --warn:#a86500;
+  --tot:#fff3cf; --tot-line:#e0b93c; --hl:#fff6dc;
+  --t1:#1E3B32; --t2:#a5650f; --t3:#d4561f; --t4:#c0302a;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --sans:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.5 var(--sans);font-feature-settings:"tnum" 1}
+a{color:var(--blue)}
+button,select,input{font:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.topbar{background:var(--navy);color:#D3E0D9;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.wm{color:#fff;font-weight:700;letter-spacing:.32em;font-size:13px}
+.tb-r{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.tb-r .sep{width:1px;height:12px;background:#4C6D60}
+.tb-r .demo{color:#ffc65c;font-weight:600}
+.tb-r a{color:#A8DCC2;text-decoration:none}
+.wrap{max-width:1480px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 50px max(16px,env(safe-area-inset-left,0px))}
+.head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;background:#E7E7E2;padding:12px 14px}
+.head h1{font:400 26px/1.15 var(--serif);color:var(--title);margin:0}
+.head p{margin:4px 0 0;max-width:820px;font-size:13px}
+.cyc{display:inline-flex;border:1px solid var(--line);background:#fff}
+.cyc span{padding:8px 14px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.cyc .on{background:var(--navy);color:#fff;font-weight:600}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;background:#E7E7E2;padding:4px 10px 10px;margin-top:10px}
+.tabs button{border:0;border-top:4px solid var(--c);background:#fff;padding:12px 14px 10px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.tabs button[aria-selected="true"]{background:var(--c);color:#fff;transform:translateY(-3px);box-shadow:0 4px 10px rgba(0,0,0,.18)}
+.eyebrow{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin:22px 0 4px}
+h2.lead{font:400 21px/1.25 var(--serif);color:var(--title);margin:0 0 12px;text-wrap:balance}
+.hero{background:var(--navy);color:#fff;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.hero > div{padding:16px 22px;border-left:1px solid #3A5A4E;min-width:0}
+.hero > div:first-child{border-left:0}
+.hero .big{font:400 30px/1.1 var(--serif)}
+.hero .dn{font:400 19px/1.15 var(--serif);color:#ff7468}
+.hero .up{font:400 19px/1.15 var(--serif);color:#4fd59a}
+.hero .l{font-size:12.5px;color:#dfe6ee;margin-top:4px}
+.hero .s{font-size:11.5px;color:#A9C2B6;margin-top:3px}
+.hero .g{color:#4fd59a}.hero .r{color:#ff7468}
+.findings{margin:14px 0 6px}
+.findings h3{font-size:14px;margin:0 0 6px}
+.findings ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);padding:14px 16px;min-width:0}
+.card h3{margin:0 0 10px;font-size:15px;font-weight:600}
+.kpi{background:#fff;border:1px solid var(--line);padding:12px 14px;min-width:0}
+.kpi .l{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.kpi .n{font-size:24px;font-weight:600;margin-top:4px}
+.kpi .s{font-size:12px;color:var(--ink2)}
+.note{font-size:12px;color:var(--ink2);margin:8px 0 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--grid);white-space:nowrap}
+th.t,td.t{text-align:left}
+td.t{white-space:normal}
+tr.total td{font-weight:700;background:var(--tot);border-top:1px solid var(--tot-line)}
+td.tc,th.tc{background:var(--tot)}
+.pos{color:var(--good)}.neg{color:var(--bad)}
+.code{font-size:10.5px;color:var(--muted);background:#f0f1f3;padding:1px 5px;border-radius:3px;margin-left:4px}
+.pill{font-size:10.5px;padding:1px 6px;border-radius:3px;border:1px solid}
+.pill.in{color:#1c4e8f;border-color:#9cc3ef;background:#eaf3fd}
+.pill.up{color:#9c3d12;border-color:#f3b896;background:#fff1e8}
+.legend{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-bottom:8px}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+svg{display:block;width:100%;height:auto;max-width:100%}
+svg text{font-family:var(--sans);font-size:11px;fill:var(--ink2)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters select,.filters input{border:1px solid #cfd3d9;background:#fff;padding:6px 8px;min-width:0;max-width:220px}
+.filters input{min-width:180px}
+.filters .cnt{font-size:11.5px;color:var(--muted);align-self:center}
+.more{background:none;border:0;color:var(--blue);cursor:pointer;padding:8px 0;font-size:12.5px}
+.barcell{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.barcell i{display:block;height:3px;background:var(--blue);border-radius:2px}
+tr.top5 td{background:var(--hl)}
+tr.top5 td:first-child{box-shadow:inset 3px 0 0 var(--ftop)}
+.lookup input{width:100%;max-width:420px;border:1px solid #cfd3d9;padding:9px 10px;background:#fff}
+footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--ink2);display:flex;flex-direction:column;gap:6px}
+.fict{background:#fff8e1;border:1px solid #f0d27a;padding:8px 12px;font-size:12.5px;margin-top:12px}
+[role=tabpanel][hidden]{display:none!important}
+@media (max-width:1000px){.hero{grid-template-columns:repeat(2,minmax(0,1fr))}.hero > div:nth-child(3){border-left:0}.grid2{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.hero,.grid3,.grid4{grid-template-columns:1fr}.hero > div{border-left:0;border-top:1px solid #3A5A4E}.head h1{font-size:22px}}
+@media (prefers-reduced-motion:reduce){.tabs button{transform:none!important}}
+
+/* ---- Old financial newspaper theme: newsprint, black ink, double rules ---- */
+:root{
+  --bg:#EEE8DA; --panel:#F3EEE2; --line:#1A1A1A; --grid:#CFC7B5; --ink:#141414; --ink2:#3D3A33; --muted:#6E685C;
+  --navy:#1A1A1A; --title:#1A1A1A; --blue:#2F5E46;
+  --t1:#1A1A1A; --t2:#1A1A1A; --t3:#1A1A1A; --t4:#1A1A1A;
+  --tot:#E2DAC6; --tot-line:#1A1A1A; --hl:#E8E0CC;
+  --lease:#2B2B2B; --booked:#2B2B2B; --sales:#2F5E46; --pipe:#2F5E46; --debt:#A9A190; --ftop:#A9A190;
+  --serif:"Old Standard TT",Georgia,"Times New Roman",serif;
+  --sans:"Libre Baskerville",Georgia,"Times New Roman",serif;
+}
+body{font-size:13px}
+.topbar{color:#DDD6C6}
+.tb-r .sep{background:#5A564E}
+.head,.tabs{background:transparent;border-top:3px double #1A1A1A;border-bottom:1px solid #1A1A1A}
+.head h1{font-size:40px;font-weight:700;color:#141414;letter-spacing:-.01em}
+.kpi,.card{background:transparent;border:0;border-top:1px solid #1A1A1A;box-shadow:none}
+.tabs button{background:transparent;box-shadow:none;border-top:0;color:#1A1A1A}
+.tabs button[aria-selected="true"]{background:#1A1A1A;color:#EEE8DA;transform:none;box-shadow:none}
+.fict{background:transparent;border:1px solid #1A1A1A}
+.hero > div{border-left-color:#3A3A3A}
+.hero .s{color:#B9B2A2}
+.lookup input,.filters select,.filters input{background:#F6F1E6;border-color:#8C8576}
+.code{background:#E2DAC6}
+@media (max-width:620px){.ctlbar{grid-template-columns:1fr!important}}
+
+/* ---- phone-shaped card deck ---- */
+.deck{margin-top:18px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.phone{width:100%;max-width:380px;border:1px solid #1A1A1A;background:#fff;display:flex;flex-direction:column}
+.screen{height:620px;overflow:hidden;position:relative;outline:none}
+.screen:focus-visible{outline:2px solid #2F5E46;outline-offset:-2px}
+.card7{padding:20px 18px 10px;height:100%;overflow-y:auto;display:flex;flex-direction:column}
+.card7[hidden]{display:none}
+.card7 .eb{font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;color:#2E6FA8;font-weight:700}
+.card7 h2{font-family:var(--serif);font-weight:400;font-size:25px;line-height:1.15;margin:5px 0 14px;color:#14263D}
+.card7 .sub2{font-family:var(--serif);font-size:16px;margin:16px 0 4px;color:#14263D}
+.card7 .fin{font-size:10.5px;color:#6E685C;line-height:1.5;margin:8px 0 0}
+.jump{text-align:center;margin:10px 0 4px}
+.jump .big{font-family:var(--serif);font-size:52px;line-height:1;color:#14263D}
+.jump .when{font-size:10px;color:#6E685C;margin-top:3px}
+.jump .arr{font-size:20px;color:#A9A190;margin:10px 0}
+.jump .pill{display:inline-block;margin-top:12px;padding:6px 14px;background:#E6F0EA;color:#2F7A5A;font-weight:700;font-size:14px}
+.rows{margin-top:auto;display:flex;flex-direction:column;gap:6px;padding-top:16px}
+.rows .r{padding:8px 11px;background:#EFF4F8;font-size:11.5px;color:#1A1A1A}
+.rows .r.up b{color:#2F7A5A}
+.rows .r.mut{background:#F4F2ED;color:#6E685C}
+.lob{margin-bottom:14px}
+.lob .ln{font-family:var(--serif);font-size:15px;color:#14263D}
+.lob .pct{font-family:var(--serif);font-size:30px;line-height:1.1}
+.lb{display:grid;grid-template-columns:78px 1fr 48px;gap:7px;align-items:center;margin:3px 0;font-size:9.5px;color:#6E685C}
+.lb b{font-size:10.5px;color:#1A1A1A;text-align:right}
+.track{height:11px;background:transparent;display:flex}
+.track.wide{height:13px}
+.track i{display:block;height:100%}
+.track i.grey{background:#B9B4AA}.track i.blue{background:#2E6FA8}
+.track i.green{background:#2F7A5A}.track i.red{background:#B2443A}
+.lob .fy{font-size:9.5px;color:#6E685C;margin-top:3px}
+.up{color:#2F7A5A}.dn{color:#B2443A}
+.bignum{font-family:var(--serif);font-size:40px;line-height:1.1;margin:2px 0 8px}
+.mk{display:grid;grid-template-columns:104px 1fr 54px;gap:8px;align-items:center;margin:5px 0}
+.mk .mn{font-size:10.5px;color:#1A1A1A;line-height:1.25;text-align:right}
+.mk .mn span{display:block;font-size:8.5px;color:#6E685C}
+.mk b{font-size:11px;text-align:right}
+.net{display:flex;justify-content:space-between;border-top:1px solid #1A1A1A;margin-top:10px;padding-top:7px;font-size:12px}
+.wfwrap,.rngwrap{margin-top:6px}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+.qc{border:1px solid #D8D3C8;padding:8px 9px}
+.qc .ql{font-size:9px;color:#6E685C;line-height:1.3;min-height:24px}
+.qc .qv{font-family:var(--serif);font-size:22px;color:#14263D;margin:2px 0}
+.qc .qv s{font-size:12px;color:#A9A190}
+.qc .qn{font-size:8.5px;color:#6E685C;line-height:1.35}
+.chiprow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:4px 0}
+.mutx{font-size:10.5px;color:#6E685C}
+.phone .bar{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #D8D3C8;padding:9px 14px;font-size:11px;color:#1A1A1A}
+.phone .bar #pg{color:#6E685C;white-space:nowrap}
+.phone .prog{height:3px;background:#E7E2D7}
+.phone .prog i{display:block;height:100%;background:#1A1A1A;transition:width .25s ease}
+.deck .nav{display:flex;align-items:center;gap:12px}
+.deck .nav button{font:inherit;font-size:14px;line-height:1;background:transparent;border:1px solid #1A1A1A;padding:7px 14px;cursor:pointer;color:#1A1A1A}
+.deck .nav button:hover{background:#1A1A1A;color:#EEE8DA}
+.deck .dots{display:flex;gap:5px}
+.deck .dot{width:20px;height:4px;padding:0;border:0;background:#CFC7B5;cursor:pointer}
+.deck .dot[aria-current="true"]{background:#1A1A1A}
+@media (max-width:420px){.phone .screen{height:560px}.card7 h2{font-size:22px}.jump .big{font-size:44px}}
+
+</style>
+<style>
+/* ---- shared budget-tool pieces ---- */
+.badge{display:inline-block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border:1px solid #1A1A1A;margin-top:8px}
+.badge.final{background:#2F5E46;color:#EEE8DA;border-color:#2F5E46}
+.badge.draft{background:#1A1A1A;color:#EEE8DA}
+.grid5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-top:14px}
+.kpi .n{font-family:var(--serif);font-weight:400;font-size:26px}
+.sub{font-size:12px;color:var(--ink2);margin:2px 0 10px}
+h2.sec{font:400 21px/1.25 var(--serif);margin:26px 0 4px}
+input.num,input.txt,select.st{border:1px solid #8C8576;background:#F6F1E6;padding:5px 7px;font:inherit;font-size:12.5px}
+input.num{width:84px;text-align:right}
+input.txt{width:100%;min-width:150px}
+td input,td select{margin:-3px 0}
+.chip{display:inline-block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border:1px solid currentColor;white-space:nowrap}
+.chip.ok{color:#2F5E46}.chip.warn{color:#9A6B12}.chip.bad{color:#9A3B2A}.chip.mut{color:#6E685C}.chip.on{background:#2F5E46;color:#EEE8DA;border-color:#2F5E46}
+tr.grp td{background:#E2DAC6;font-weight:700}
+tr.sub2 td.t{padding-left:22px}
+tr.sub3 td.t{padding-left:40px;color:var(--ink2)}
+tr.exp{cursor:pointer}
+tr.exp td.t:before{content:"▸ ";color:var(--muted)}
+tr.exp.open td.t:before{content:"▾ "}
+.mix{display:flex;height:14px;min-width:160px;border:1px solid #8C8576}
+.mix i{display:block;height:100%}
+.howto p{margin:0 0 9px;font-size:12.5px}
+.howto b{color:var(--ink)}
+.side{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;margin-top:10px}
+.ctlbar{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#E8E0CC;padding:12px 16px;margin:18px 0 10px}
+.ctlbar h4{margin:0 0 8px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase}
+.ctlbar .row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.ctlbar label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--ink2)}
+.ctlbar label.chk{flex-direction:row;align-items:center;gap:6px}
+.linkbtn{background:none;border:0;padding:0;color:var(--blue);text-decoration:underline;cursor:pointer;font:inherit}
+.nav2{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.nav2 a{border:1px solid #1A1A1A;padding:5px 11px;font-size:12px;text-decoration:none;color:#1A1A1A}
+.cal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:14px}
+.mon{border:1px solid #1A1A1A;min-width:0}
+.mon h4{margin:0;background:#1A1A1A;color:#EEE8DA;padding:8px 10px;font-size:12.5px;display:flex;justify-content:space-between}
+.ev{display:grid;grid-template-columns:74px 12px minmax(0,1fr) auto;gap:4px;padding:8px 10px;border-top:1px solid #CFC7B5;font-size:12px}
+.ev:first-of-type{border-top:0}
+.ev .d{color:var(--ink2)}.ev .d.ph{color:#9A6B12}
+.ev .dot{width:8px;height:8px;border-radius:50%;margin-top:4px;background:#A9A190}
+.ev .dot.own{background:#1A1A1A}
+.ev b{font-weight:700}.ev small{display:block;color:var(--ink2)}
+.qbox{background:#E8E0CC;padding:10px 14px;font-size:12.5px;margin-top:12px}
+.hbar{display:grid;grid-template-columns:240px minmax(0,1fr) 70px 44px;gap:10px;align-items:center;font-size:12.5px;padding:3px 0}
+.hbar i{display:block;height:12px}
+.inv{display:flex;justify-content:space-between;gap:12px;background:#E8E0CC;padding:10px 14px;margin-top:8px;font-size:12.5px}
+.pop{position:fixed;inset:0;background:rgba(20,20,20,.35);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.pop[hidden]{display:none}
+.pop .box{background:#F3EEE2;border:1px solid #1A1A1A;max-width:560px;width:100%;padding:16px 18px;max-height:80vh;overflow:auto}
+.pop .box h3{margin:0 0 4px;font:400 20px var(--serif)}
+.pop .x{float:right;background:none;border:1px solid #1A1A1A;cursor:pointer;padding:2px 8px}
+.saved{font-size:11.5px;color:var(--muted);margin-left:8px}
+@media (max-width:1000px){.grid5{grid-template-columns:repeat(2,minmax(0,1fr))}.side,.ctlbar{grid-template-columns:1fr}.cal{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.grid5,.cal{grid-template-columns:1fr}.hbar{grid-template-columns:120px minmax(0,1fr) 60px}.hbar span:last-child{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="wm">MERIDIAN</div>
+  <div class="tb-r"><span>FP&amp;A</span><span class="sep"></span><span>Agent tools</span><span class="sep"></span><span class="demo">Demo · fictional company &amp; data</span><span class="sep"></span><a href="../../work/index.html">← Huan's work</a></div>
+</div>
+<div class="wrap">
+  <div class="agentbar" style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;border:1px solid #1A1A1A;padding:7px 12px;margin:0 0 12px;font-size:12.5px"><b style="letter-spacing:.08em;text-transform:uppercase;font-size:11px">Run by Agent 5 · Reporting</b><span>turns checked numbers into the monthly reports</span><span style="color:var(--ink2)">→ hands off to Agent 7 Admin</span><a href="../agents/index.html" style="margin-left:auto">See the agent team ↗</a></div>
+  <div class="head"><div>
+    <h1>Forecast Update</h1>
+    <span class="badge draft">Demo</span>
+    <p>What changed in the quarterly revenue forecast between the October and November cycles, as seven cards a CFO reads on a phone. One card, one point.</p>
+  </div></div>
+  <p class="fict"><b>What this shows:</b> the format I use when a forecast moves and leadership needs the reason before the next meeting, not a deck after it: the number, the drivers, what came up, what came down, whether the forecast got better, and what to watch. <b>All names and figures are made up.</b></p>
+
+  <div class="deck">
+    <div class="phone">
+      <div class="screen" id="screen" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Forecast update, seven cards"></div>
+      <div class="bar"><span id="cap"></span><span id="pg"></span></div>
+      <div class="prog"><i id="pi"></i></div>
+    </div>
+    <div class="nav">
+      <button id="prev" aria-label="Previous card">←</button>
+      <div class="dots" id="dots" role="tablist" aria-label="Cards"></div>
+      <button id="next" aria-label="Next card">→</button>
+    </div>
+    <p class="note" style="text-align:center">Arrow keys, the buttons, or swipe on a phone.</p>
+  </div>
+
+  <h2 class="sec">The same thing as a table</h2>
+  <p class="sub">The cards are for reading on a phone. This is what sits behind them, for anyone who wants to check it. $M.</p>
+  <div class="grid2">
+    <div class="card"><h3>What moved</h3><div class="scroll"><table id="wtbl"></table></div>
+      <p class="note">The four moves have to add to the change in the headline, or the card is wrong.</p></div>
+    <div class="card"><h3>Against last year</h3><div class="scroll"><table id="ytbl"></table></div>
+      <p class="note">Q4 forecast against Q4 2025 actual, and the full year against full-year 2025.</p></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Tie-out</h3><div id="tie"></div></div>
+
+  <footer>
+    <div><b>Built by</b> Huan Zhu · <a href="../../index.html">huanzhublog.com</a> · <a href="../revenue-forecast/index.html">revenue forecast and budget</a> · <a href="../monthly-financials/index.html">monthly financials</a> · <a href="../agents/index.html">the agent team</a></div>
+    <div>Demo with generated data. Meridian is not a real company; every client, market and figure on this page is made up.</div>
+    <div><b>Independent project built on my own time with fictional data. Not affiliated with or endorsed by any employer.</b></div>
+  </footer>
+</div>
+<script src="../contracts-data.js"></script>
+<script src="../cost-data.js"></script>
+<script src="../budget-data.js"></script>
+<script src="../brokers-data.js"></script>
+<script src="../pl-data.js"></script>
+<script>
+(function(){
+const $=q=>document.querySelector(q);
+const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const P=window.HZ_PL;
+const M=v=>(v/1e6).toFixed(1), M2=v=>(v/1e6).toFixed(2);
+const sg=v=>(v>=0?'+':'−')+'$'+Math.abs(v/1e6).toFixed(1)+'M';
+const pc=v=>(v>=0?'+':'−')+Math.abs(v*100).toFixed(1)+'%';
+
+/* ---- the numbers. The November forecast is the site's own Q4, so this page
+   cannot drift from the revenue forecast or the market P&L. The decomposition
+   of the move is this page's own, and it has to foot back to the headline. ---- */
+const Q4 = P.Q[2026][3], Q4P = P.Q[2025][3];
+const NOV = Q4[0]+Q4[1]+Q4[2];                 // current Q4 forecast
+const MOVES = [['West region',  9.2e6,'up'],
+               ['Finance topside', -4.0e6,'down'],
+               ['Capital markets, investment sales', -2.3e6,'down'],
+               ['Everything else', -0.5e6,'down']];
+const DELTA = MOVES.reduce((a,m)=>a+m[1],0);
+const OCT = NOV - DELTA;
+const FY  = P.FYL(2026), FYP = P.FYL(2025);
+const FYT = FY[0]+FY[1]+FY[2], FYPT = FYP[0]+FYP[1]+FYP[2];
+const TOPSIDE = 3.8e6;                          // finance topside left in the number
+
+const LINES=[['Leasing',0],['Capital markets',1],['Debt and structured finance',2]];
+// markets adding, with the client attribution the market lead gave. Clients are lettered,
+// the way the contract pages letter vendors.
+const UP=[['LA',2.9,'Client A +$1.6M'],['Dallas',2.2,'Client B +$1.2M'],['San Francisco',1.8,'Client C +$0.9M'],
+          ['Houston',1.4,''],['Chicago',0.9,''],['Denver',0.5,''],['Seattle',-0.5,'one deal slipped']];
+const DOWN=[['Portfolio sale, Miami',-1.1],['Seniors housing',-0.6],['Industrial portfolio',-0.4],['Other',-0.2]];
+const CLIENTS=[['Client A',5.1],['Client B',3.8],['Client C',2.6],['Client D',1.9],['Client E',1.4]];
+const Q=[ // quality of the build, October cycle → November cycle
+  ['Topside share of the forecast','5.4%','2.6%','Market topside $7.8M → $3.8M'],
+  ['Booked revenue in the number','3%','21%','$4M → $31M booked'],
+  ['Pipeline with no deal detail','$18M (12%)','≈ $0','Half investment sales, half leasing'],
+  ['Investment sales backed by deals','22%','100%','$3M → $14M of deal-level detail']];
+const RANGE=[['October cycle',136,144,155],['November cycle',141,146.4,152]];
+
+/* ---------------- the seven cards ---------------- */
+const bar=(w,cls)=>`<i class="${cls||''}" style="width:${Math.max(1,w)}%"></i>`;
+const CARDS=[
+{cap:`Q4 forecast moved up ${sg(DELTA)} to $${M(NOV)}M`, html:`
+  <div class="eb">Q4 2026 forecast</div><h2>Up $${M(DELTA)}M to $${M(NOV)}M</h2>
+  <div class="jump">
+    <div class="big">$${M(OCT)}M</div><div class="when">October cycle</div>
+    <div class="arr" aria-hidden="true">↓</div>
+    <div class="big">$${M(NOV)}M</div><div class="when">November cycle</div>
+    <div class="pill up">${sg(DELTA)} · ${pc(DELTA/OCT)}</div>
+  </div>
+  <div class="rows">
+    <div class="r up"><b>${pc(NOV/(Q4P[0]+Q4P[1]+Q4P[2])-1)}</b> vs Q4 2025 ($${M(Q4P[0]+Q4P[1]+Q4P[2])}M)</div>
+    <div class="r up"><b>${pc(FYT/FYPT-1)}</b> FY 2026 against 2025 ($${M(FYT)}M)</div>
+    <div class="r mut">$${M(NOV-TOPSIDE)}M from the markets + $${M(TOPSIDE)}M finance topside</div>
+  </div>`},
+
+{cap:`Every line is ahead of Q4 2025`, html:`
+  <div class="eb">Year over year</div><h2>Every line is ahead</h2>
+  ${LINES.map(([n,i])=>{const a=Q4P[i],b=Q4[i],g=b/a-1,fg=FY[i]/FYP[i]-1;
+   return `<div class="lob"><div class="ln">${n}</div><div class="pct up">${pc(g)}</div>
+    <div class="lb"><span>Q4 2025 actual</span><div class="track">${bar(a/Q4[0]*100,'grey')}</div><b>$${M(a)}M</b></div>
+    <div class="lb"><span>Q4 2026 forecast</span><div class="track">${bar(b/Q4[0]*100,'blue')}</div><b>$${M(b)}M</b></div>
+    <div class="fy">Full year 2026: <b class="up">${pc(fg)}</b> ($${M(FY[i])}M)</div></div>`}).join('')}`},
+
+{cap:`Four moves explain the change`, html:`
+  <div class="eb">What moved</div><h2>$${M(OCT)}M to $${M(NOV)}M in four moves</h2>
+  <div class="wfwrap"><svg id="wf" viewBox="0 0 320 300" role="img" aria-label="Waterfall from the October forecast to the November forecast"></svg></div>
+  <p class="fin">Axis starts at $${M(OCT-6e6)}M</p>`},
+
+{cap:`The West adds ${sg(9.2e6)}, led by LA and Dallas`, html:`
+  <div class="eb">Up</div><h2>The West adds ${sg(9.2e6)}</h2>
+  ${UP.map(([m,v,note])=>`<div class="mk"><div class="mn">${m}${note?`<span>${note}</span>`:''}</div>
+    <div class="track wide">${bar(Math.abs(v)/2.9*100,v>=0?'green':'red')}</div><b class="${v>=0?'up':'dn'}">${sg(v*1e6)}</b></div>`).join('')}
+  <div class="net"><span>West, net</span><b class="up">${sg(UP.reduce((a,u)=>a+u[1],0)*1e6)}</b></div>`},
+
+{cap:`Finance topside and investment sales come down`, html:`
+  <div class="eb">Down</div><h2>Two things come down</h2>
+  <div class="sub2">Finance topside</div><div class="bignum dn">−$4.0M</div>
+  <div class="lb"><span>October</span><div class="track">${bar(100,'blue')}</div><b>$7.8M</b></div>
+  <div class="lb"><span>November</span><div class="track">${bar(3.8/7.8*100,'blue')}</div><b>$3.8M</b></div>
+  <p class="fin">Better visibility into the deals themselves; $3.8M is about 2.6% of the quarter, in line with where forecasts have landed.</p>
+  <div class="sub2">Capital markets, investment sales</div><div class="bignum dn">−$2.3M</div>
+  ${DOWN.map(([n,v])=>`<div class="mk"><div class="mn">${n}</div><div class="track wide">${bar(Math.abs(v)/1.1*100,'red')}</div><b class="dn">${sg(v*1e6)}</b></div>`).join('')}`},
+
+{cap:`Less topside, more deal detail, a tighter range`, html:`
+  <div class="eb">Forecast build</div><h2>Better quality, tighter range</h2>
+  <div class="rngwrap"><svg id="rng" viewBox="0 0 320 130" role="img" aria-label="Forecast range, October cycle against November cycle"></svg></div>
+  <p class="fin">The range narrowed by $8M while the base moved up, because more of the number is booked and less of it is judgement.</p>
+  <div class="qgrid">${Q.map(([l,a,b,n])=>`<div class="qc"><div class="ql">${l}</div>
+    <div class="qv"><s>${a}</s> <b>${b}</b></div><div class="qn">${n}</div></div>`).join('')}</div>`},
+
+{cap:`Watch concentration, and one deal moving to Q1`, html:`
+  <div class="eb">Watch list</div><h2>Concentration and timing</h2>
+  <div class="sub2">Largest clients in the quarter</div>
+  ${CLIENTS.map(([n,v])=>`<div class="mk"><div class="mn">${n}</div><div class="track wide">${bar(v/5.1*100,'blue')}</div><b>$${v.toFixed(1)}M</b></div>`).join('')}
+  <p class="fin">The top ten clients are 14% of the discounted pipeline, so no single loss takes the quarter down.</p>
+  <div class="sub2">Project Harbor</div>
+  <div class="chiprow"><span class="chip warn">Moved to Q1</span><span class="mutx">$4.2M, signing slipped past year end</span></div>
+  <p class="fin">Four deals are expected to sign this week; two to three is the likely outcome.</p>`}
+];
+
+/* ---------------- render ---------------- */
+const screen=$('#screen'), dots=$('#dots');
+let i=0;
+CARDS.forEach((c,n)=>{const s=document.createElement('section');s.className='card7';s.innerHTML=c.html;s.hidden=n!==0;screen.appendChild(s);
+  const d=document.createElement('button');d.className='dot';d.type='button';d.setAttribute('role','tab');
+  d.setAttribute('aria-label','Card '+(n+1)+' of '+CARDS.length);d.addEventListener('click',()=>go(n));dots.appendChild(d)});
+const panes=[...screen.children], dl=[...dots.children];
+function go(n){i=(n+CARDS.length)%CARDS.length;
+  panes.forEach((p,k)=>p.hidden=k!==i);
+  dl.forEach((d,k)=>d.setAttribute('aria-current',k===i?'true':'false'));
+  $('#cap').innerHTML=CARDS[i].cap;$('#pg').textContent=(i+1)+' / '+CARDS.length;
+  $('#pi').style.width=((i+1)/CARDS.length*100)+'%';
+  if(i===2)waterfall(); if(i===5)range();
+}
+$('#prev').addEventListener('click',()=>go(i-1));
+$('#next').addEventListener('click',()=>go(i+1));
+screen.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();go(i+1)}if(e.key==='ArrowLeft'){e.preventDefault();go(i-1)}});
+let tx=null;
+screen.addEventListener('touchstart',e=>{tx=e.changedTouches[0].clientX},{passive:true});
+screen.addEventListener('touchend',e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>45)go(i+(dx<0?1:-1));tx=null},{passive:true});
+
+function waterfall(){const el=$('#wf');if(!el||el.dataset.done)return;el.dataset.done=1;
+  const W=320,H=300,base=OCT-6e6,top=H-58,bot=14;
+  const pts=[OCT];let r=OCT;MOVES.forEach(m=>{r+=m[1];pts.push(r)});
+  const hi=Math.max(OCT,NOV,...pts)+2e6;
+  const y=v=>bot+(hi-v)/(hi-base)*(top-bot);
+  const n=MOVES.length+2,gw=(W-16)/n,bw=gw*.52;
+  let g='',cur=OCT;
+  const bar=(k,a,b,col,lab,val)=>{const x=8+k*gw+(gw-bw)/2,y0=Math.min(y(a),y(b)),h=Math.max(2,Math.abs(y(a)-y(b)));
+    g+=`<rect x="${x}" y="${y0}" width="${bw}" height="${h}" fill="${col}"/>`+
+       `<text x="${x+bw/2}" y="${y0-5}" text-anchor="middle" style="font-size:9px;font-weight:700;fill:#1A1A1A">${val}</text>`+
+       `<text x="${x+bw/2}" y="${top+14}" text-anchor="middle" style="font-size:8.5px;fill:#6E685C">${lab}</text>`};
+  bar(0,base,OCT,'#1F3B5C','Oct','$'+M(OCT)+'M');
+  MOVES.forEach((m,k)=>{const nx=cur+m[1];bar(k+1,cur,nx,m[1]>=0?'#2F7A5A':'#B2443A',
+    ['West','Topside','Inv sales','Other'][k], sg(m[1]));cur=nx});
+  bar(n-1,base,NOV,'#1F3B5C','Nov','$'+M(NOV)+'M');
+  el.innerHTML=g}
+
+function range(){const el=$('#rng');if(!el||el.dataset.done)return;el.dataset.done=1;
+  const W=320,lo=132,hi=160,x=v=>14+(v-lo)/(hi-lo)*(W-34);
+  let g='';
+  RANGE.forEach(([lab,a,b,c],k)=>{const yy=34+k*58;
+    g+=`<text x="14" y="${yy-10}" style="font-size:9px;fill:#6E685C">${lab}</text>`+
+       `<rect x="${x(a)}" y="${yy}" width="${x(c)-x(a)}" height="15" fill="#2E6FA8"/>`+
+       `<line x1="${x(b)}" x2="${x(b)}" y1="${yy-5}" y2="${yy+20}" stroke="#1A1A1A" stroke-width="2"/>`+
+       `<text x="${x(b)}" y="${yy-8}" text-anchor="middle" style="font-size:9px;font-weight:700;fill:#1A1A1A">Base $${b}M</text>`+
+       `<text x="${x(a)}" y="${yy+28}" text-anchor="middle" style="font-size:8.5px;fill:#6E685C">$${a}M</text>`+
+       `<text x="${x(c)}" y="${yy+28}" text-anchor="middle" style="font-size:8.5px;fill:#6E685C">$${c}M</text>`});
+  el.innerHTML=g}
+
+/* ---------------- the table behind the cards ---------------- */
+const fm=v=>{const r=(v/1e6);return (r<0?'(':'')+Math.abs(r).toFixed(1)+(r<0?')':'')};
+$('#wtbl').innerHTML=`<tr><th class="t">Step</th><th>$M</th><th>Running</th></tr>`+
+  (()=>{let r=OCT;return `<tr><td class="t">October cycle forecast</td><td>${fm(OCT)}</td><td>${fm(OCT)}</td></tr>`+
+   MOVES.map(m=>{r+=m[1];return `<tr><td class="t">${esc(m[0])}</td><td class="${m[1]>=0?'pos':'neg'}">${sg(m[1])}</td><td>${fm(r)}</td></tr>`}).join('')})()+
+  `<tr class="total"><td class="t">November cycle forecast</td><td>${sg(DELTA)}</td><td>${fm(NOV)}</td></tr>`;
+
+$('#ytbl').innerHTML=`<tr><th class="t">Line</th><th>Q4 2025</th><th>Q4 2026</th><th>Change</th><th>FY 2026</th><th>FY change</th></tr>`+
+  LINES.map(([n,k])=>`<tr><td class="t">${n}</td><td>${fm(Q4P[k])}</td><td>${fm(Q4[k])}</td><td class="pos">${pc(Q4[k]/Q4P[k]-1)}</td><td>${fm(FY[k])}</td><td class="pos">${pc(FY[k]/FYP[k]-1)}</td></tr>`).join('')+
+  `<tr class="total"><td class="t">Total</td><td>${fm(Q4P[0]+Q4P[1]+Q4P[2])}</td><td>${fm(NOV)}</td><td>${pc(NOV/(Q4P[0]+Q4P[1]+Q4P[2])-1)}</td><td>${fm(FYT)}</td><td>${pc(FYT/FYPT-1)}</td></tr>`;
+
+const wsum=UP.reduce((a,u)=>a+u[1],0)*1e6, dsum=DOWN.reduce((a,d)=>a+d[1],0)*1e6;
+$('#tie').innerHTML=[
+  ['The four moves add to the headline change',`${sg(MOVES.reduce((a,m)=>a+m[1],0))} vs ${sg(DELTA)}`,Math.abs(MOVES.reduce((a,m)=>a+m[1],0)-DELTA)<1],
+  ['Markets on the up card add to the West move',`${sg(wsum)} vs ${sg(9.2e6)}`,Math.abs(wsum-9.2e6)<1e4],
+  ['Items on the down card add to the investment sales move',`${sg(dsum)} vs ${sg(-2.3e6)}`,Math.abs(dsum+2.3e6)<1e4],
+  ['November forecast against the market P&L',`$${M2(NOV)}M vs $${M2(Q4[0]+Q4[1]+Q4[2])}M`,true],
+  (()=>{const rv=P.sum(P.pnl(2026)).revT;
+    return ['Full year against the market P&L',`$${M2(FYT)}M vs $${M2(rv)}M`,Math.abs(FYT-rv)<1e4]})()]
+ .map(([a,b,ok])=>`<div class="inv"><span>${a}<br><span class="note" style="margin:0">${b}</span></span><span class="chip ${ok?'ok':'bad'}">${ok?'Ties out':'Check'}</span></div>`).join('')+
+ `<p class="note">The cards are generated from this page's numbers, so a card cannot say something the table does not.</p>`;
+
+go(0);
+})();
+</script>
+</body>
+</html>
