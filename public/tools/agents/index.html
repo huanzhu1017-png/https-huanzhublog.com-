@@ -217,14 +217,6 @@ tr.exp.open td.t:before{content:"▾ "}
 /* the 60-second path: the claim, then three stops with what to look for */
 .thesis{background:#1A1A1A;color:#EEE8DA;padding:15px 18px;margin-top:16px;font:400 19px/1.4 var(--serif)}
 .thesis span{display:block;font:400 13px/1.5 var(--sans);color:#CFC7B5;margin-top:5px}
-.tour{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid #1A1A1A;border-top:0}
-.tstep{padding:13px 16px;border-left:1px solid #CFC7B5;min-width:0;display:flex;flex-direction:column;gap:4px}
-.tstep:first-child{border-left:0}
-.tstep .tm{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#6E685C}
-.tstep b{font:400 17px/1.2 var(--serif)}
-.tstep p{margin:0;font-size:12.5px;color:var(--ink2)}
-.tstep a{margin-top:auto;padding-top:6px;font-size:12px;color:#2F5E46}
-@media (max-width:760px){.tour{grid-template-columns:1fr}.tstep{border-left:0;border-top:1px solid #CFC7B5}.tstep:first-child{border-top:0}}
 @media (max-width:900px){.flow{grid-template-columns:1fr}.stage{border-left:0;border-top:1px solid #CFC7B5}.stage:first-child{border-top:0}.rules{grid-template-columns:1fr}.detail dl{grid-template-columns:1fr}}
 </style>
 <body>
@@ -242,17 +234,6 @@ tr.exp.open td.t:before{content:"▾ "}
 
   <div class="thesis">Nineteen tools, one set of numbers.
     <span>Change an assumption in any of them and it flows through the rest. The Controller runs nine checks against source, and nothing reaches a report until all nine pass.</span></div>
-  <div class="tour">
-    <div class="tstep"><span class="tm">20 seconds</span><b>The cycle, end to end</b>
-      <p>Nine agents in one loop: collect, build, check, report, send. Follow the dashed arrow — that is work going back because it did not tie.</p>
-      <a href="#flow">Start with the flowchart ↓</a></div>
-    <div class="tstep"><span class="tm">20 seconds</span><b>Proof that it ties</b>
-      <p>The Controller is where the numbers get checked. Nine tie-outs, each against its source, and the full P&amp;L by market behind them.</p>
-      <a href="../controller/index.html">Open the Controller ↗</a></div>
-    <div class="tstep"><span class="tm">20 seconds</span><b>What a CFO reads</b>
-      <p>The October financials, the broker production report and the 2027 budget review — three reports off the same numbers, not three models.</p>
-      <a href="../monthly-financials/index.html">Open the monthly financials ↗</a></div>
-  </div>
 
   <div class="scroll" id="flow" style="margin-top:16px;scroll-margin-top:12px"><svg id="chart" viewBox="0 0 1260 660" style="min-width:900px;width:100%;display:block" role="img" aria-label="Flowchart of the FP&amp;A agent team: the PMO feeds the build agents; Revenue feeds Broker contracts, the Controller checks their work, Reporting and Admin turn it into drafts, and Huan reviews and sends"></svg></div>
   <p class="note">Click a box to see what the agent takes in, produces and hands off. Solid arrows pass work on; the dashed arrow sends work back when it doesn't tie out.</p>
